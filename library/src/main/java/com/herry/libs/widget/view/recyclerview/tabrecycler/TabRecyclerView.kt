@@ -117,18 +117,18 @@ open class TabRecyclerView: NodeForm<TabRecyclerView.Holder, TabRecyclerContract
                     }
                 }
             }.apply {
-                bindHolder(context, listener?.getCustomRecyclerForm(view) ?: view.findViewById(R.id.recycler_form))
+                bindHolder(context, listener?.getCustomRecyclerForm(view) ?: view.findViewById(R.id.recyclerview_form))
             }
         }
 
         override fun onAttached(saveInstanceState: Parcelable?) {
-            view.findViewById<RecyclerView>(R.id.recycler_form_view)?.layoutManager?.onRestoreInstanceState(saveInstanceState)
+            view.findViewById<RecyclerView>(R.id.recyclerview_form_view)?.layoutManager?.onRestoreInstanceState(saveInstanceState)
         }
 
-        override fun onDetached(): Parcelable? = view.findViewById<RecyclerView>(R.id.recycler_form_view)?.layoutManager?.onSaveInstanceState()
+        override fun onDetached(): Parcelable? = view.findViewById<RecyclerView>(R.id.recyclerview_form_view)?.layoutManager?.onSaveInstanceState()
 
         override fun onNotifyScrollState() {
-            listener?.onScrollStateChanged(this@Holder, view.findViewById(R.id.recycler_form_view), RecyclerView.SCROLL_STATE_IDLE)
+            listener?.onScrollStateChanged(this@Holder, view.findViewById(R.id.recyclerview_form_view), RecyclerView.SCROLL_STATE_IDLE)
         }
 
         override fun onEmptyView(visible: Boolean) {
@@ -156,11 +156,11 @@ open class TabRecyclerView: NodeForm<TabRecyclerView.Holder, TabRecyclerContract
         }
 
         override fun showViewLoading() {
-            view.findViewById<LoadingCountView>(R.id.recycler_form_loading)?.show()
+            view.findViewById<LoadingCountView>(R.id.recyclerview_form_loading)?.show()
         }
 
         override fun hideViewLoading(success: Boolean) {
-            view.findViewById<LoadingCountView>(R.id.recycler_form_loading)?.hide()
+            view.findViewById<LoadingCountView>(R.id.recyclerview_form_loading)?.hide()
         }
 
         override fun error(throwable: Throwable) {

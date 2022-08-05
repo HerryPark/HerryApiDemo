@@ -17,8 +17,7 @@
         android:layout_height="@dimen/size36"
         android:gravity="center"
         android:orientation="horizontal"
-        android:background="@drawable/shape_ra27_bg_tbc35"
-        tools:ignore="">
+        android:background="@drawable/shape_ra27_bg_tbc35">
 
         <com.herry.libs.widget.view.editor.EditTextEx
             android:id="@+id/search_input_form_edit"
@@ -45,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/size08"
             android:background="?android:attr/actionBarItemBackground"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="@dimen/size20"

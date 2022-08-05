@@ -70,4 +70,14 @@ interface FeedDao {
             "ORDER BY tags ASC; "
     )
     fun getAutoCompleteKeywords(keyword: String): List<String>
+
+    /**
+     * INNER JOIN : 두 테이블에 각각 조인이 되는 컬럼을 지정하고 각각의 컬럼에 같은 값이 저장되어 있는 데이터를 조인하여 받아온다
+     * query:
+     * SELECT 테이블명. 컬럼명, ...FROM 테이블명1
+        INNER JOIN 테이블명2
+        ON 테이블명1.컬럼명1 = 테이블명2. 컬럼명2;
+
+     *
+     */
 }

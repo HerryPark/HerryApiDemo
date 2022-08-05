@@ -1,17 +1,20 @@
 package com.herry.libs.widget.view.skeleton
 
 import android.animation.ObjectAnimator
-import android.annotation.TargetApi
+import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Build
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import com.herry.libs.R
 import com.herry.libs.widget.anim.ViewAnimCreator
+import com.herry.libs.widget.anim.ViewAnimListener
 import com.herry.libs.widget.anim.ViewAnimPlayer
 
 
@@ -33,7 +36,6 @@ class SkeletonFrameLayout : FrameLayout {
 
     constructor(context: Context, attrs: AttributeSet?, @AttrRes defStyleAttr: Int) : this(context, attrs, defStyleAttr, 0)
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     constructor(context: Context, attrs: AttributeSet?, @AttrRes defStyleAttr: Int, @StyleRes defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
         init(context, attrs)
     }
@@ -77,16 +79,27 @@ class SkeletonFrameLayout : FrameLayout {
         stopEffect()
     }
 
+    private fun getChildViews(viewGroup: ViewGroup): MutableList<View> {
+        val views = mutableListOf<View>()
+
+        viewGroup.children.forEach { child ->
+            if (child is ViewGroup) {
+                views.addAll(getChildViews(child))
+            } else {
+                views.add(child)
+            }
+        }
+
+        return views
+    }
+
+    fun setEffectAnimPlayer(animPlayer: ViewAnimPlayer?) {
+        this.effectAnimPlayer = animPlayer
+    }
+
     fun startEffect() {
         val effectAnimPlayer = this.effectAnimPlayer ?: ViewAnimPlayer().apply {
-            val list: ArrayList<View> = ArrayList()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                children.iterator().forEachRemaining(list::add)
-            } else {
-                while (children.iterator().hasNext()) {
-                    list.add(children.iterator().next())
-                }
-            }
+            val list = getChildViews(this@SkeletonFrameLayout)
 
             add(ViewAnimCreator(*list.toTypedArray()).apply {
                 duration(effectDuration.toLong())
@@ -107,5 +120,48 @@ class SkeletonFrameLayout : FrameLayout {
     fun stopEffect() {
         state = State.STOPPED
         effectAnimPlayer?.cancel()
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    fun setProtectTouchBelowLayer(protect: Boolean) {
+        setOnTouchListener { _: View?, _: MotionEvent? -> protect }
+    }
+
+    private var hidingAnimPlayer: ViewAnimPlayer? = null
+    fun hide(withAnimation: Boolean = true, duration: Long = 500L) {
+        if (!withAnimation) {
+            this.isVisible = false
+            return
+        }
+
+        if (!this.isVisible || hidingAnimPlayer != null) {
+            return
+        }
+        val view = this@SkeletonFrameLayout
+        hidingAnimPlayer = ViewAnimPlayer().apply {
+            add(
+                ViewAnimCreator(view).apply {
+                    alpha(1f, 0f)
+                }
+                    .duration(duration)
+            )
+
+            this.onStartListener = object: ViewAnimListener.OnStart {
+                override fun onStart() {
+                    view.stopEffect()
+                }
+            }
+            this.onStopListener = object: ViewAnimListener.OnStop {
+                override fun onStop() {
+                    view.isVisible = false
+                }
+            }
+        }
+        hidingAnimPlayer?.start()
+    }
+
+    fun show() {
+        hidingAnimPlayer?.cancel()
+        this.isVisible = true
     }
 }

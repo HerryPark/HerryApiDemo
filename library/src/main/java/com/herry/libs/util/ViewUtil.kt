@@ -91,7 +91,7 @@ object ViewUtil {
         return LayoutInflater.from(root.context).inflate(layout, root, false)
     }
 
-    fun inflate(@LayoutRes layout: Int, context: Context): View {
+    fun inflate(context: Context, @LayoutRes layout: Int): View {
         return LayoutInflater.from(context).inflate(layout, null, false)
     }
 

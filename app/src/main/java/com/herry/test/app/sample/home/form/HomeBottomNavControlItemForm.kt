@@ -25,7 +25,7 @@ class HomeBottomNavControlItemForm(
         val label: TextView = view.findViewById(R.id.home_bottom_nav_item_form_label)
 
         init {
-            view.setOnProtectClickListener {
+            view.setOnClickListener {
                 model?.let { model ->
                     onClick.invoke(model.id)
                 }

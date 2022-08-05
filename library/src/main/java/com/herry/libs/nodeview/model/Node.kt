@@ -149,6 +149,8 @@ open class Node<M : Any> {
 
     fun getChildCount(): Int = nodeChildren.getCount()
 
+    fun isEmpty(): Boolean = getChildCount() == 0
+
     fun getChildNode(position: Int): Node<*>? = nodeChildren.get(position)
 
     fun changedNode() {

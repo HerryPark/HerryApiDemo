@@ -1,5 +1,6 @@
 package com.herry.test.app.sample.feeds.search
 
+import com.herry.libs.log.Trace
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.nodeview.model.NodeModelGroup
@@ -26,7 +27,7 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
     private var recentlyDatabase: RecentlySearchKeywordDB? = null
     private var recentlyRepository: RecentlySearchKeywordDBRepository? = null
 
-    private val keywordsNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
+    private val recentlyKeywordsNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
     private val autocompleteNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
     private val feedsNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
 
@@ -55,7 +56,7 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
 
         view.keywordsRoot.beginTransition()
         view.keywordsRoot.clearChild()
-        NodeHelper.addNode(view.keywordsRoot, keywordsNodes)
+        NodeHelper.addNode(view.keywordsRoot, recentlyKeywordsNodes)
         NodeHelper.addNode(view.keywordsRoot, autocompleteNodes)
         view.keywordsRoot.endTransition()
 
@@ -148,6 +149,8 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
         NodeHelper.upSert(this.autocompleteNodes, nodes)
 
         this.autocompleteNodes.endTransition()
+
+        view?.onChangedViewMode(SearchFeedsContract.ViewMode.RECOMMEND)
     }
 
     private fun getRecentlySearchKeywords(): Observable<MutableList<RecentlySearchKeyword>> {
@@ -168,16 +171,16 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
     }
 
     private fun displayRecentlySearchKeywords(list: MutableList<RecentlySearchKeyword>) {
-        this.keywordsNodes.beginTransition()
+        this.recentlyKeywordsNodes.beginTransition()
 
         val recentlySearchWordNodes = NodeHelper.createNodeGroup()
 
         if(list.isNotEmpty()) {
             NodeHelper.addModels(recentlySearchWordNodes, *list.toTypedArray())
         }
-        NodeHelper.upSert(this.keywordsNodes, recentlySearchWordNodes)
+        NodeHelper.upSert(this.recentlyKeywordsNodes, recentlySearchWordNodes)
 
-        this.keywordsNodes.endTransition()
+        this.recentlyKeywordsNodes.endTransition()
     }
 
     private fun getFeeds(): MutableList<SearchFeedsContract.SearchResultData> = NodeHelper.getChildrenModels(feedsNodes)
@@ -192,6 +195,10 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
     }
 
     override fun searchFeeds(keyword: String) {
+        view ?: return
+
+        Trace.d("Herry", "searchFeeds $keyword")
+        view?.onChangedViewMode(SearchFeedsContract.ViewMode.SEARCH_RESULT)
         loadFeeds(true, keyword)
         // save
     }
@@ -238,15 +245,13 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
     }
 
     private fun displaySearchFeedResults(reset: Boolean, result: MutableList<SearchFeedsContract.SearchResultData>? = null) {
-        if (reset) {
-            view?.onChangedViewMode(SearchFeedsContract.ViewMode.SEARCH_RESULT)
-//            view?.onScrollTo(currentPosition)
-        }
+        view ?: return
 
         this.feedsNodes.beginTransition()
         if (reset || result == null) {
             val nodes = NodeHelper.createNodeGroup()
             if (result != null) {
+                Trace.d("Herry", "displaySearchFeedResults ${result.size}")
                 NodeHelper.addModels(nodes, *result.toTypedArray())
             }
             NodeHelper.upSert(this.feedsNodes, nodes)
@@ -254,6 +259,10 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
             NodeHelper.addModels(this.feedsNodes, *result.toTypedArray())
         }
         this.feedsNodes.endTransition()
+
+        if (reset) {
+//            view?.onScrollTo(currentPosition)
+        }
     }
 
     override fun getFeedDetailCallData(selected: SearchFeedsContract.SearchResultData): FeedDetailCallData? {

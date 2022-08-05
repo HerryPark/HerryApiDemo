@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
+import com.herry.libs.log.Trace
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
@@ -49,9 +50,6 @@ class SearchFeedsFragment: BaseNavView<SearchFeedsContract.View, SearchFeedsCont
     private val keywordForm = SearchInputEditForm(
         onTextChanged = { text ->
             presenter?.getAutoComplete(text)
-        },
-        onFocusChange = { _, _ ->
-            // updates search button
         },
         onEditorActionListener = { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -195,6 +193,13 @@ class SearchFeedsFragment: BaseNavView<SearchFeedsContract.View, SearchFeedsCont
             ViewUtil.setProtectTouchLowLayer(this, true)
             feedsRecyclerForm.bindHolder(context, this)
         }
+    }
+
+    override fun onUpdatedSearchFeedResult() {
+        Trace.d("Herry", "onUpdatedSearchFeedResult")
+        keywordForm.requestFocus(focus = false, withKeyboard = true)
+        // hide soft keyboard
+        ViewUtil.hideSoftKeyboard(requireContext(), container)
     }
 
     inner class KeywordsAdapter: NodeRecyclerAdapter(::requireContext) {

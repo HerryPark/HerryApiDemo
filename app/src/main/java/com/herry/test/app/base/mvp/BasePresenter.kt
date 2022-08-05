@@ -135,10 +135,13 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
     protected fun <T> presenterObservable(
         observable: Observable<T>,
         subscribeOn: Scheduler = RxSchedulerProvider.io(),
-        loadView: Boolean = false): Observable<T> {
+        observerOn: Scheduler = RxSchedulerProvider.ui(),
+        loadView: Boolean = false
+    ): Observable<T> {
 
         return observable
             .subscribeOn(subscribeOn)
+            .observeOn(observerOn)
             .doOnSubscribe {
                 if (loadView) {
                     (view as? MVPView<*>)?.showViewLoading()
@@ -163,48 +166,27 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
     }
 
     protected fun <T> subscribeObservable(
-            observable: Observable<T>,
-            onNext: ((T) -> Unit)? = null,
-            onError: ((Throwable) -> Unit)? = null,
-            onComplete: (() -> Unit)? = null,
-            subscribeOn: Scheduler = RxSchedulerProvider.io(),
-            observerOn: Scheduler = RxSchedulerProvider.ui(),
-            loadView: Boolean = false
+        observable: Observable<T>,
+        onNext: ((T) -> Unit)? = null,
+        onError: ((Throwable) -> Unit)? = null,
+        onComplete: (() -> Unit)? = null,
+        subscribeOn: Scheduler = RxSchedulerProvider.io(),
+        observerOn: Scheduler = RxSchedulerProvider.ui(),
+        loadView: Boolean = false
     ) {
-
-        val subscribeObservable = observable
-                .subscribeOn(subscribeOn)
-                .observeOn(observerOn)
-                .doOnSubscribe {
-                    if (loadView) {
-                        (view as? MVPView<*>)?.showViewLoading()
-                    }
-                }
-                .doOnError {
-                    (view as? MVPView<*>)?.error(it)
-                    if (loadView) {
-                        (view as? MVPView<*>)?.hideViewLoading(false)
-                    }
-                }
-                .doOnComplete {
-                    if (loadView) {
-                        (view as? MVPView<*>)?.hideViewLoading(true)
-                    }
-                }
-                .doOnDispose {
-                    if (loadView) {
-                        (view as? MVPView<*>)?.hideViewLoading(true)
-                    }
-                }
-
         compositeDisposable.add(
-                subscribeObservable.subscribe({
-                    onNext?.let { next -> next(it) }
-                }, {
-                    onError?.let { error -> error(it) }
-                }, {
-                    onComplete?.let { it() }
-                })
+            presenterObservable(
+                observable,
+                subscribeOn,
+                observerOn,
+                loadView
+            ).subscribe({
+                onNext?.let { next -> next(it) }
+            }, {
+                onError?.let { error -> error(it) }
+            }, {
+                onComplete?.let { it() }
+            })
         )
     }
 }

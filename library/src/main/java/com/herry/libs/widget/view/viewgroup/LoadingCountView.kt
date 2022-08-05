@@ -1,6 +1,6 @@
 package com.herry.libs.widget.view.viewgroup
 
-import android.animation.Animator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
@@ -26,6 +26,11 @@ class LoadingCountView : FrameLayout {
 
     private var waitToIng: WaitToIng? = null
 
+    companion object {
+        private const val  SHOW_LOADING_DELAY = 300L
+        private const val  HIDE_LOADING_DELAY = 0L
+    }
+
     private inner class WaitToIng(val waitStatus: Status): Runnable {
         private var cancel: Boolean = false
 
@@ -35,8 +40,8 @@ class LoadingCountView : FrameLayout {
 
         fun execute(): WaitToIng {
             when(waitStatus) {
-                Status.LOAD_WAIT -> postDelayed(this, 300)
-                Status.END_WAIT -> postDelayed(this, 100)
+                Status.LOAD_WAIT -> postDelayed(this, SHOW_LOADING_DELAY)
+                Status.END_WAIT -> postDelayed(this, HIDE_LOADING_DELAY)
                 else -> {
 
                 }
@@ -77,6 +82,7 @@ class LoadingCountView : FrameLayout {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean = true
 
     fun show() {
@@ -87,7 +93,7 @@ class LoadingCountView : FrameLayout {
                 waitToIng?.cancel()
                 waitToIng = WaitToIng(status).execute()
             }
-            Status.LOAD_WAIT, Status.LOADING -> loadingCount++
+            Status.LOAD_WAIT, Status.LOADING  -> loadingCount++
             Status.END_WAIT -> {
                 waitToIng?.cancel()
                 waitToIng = null
@@ -102,7 +108,9 @@ class LoadingCountView : FrameLayout {
         }
     }
 
-    fun hide() {
+    fun hide(listener: OnHideListener? = null) {
+        this.onHideListener = listener
+
         when(status) {
             Status.INIT -> {
             }
@@ -147,27 +155,9 @@ class LoadingCountView : FrameLayout {
                 .setListener(null)
                 .cancel()
 
-            animate()
-                .setListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(animation: Animator?) {
-                    }
-
-                    override fun onAnimationEnd(animation: Animator?) {
-                        statusToInit()
-                    }
-
-                    override fun onAnimationCancel(animation: Animator?) {
-
-                    }
-
-                    override fun onAnimationRepeat(animation: Animator?) {
-
-                    }
-                })
-                .alpha(0.0f)
-                .withLayer()
-                .setDuration(300)
-                .start()
+            alpha = 0.0f
+            statusToInit()
+            onHideListener?.onDone()
         }
     }
 
@@ -181,4 +171,10 @@ class LoadingCountView : FrameLayout {
 
         visibility = View.GONE
     }
+
+    interface OnHideListener {
+        fun onDone()
+    }
+
+    private var onHideListener: OnHideListener? = null
 }

@@ -63,6 +63,10 @@ object NodeHelper {
         return list
     }
 
+    inline fun <reified T : Any> findChildrenNode(node: Node<*>, model: T): Node<T>? {
+        return getChildrenNode<T>(node).firstOrNull { it.model == model }
+    }
+
     inline fun <reified T : Any> getChildModel(model: INodeModel): T? {
         model.getNode()?.let {
             return getChildModel(it)
@@ -188,5 +192,11 @@ object NodeHelper {
      */
     inline fun <reified T : INodeModel> upSert(from: Node<T>, to: Node<T>) {
         from.replace(to)
+    }
+
+    inline fun <reified T : INodeModel> transition(node: Node<T>, block: (transitionNode: Node<T>) -> Unit) {
+        node.beginTransition()
+        block(node)
+        node.endTransition()
     }
 }

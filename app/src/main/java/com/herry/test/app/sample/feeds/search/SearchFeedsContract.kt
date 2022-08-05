@@ -12,6 +12,7 @@ interface SearchFeedsContract {
         val feedsRoot: NodeRoot
 
         fun onChangedViewMode(mode: ViewMode)
+        fun onUpdatedSearchFeedResult()
     }
 
     abstract class Presenter: BaseNavPresenter<View>() {
