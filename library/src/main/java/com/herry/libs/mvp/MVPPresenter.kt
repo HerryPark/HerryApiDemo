@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 
 @Suppress("unused")
 abstract class MVPPresenter<in V>: ViewModel() {
+    protected val presenterLifecycle = MVPPresenterLifecycle()
+
     abstract fun onAttach(view: V)
 
     abstract fun onDetach()

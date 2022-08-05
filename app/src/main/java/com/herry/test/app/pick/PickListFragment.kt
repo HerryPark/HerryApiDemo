@@ -139,23 +139,7 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                                 activityCaller?.call(ACTake.TakePicture(saveFileURI) { result ->
                                     val activity = result.callActivity
                                     activity.lifecycleScope.launchWhenResumed {
-                                        if (result.success) {
-                                            val picked: Uri? = result.uris.firstOrNull()
-                                            if (picked == null) {
-                                                MediaScanner.newInstance(requireContext()).run {
-                                                    mediaScanning(tempFile.absolutePath)
-                                                }
-
-                                                Trace.d("Herry", "path: ${tempFile.absolutePath}")
-
-                                                ToastHelper.showToast(activity, "taked ${tempFile.absolutePath}")
-                                            } else {
-                                                ToastHelper.showToast(activity, "taked $picked")
-                                            }
-                                        } else {
-                                            deleteTempFile(tempFile)
-                                            ToastHelper.showToast(activity, "cancel taking")
-                                        }
+                                        presenter?.picked(tempFile = tempFile, picked = result.uris.firstOrNull(), type = type, result.success)
                                     }
                                 })
                             } else {
@@ -164,23 +148,7 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
 
                                     activity.lifecycleScope.launchWhenResumed {
                                         Trace.d("Herry", "path: ${activity.lifecycle.currentState}")
-                                        if (result.success) {
-                                            val picked: Uri? = result.uris.firstOrNull()
-                                            if (picked == null) {
-                                                MediaScanner.newInstance(requireContext()).run {
-                                                    mediaScanning(tempFile.absolutePath)
-                                                }
-
-                                                Trace.d("Herry", "path: ${tempFile.absolutePath}")
-
-                                                ToastHelper.showToast(activity, "taked ${tempFile.absolutePath}")
-                                            } else {
-                                                ToastHelper.showToast(activity, "taked $picked")
-                                            }
-                                        } else {
-                                            deleteTempFile(tempFile)
-                                            ToastHelper.showToast(activity, "cancel taking")
-                                        }
+                                        presenter?.picked(tempFile = tempFile, picked = result.uris.firstOrNull(), type = type, result.success)
                                     }
                                 })
                             }
@@ -190,10 +158,8 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
         }
     }
 
-    private fun deleteTempFile(file: File?) {
-        if (file?.exists() == true) {
-            file.delete()
-        }
+    override fun onPicked(message: String) {
+        ToastHelper.showToast(activity, message)
     }
 
     inner class Adapter: NodeRecyclerAdapter(::requireContext) {

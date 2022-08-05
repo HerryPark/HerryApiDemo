@@ -6,15 +6,13 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.herry.libs.mvp.MVPPresenter
+import com.herry.libs.mvp.MVPPresenterLifecycle
 import com.herry.libs.mvp.MVPView
 import com.herry.test.rx.RxSchedulerProvider
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
@@ -47,6 +45,8 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
             }
             _compositeDisposable = CompositeDisposable()
         }
+
+        presenterLifecycle.setState(MVPPresenterLifecycle.State.ATTACHED)
     }
 
     override fun onDetach() {
@@ -54,6 +54,8 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         this.lifecycleOwner = null
 
         compositeDisposable.dispose()
+
+        presenterLifecycle.setState(MVPPresenterLifecycle.State.CREATED)
     }
 
     final override fun relaunched(recreated: Boolean) {
@@ -62,14 +64,23 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
 
     final override fun onLaunch() {
         this.view?.let {
-            if (!launched) {
-                launched = true
-                onLaunch(it, false)
-            } else if (relaunched) {
-                relaunched = false
-                onLaunch(it, true)
-            } else {
-                onResume(it)
+            launch(Dispatchers.Main) {
+                if (!launched) {
+                    launched = true
+                    onLaunch(it, false)
+                    presenterLifecycle.setState(MVPPresenterLifecycle.State.LAUNCHED)
+                    presenterLifecycle.performPendingStateBlocks(MVPPresenterLifecycle.State.LAUNCHED)
+                } else if (relaunched) {
+                    relaunched = false
+                    onLaunch(it, true)
+                    presenterLifecycle.setState(MVPPresenterLifecycle.State.LAUNCHED)
+                    presenterLifecycle.performPendingStateBlocks(MVPPresenterLifecycle.State.LAUNCHED)
+                    presenterLifecycle.performPendingStateBlocks(MVPPresenterLifecycle.State.RESUMED)
+                } else {
+                    onResume(it)
+                    presenterLifecycle.setState(MVPPresenterLifecycle.State.RESUMED)
+                    presenterLifecycle.performPendingStateBlocks(MVPPresenterLifecycle.State.RESUMED)
+                }
             }
         }
     }
@@ -78,6 +89,7 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         compositeDisposable.clear()
         this.view?.let {
             onPause(it)
+            presenterLifecycle.setState(MVPPresenterLifecycle.State.ATTACHED)
         }
     }
 
@@ -97,21 +109,38 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         return lifecycleOwner?.lifecycleScope?.launch(context, start, block)
     }
 
-    protected enum class LaunchWhen {
+    protected enum class LaunchWhenActivity {
         CREATED,
         STARTED,
         RESUMED
     }
 
     protected open fun launch(
-        launchWhen: LaunchWhen,
+        launchWhen: LaunchWhenActivity,
         block: suspend CoroutineScope.() -> Unit): Job? {
         return lifecycleOwner?.lifecycleScope?.run {
             when (launchWhen) {
-                LaunchWhen.CREATED -> launchWhenCreated(block)
-                LaunchWhen.STARTED -> launchWhenStarted(block)
-                LaunchWhen.RESUMED -> launchWhenResumed(block)
+                LaunchWhenActivity.CREATED -> launchWhenCreated(block)
+                LaunchWhenActivity.STARTED -> launchWhenStarted(block)
+                LaunchWhenActivity.RESUMED -> launchWhenResumed(block)
             }
+        }
+    }
+
+    protected fun getCurrentState(): MVPPresenterLifecycle.State = presenterLifecycle.getCurrentState()
+
+    protected enum class LaunchWhenPresenter {
+        LAUNCHED,
+        RESUMED;
+    }
+
+    protected open fun launch(
+        launchWhen: LaunchWhenPresenter,
+        block: () -> Unit
+    ) {
+        when(launchWhen) {
+            LaunchWhenPresenter.LAUNCHED -> presenterLifecycle.launchWhenPresenterLaunched(block)
+            LaunchWhenPresenter.RESUMED -> presenterLifecycle.launchWhenPresenterResumed(block)
         }
     }
 

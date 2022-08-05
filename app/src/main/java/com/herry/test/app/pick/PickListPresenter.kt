@@ -2,7 +2,10 @@ package com.herry.test.app.pick
 
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import androidx.core.content.FileProvider
+import com.herry.libs.log.Trace
+import com.herry.libs.media.media_scanner.MediaScanner
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.nodeview.model.NodeModelGroup
@@ -28,7 +31,20 @@ class PickListPresenter : PickListContract.Presenter() {
             return
         }
 
-        loadList()
+        launch(launchWhen = LaunchWhenPresenter.LAUNCHED) {
+            Log.d("Herry", "onLaunch() block")
+            loadList()
+
+            launch(launchWhen = LaunchWhenPresenter.RESUMED) {
+                Log.d("Herry", "onResume() block2")
+            }
+        }
+    }
+
+    override fun onResume(view: PickListContract.View) {
+        launch(launchWhen = LaunchWhenPresenter.RESUMED) {
+            Log.d("Herry", "onResume() block")
+        }
     }
 
     private fun loadList() {
@@ -96,8 +112,46 @@ class PickListPresenter : PickListContract.Presenter() {
         )
     }
 
-    override fun picked(file: File, receivedUri: Uri?, type: PickListContract.PickType, success: Boolean) {
+    override fun picked(tempFile: File, picked: Uri?, type: PickListContract.PickType, success: Boolean) {
+        launch(LaunchWhenPresenter.RESUMED) {
+            Trace.d("Herry", "thread = ${Thread.currentThread().name}")
+            val context = view?.getViewContext() ?: return@launch
+            if (type == PickListContract.PickType.TAKE_PHOTO) {
+                if (success) {
+                    if (picked == null) {
+                        MediaScanner.newInstance(context).run {
+                            mediaScanning(tempFile.absolutePath)
+                        }
 
+                        Trace.d("Herry", "path: ${tempFile.absolutePath}")
+
+                        view?.onPicked("taked ${tempFile.absolutePath}")
+                    } else {
+                        view?.onPicked("taked $picked")
+                    }
+                } else {
+                    deleteTempFile(tempFile)
+                    view?.onPicked("cancel taking")
+                }
+            } else if (type == PickListContract.PickType.TAKE_MOVIE) {
+                if (success) {
+                    if (picked == null) {
+                        MediaScanner.newInstance(context).run {
+                            mediaScanning(tempFile.absolutePath)
+                        }
+
+                        Trace.d("Herry", "path: ${tempFile.absolutePath}")
+
+                        view?.onPicked("taked ${tempFile.absolutePath}")
+                    } else {
+                        view?.onPicked("taked $picked")
+                    }
+                } else {
+                    deleteTempFile(tempFile)
+                    view?.onPicked("cancel taking")
+                }
+            }
+        }
     }
 
 
