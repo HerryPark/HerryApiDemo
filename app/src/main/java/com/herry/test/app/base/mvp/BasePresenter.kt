@@ -33,13 +33,13 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
 
     private var relaunched = false
 
-    protected var lifecycleOwner: LifecycleOwner? = null
+    protected var viewLifecycleOwner: LifecycleOwner? = null
         private set
 
     override fun onAttach(view: V) {
         if (view is LifecycleOwner) {
-            lifecycleOwner = view
-            lifecycleOwner?.lifecycle?.addObserver(this)
+            viewLifecycleOwner = view
+            viewLifecycleOwner?.lifecycle?.addObserver(this)
         }
         this.view = view
 
@@ -55,7 +55,7 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
 
     override fun onDetach() {
         this.view = null
-        this.lifecycleOwner = null
+        this.viewLifecycleOwner = null
 
         compositeDisposable.dispose()
 
@@ -72,10 +72,10 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
     }
 
     final override fun onLaunch() {
-        Trace.d("Herry", "onLaunch() = View.${lifecycleOwner?.lifecycle?.currentState}")
+        Trace.d("Herry", "onLaunch() = View.${viewLifecycleOwner?.lifecycle?.currentState}")
         this.view?.let {
             Trace.d("Herry", "onLaunch() = Presenter.${getCurrentPresenterState()} launched = $launched relaunched = $relaunched")
-            val lifecycleScope = lifecycleOwner?.lifecycleScope
+            val lifecycleScope = viewLifecycleOwner?.lifecycleScope
             if (!launched) {
                 launched = true
                 onLaunch(it, false)
@@ -112,7 +112,7 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit
     ): Job? {
-        return lifecycleOwner?.lifecycleScope?.launch(context, start, block)
+        return viewLifecycleOwner?.lifecycleScope?.launch(context, start, block)
     }
 
     protected enum class LaunchWhenView {
@@ -124,7 +124,7 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
     protected open fun launch(
         launchWhen: LaunchWhenView,
         block: suspend CoroutineScope.() -> Unit): Job? {
-        return lifecycleOwner?.lifecycleScope?.run {
+        return viewLifecycleOwner?.lifecycleScope?.run {
             when (launchWhen) {
                 LaunchWhenView.CREATED -> launchWhenCreated(block)
                 LaunchWhenView.STARTED -> launchWhenStarted(block)
@@ -144,7 +144,7 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         launchWhen: LaunchWhenPresenter,
         block: suspend CoroutineScope.() -> Unit
     ): Job? {
-        return lifecycleOwner?.lifecycleScope?.run {
+        return viewLifecycleOwner?.lifecycleScope?.run {
             when (launchWhen) {
                 LaunchWhenPresenter.LAUNCHED -> presenterLifecycle.launchWhenPresenterLaunched(this, block)
                 LaunchWhenPresenter.RESUMED -> presenterLifecycle.launchWhenPresenterResumed(this, block)
