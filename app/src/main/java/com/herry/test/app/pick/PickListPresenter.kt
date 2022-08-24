@@ -2,7 +2,6 @@ package com.herry.test.app.pick
 
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
 import androidx.core.content.FileProvider
 import com.herry.libs.log.Trace
 import com.herry.libs.media.media_scanner.MediaScanner
@@ -31,20 +30,7 @@ class PickListPresenter : PickListContract.Presenter() {
             return
         }
 
-        launch(launchWhen = LaunchWhenPresenter.LAUNCHED) {
-            Log.d("Herry", "onLaunch() block")
-            loadList()
-
-            launch(launchWhen = LaunchWhenPresenter.RESUMED) {
-                Log.d("Herry", "onResume() block2")
-            }
-        }
-    }
-
-    override fun onResume(view: PickListContract.View) {
-        launch(launchWhen = LaunchWhenPresenter.RESUMED) {
-            Log.d("Herry", "onResume() block")
-        }
+        loadList()
     }
 
     private fun loadList() {
@@ -59,6 +45,13 @@ class PickListPresenter : PickListContract.Presenter() {
         NodeHelper.upSert(this.nodes, nodes)
 
         this.nodes.endTransition()
+
+        launch(LaunchWhenPresenter.RESUMED) {
+            Trace.d("Herry", "do resumed 1 at loadList()")
+        }
+        launch(LaunchWhenPresenter.RESUMED) {
+            Trace.d("Herry", "do resumed 2 at loadList()")
+        }
     }
 
     override fun pick(type: PickListContract.PickType) {
@@ -113,8 +106,16 @@ class PickListPresenter : PickListContract.Presenter() {
     }
 
     override fun picked(tempFile: File, picked: Uri?, type: PickListContract.PickType, success: Boolean) {
+        Trace.d("Herry", "picked 1 currentState = Presenter.${getCurrentPresenterState()}")
+        launch(LaunchWhenView.RESUMED) {
+            Trace.d("Herry", "do View.RESUMED : called from picked()")
+        }
         launch(LaunchWhenPresenter.RESUMED) {
-            Trace.d("Herry", "thread = ${Thread.currentThread().name}")
+            Trace.d("Herry", "1 Presenter.RESUMED : called from picked() currentState = Presenter.${getCurrentPresenterState()} thread = ${Thread.currentThread().name}")
+        }
+        Trace.d("Herry", "picked 2 currentState = Presenter.${getCurrentPresenterState()}")
+        launch(LaunchWhenPresenter.LAUNCHED) {
+            Trace.d("Herry", "2 Presenter.LAUNCHED : called from picked() currentState = Presenter.${getCurrentPresenterState()}")
             val context = view?.getViewContext() ?: return@launch
             if (type == PickListContract.PickType.TAKE_PHOTO) {
                 if (success) {
@@ -152,6 +153,7 @@ class PickListPresenter : PickListContract.Presenter() {
                 }
             }
         }
+        Trace.d("Herry", "picked 3 currentState = Presenter.${getCurrentPresenterState()}")
     }
 
 

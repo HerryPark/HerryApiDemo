@@ -1,5 +1,9 @@
 package com.herry.libs.mvp
 
+import androidx.annotation.MainThread
+import kotlinx.coroutines.*
+import java.util.concurrent.ConcurrentHashMap
+
 class MVPPresenterLifecycle {
 
     enum class State {
@@ -11,19 +15,26 @@ class MVPPresenterLifecycle {
         fun isAtLeast(state: State): Boolean = this.ordinal >= state.ordinal
     }
 
-    private val launchWhenPresenterBlocks: MutableMap<State, MutableList<() -> Unit>> = mutableMapOf()
+    private val launchWhenPresenterBlocks: ConcurrentHashMap<State, MutableList<suspend CoroutineScope.() -> Unit>> = ConcurrentHashMap()
 
     private var currentState: State = State.CREATED
 
-    fun setState(state: State) {
-        this.currentState = state
+    @MainThread
+    fun setState(lifecycleScope: CoroutineScope? = null, state: State) {
+        if (this.currentState != state) {
+            this.currentState = state
+        }
+
+        lifecycleScope?.launch {
+            performPendingStateBlocks(state)
+        }
     }
 
     fun getCurrentState(): State = this.currentState
 
-    private fun addPresenterLaunchBlocks(state: State, block: () -> Unit) {
+    private fun addPresenterLaunchBlocks(state: State, block: suspend CoroutineScope.() -> Unit) {
         (launchWhenPresenterBlocks[state] ?: kotlin.run {
-            val value: MutableList<() -> Unit> = mutableListOf()
+            val value: MutableList<suspend CoroutineScope.() -> Unit> = mutableListOf()
             launchWhenPresenterBlocks[state] = value
             value
         }).apply {
@@ -31,32 +42,42 @@ class MVPPresenterLifecycle {
         }
     }
 
-    fun performPendingStateBlocks(maxState: State) {
-        val remainLaunchBlocksStates = launchWhenPresenterBlocks.keys.filter { it.ordinal <= maxState.ordinal }.sortedBy { it.ordinal }
-        remainLaunchBlocksStates.forEach { state ->
-            launchWhenPresenterBlocks[state]?.let { actions ->
-                val iterator = actions.iterator()
-                while (iterator.hasNext()) {
-                    iterator.next().invoke()
-                    iterator.remove()
+    private suspend fun performPendingStateBlocks(maxState: State) {
+        withContext(Dispatchers.Main.immediate) {
+            val coroutineScope = this
+            coroutineScope.launch((Dispatchers.Main.immediate)) {
+                val remainLaunchBlocksStates = launchWhenPresenterBlocks.keys.filter { key ->
+                    key.ordinal <= maxState.ordinal && launchWhenPresenterBlocks[key]?.isNotEmpty() == true
+                }.sortedBy { it.ordinal }
+                remainLaunchBlocksStates.forEach { state ->
+                    launchWhenPresenterBlocks[state]?.let { actions ->
+                        val iterator = actions.iterator()
+                        while (iterator.hasNext()) {
+                            val block = iterator.next()
+                            block(coroutineScope)
+                            iterator.remove()
+                        }
+                    }
                 }
             }
         }
     }
 
-    private fun launchWhenPresenter(state: State, block: () -> Unit) {
-        if (getCurrentState().isAtLeast(state)) {
-            block()
-        } else {
-            addPresenterLaunchBlocks(state, block)
+    private suspend fun launchWhenPresenterStateAtLeast(state: State, block: suspend CoroutineScope.() -> Unit) {
+        withContext(Dispatchers.Main.immediate) {
+            if (getCurrentState().isAtLeast(state)) {
+                block()
+            } else {
+                addPresenterLaunchBlocks(state, block)
+            }
         }
     }
 
-    fun launchWhenPresenterLaunched(block: () -> Unit) {
-        launchWhenPresenter(State.LAUNCHED, block)
+    fun launchWhenPresenterLaunched(lifecycleScope: CoroutineScope, block: suspend CoroutineScope.() -> Unit): Job = lifecycleScope.launch {
+        launchWhenPresenterStateAtLeast(State.LAUNCHED, block)
     }
 
-    fun launchWhenPresenterResumed(block: () -> Unit) {
-        launchWhenPresenter(State.RESUMED, block)
+    fun launchWhenPresenterResumed(lifecycleScope: CoroutineScope, block: suspend CoroutineScope.() -> Unit): Job = lifecycleScope.launch {
+        launchWhenPresenterStateAtLeast(State.RESUMED, block)
     }
 }

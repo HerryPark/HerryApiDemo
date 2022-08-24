@@ -145,9 +145,9 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                             } else {
                                 activityCaller?.call(ACTake.TakeVideo(saveFileURI) { result ->
                                     val activity = result.callActivity
-
+                                    Trace.d("Herry", "call return: Activity.${activity.lifecycle.currentState}")
+                                    Trace.d("Herry", "call return: View.${lifecycle.currentState}")
                                     activity.lifecycleScope.launchWhenResumed {
-                                        Trace.d("Herry", "path: ${activity.lifecycle.currentState}")
                                         presenter?.picked(tempFile = tempFile, picked = result.uris.firstOrNull(), type = type, result.success)
                                     }
                                 })
