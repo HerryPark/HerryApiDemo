@@ -25,7 +25,7 @@ class NodeRoot internal constructor(private val notify: NodeNotify, private val 
         get() = null
         set(value) {}
 
-    override fun getRoot(): NodeRoot? = this
+    override fun getRoot(): NodeRoot = this
 
     override fun beginTransition() {
         isTransition = true
@@ -72,24 +72,25 @@ class NodeRoot internal constructor(private val notify: NodeNotify, private val 
             if (log) {
                 Log.d("node_ui", "notify isNodeSetChanged : TRUE")
             }
-            then?.let { it() }
+            then?.invoke()
             return true
         }
 
         if (isTransition) {
-            if (this.param != null) {
-                val composeParam = this.param!!.compose(param)
+            val oldParam = this.param
+            if (oldParam != null) {
+                val composeParam = oldParam.compose(param)
                 if (log) {
-                    Log.d("node_ui", "notify isTransition : $isTransition this.param : ${this.param} composeParam : $composeParam ")
+                    Log.d("node_ui", "notify isTransition : $isTransition this.param : $oldParam composeParam : $composeParam ")
                 }
 
                 return if (composeParam != null) {
                     this.param = composeParam
-                    then?.let { it() }
+                    then?.invoke()
                     true
                 } else {
-                    applyTo(this.param!!)
-                    then?.let { it() }
+                    applyTo(oldParam)
+                    then?.invoke()
                     this.param = null
                     false
                 }
@@ -98,7 +99,7 @@ class NodeRoot internal constructor(private val notify: NodeNotify, private val 
                     Log.d("node_ui", "notify isTransition : $isTransition this.param : null")
                 }
                 this.param = param
-                then?.let { it() }
+                then?.invoke()
                 return true
             }
         } else {
@@ -106,12 +107,12 @@ class NodeRoot internal constructor(private val notify: NodeNotify, private val 
                 Log.d("node_ui", "notify $isTransition ${getViewCount()}")
             }
             if (getViewCount() <= 0) {
-                then?.let { it() }
+                then?.invoke()
                 traversals()
                 this.param = null
                 notify.nodeSetChanged()
             } else {
-                then?.let { it() }
+                then?.invoke()
                 applyTo(param)
             }
             return true

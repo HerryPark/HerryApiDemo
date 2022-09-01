@@ -52,7 +52,7 @@ class ShareMediaListPresenter : ShareMediaListContract.Presenter() {
         val nodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
         NodeHelper.addModels(nodes, *list.toTypedArray())
 
-        NodeHelper.upSert(this.nodes, nodes)
+        NodeHelper.upsert(this.nodes, nodes)
         this.nodes.endTransition()
     }
 

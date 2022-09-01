@@ -14,7 +14,10 @@ import com.herry.test.rx.RxSchedulerProvider
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
@@ -75,18 +78,18 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         Trace.d("Herry", "onLaunch() = View.${viewLifecycleOwner?.lifecycle?.currentState}")
         this.view?.let {
             Trace.d("Herry", "onLaunch() = Presenter.${getCurrentPresenterState()} launched = $launched relaunched = $relaunched")
-            val lifecycleScope = viewLifecycleOwner?.lifecycleScope
+            val viewLifecycleScope = viewLifecycleOwner?.lifecycleScope
             if (!launched) {
                 launched = true
                 onLaunch(it, false)
-                presenterLifecycle.setState(lifecycleScope = lifecycleScope, state = MVPPresenterLifecycle.State.LAUNCHED)
+                presenterLifecycle.setState(viewLifecycleScope = viewLifecycleScope, state = MVPPresenterLifecycle.State.LAUNCHED)
             } else if (relaunched) {
                 relaunched = false
                 onLaunch(it, true)
-                presenterLifecycle.setState(lifecycleScope = lifecycleScope, state = MVPPresenterLifecycle.State.LAUNCHED)
+                presenterLifecycle.setState(viewLifecycleScope = viewLifecycleScope, state = MVPPresenterLifecycle.State.LAUNCHED)
             } else {
                 onResume(it)
-                presenterLifecycle.setState(lifecycleScope = lifecycleScope, state = MVPPresenterLifecycle.State.RESUMED)
+                presenterLifecycle.setState(viewLifecycleScope = viewLifecycleScope, state = MVPPresenterLifecycle.State.RESUMED)
             }
         }
     }

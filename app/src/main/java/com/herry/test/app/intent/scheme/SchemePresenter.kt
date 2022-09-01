@@ -56,7 +56,7 @@ class SchemePresenter : SchemeContract.Presenter() {
 
         val nodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
         NodeHelper.addModels(nodes, *testSchemes.toTypedArray())
-        NodeHelper.upSert(this.nodes, nodes)
+        NodeHelper.upsert(this.nodes, nodes)
         this.nodes.endTransition()
     }
 
@@ -69,7 +69,7 @@ class SchemePresenter : SchemeContract.Presenter() {
         SchemeContract.SchemeItemType.values().forEach {
             NodeHelper.addModel(nodes, it)
         }
-        NodeHelper.upSert(this.nodes, nodes)
+        NodeHelper.upsert(this.nodes, nodes)
         this.nodes.endTransition()
     }
 

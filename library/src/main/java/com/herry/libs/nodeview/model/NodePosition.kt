@@ -2,51 +2,52 @@ package com.herry.libs.nodeview.model
 
 
 @Suppress("unused")
-class NodePosition(val position: IntArray) {
+class NodePosition(internal val positions: IntArray) {
     companion object {
-        fun compose(pos: Int, pPos: NodePosition?): NodePosition {
-            if (pPos != null) {
-                val newPPos = IntArray(pPos.position.size + 1)
-                newPPos[0] = pos
-                for (i in 1..pPos.position.size) {
-                    newPPos[i] = pPos.position[i - 1]
+        const val NO_POSITION = -1
+
+        /**
+         * Creates the NodePosition with relative position
+         */
+        internal fun compose(position: Int, relative: NodePosition?): NodePosition {
+            if (relative != null) {
+                val relativePosition = IntArray(relative.positions.size + 1)
+                relativePosition[0] = position
+                for (index in 1..relative.positions.size) {
+                    relativePosition[index] = relative.positions[index - 1]
                 }
-                return NodePosition(newPPos)
+                return NodePosition(relativePosition)
             }
-            return NodePosition(intArrayOf(pos))
+            return NodePosition(intArrayOf(position))
         }
     }
 
     fun getViewPosition(): Int {
-        var viewPosition = 0
-        for (inPosition in position) {
-            viewPosition += inPosition
-        }
-        return viewPosition
+        return positions.sum()
     }
 
     fun getPosition(): Int {
-        if (position.isNotEmpty()) {
-            return position[position.size - 1]
+        if (positions.isNotEmpty()) {
+            return positions[positions.size - 1]
         }
-        return -1
+        return NO_POSITION
     }
 
     fun getParentPosition(): NodePosition? {
-        if (position.size > 1) {
-            val parentPos = IntArray(position.size - 1)
-            for (i in parentPos.indices) {
-                parentPos[i] = position[i]
+        if (positions.size > 1) {
+            val parentPositions = IntArray(positions.size - 1)
+            for (parentPosition in parentPositions.indices) {
+                parentPositions[parentPosition] = positions[parentPosition]
             }
-            return NodePosition(parentPos)
+            return NodePosition(parentPositions)
         }
         return null
     }
 
     override fun toString(): String {
         val sb = StringBuilder()
-        for (pos in position) {
-            sb.append("[$pos]")
+        for (position in positions) {
+            sb.append("[$position]")
         }
         return sb.toString()
     }

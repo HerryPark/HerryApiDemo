@@ -41,7 +41,7 @@ class IndexerListPresenter : IndexerListContract.Presenter() {
 //            NodeHelper.addModel(nodes, IndexerListContract.ListItemData("B"))
 //        }
 
-        NodeHelper.upSert(this.nodes, nodes)
+        NodeHelper.upsert(this.nodes, nodes)
 
         this.nodes.endTransition()
     }

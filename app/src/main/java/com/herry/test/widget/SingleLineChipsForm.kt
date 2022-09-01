@@ -61,7 +61,7 @@ class SingleLineChipsForm(
             }
 
             root.beginTransition()
-            this.node = NodeHelper.upSert(root, this.node, node)
+            this.node = NodeHelper.upsert(root, this.node, node)
             root.endTransition()
         }
     }

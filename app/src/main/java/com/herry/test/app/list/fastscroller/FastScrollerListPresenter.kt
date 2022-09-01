@@ -34,7 +34,7 @@ class FastScrollerListPresenter : FastScrollerListContract.Presenter() {
         NodeHelper.addModels(nodes, *getAlphabetItems('A', 'Z').toTypedArray())
         NodeHelper.addModels(nodes, *getAlphabetItems('a', 'z').toTypedArray())
 
-        NodeHelper.upSert(this.nodes, nodes)
+        NodeHelper.upsert(this.nodes, nodes)
 
         this.nodes.endTransition()
     }

@@ -41,7 +41,7 @@ class EndlessListPresenter : EndlessListContract.Presenter() {
         val nodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
 
         NodeHelper.addModels(nodes, *createListItems(0, 50).toTypedArray())
-        NodeHelper.upSert(this.nodes, nodes)
+        NodeHelper.upsert(this.nodes, nodes)
 
         this.nodes.endTransition()
     }

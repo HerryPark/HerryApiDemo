@@ -37,7 +37,7 @@ class AppDialogListPresenter : AppDialogListContract.Presenter() {
         AppDialogListContract.TestItemType.values().forEach {
             NodeHelper.addModel(nodes, it)
         }
-        NodeHelper.upSert(this.nodes, nodes)
+        NodeHelper.upsert(this.nodes, nodes)
         this.nodes.endTransition()
     }
 

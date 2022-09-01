@@ -177,9 +177,9 @@ object NodeHelper {
             node.endTransition()
     }
 
-    inline fun <reified T : INodeModel> upSert(parent: Node<out INodeModel>, from: Node<T>?, to: Node<T>): Node<T> {
+    fun <T : INodeModel> upsert(parent: Node<out INodeModel>, from: Node<T>?, to: Node<T>, onChangeCompare: ((src: Any, dest: Any) -> Boolean)? = null): Node<T> {
         return if (from != null) {
-            from.replace(to)
+            from.replace(node = to, onChangeCompare = onChangeCompare)
             from
         } else {
             addNode(parent, to)
@@ -190,13 +190,27 @@ object NodeHelper {
     /**
      * Changes node (if 'from' is A and 'to' is B, Changes A to B).
      */
-    inline fun <reified T : INodeModel> upSert(from: Node<T>, to: Node<T>) {
-        from.replace(to)
+    fun <T : INodeModel> upsert(from: Node<T>, to: Node<T>, onChangeCompare: ((src: Any, dest: Any) -> Boolean)? = null) {
+        from.replace(node = to, onChangeCompare = onChangeCompare)
     }
 
     inline fun <reified T : INodeModel> transition(node: Node<T>, block: (transitionNode: Node<T>) -> Unit) {
         node.beginTransition()
         block(node)
         node.endTransition()
+    }
+
+    fun clearChildNodes(node: Node<*>, notify: Boolean = false) {
+        if (notify) {
+            node.beginTransition()
+            node.clearChild()
+            node.endTransition()
+        } else {
+            node.clearChild()
+        }
+    }
+
+    fun clearChildModels(node: Node<*>, notify: Boolean = false) {
+        clearChildNodes(node, notify)
     }
 }

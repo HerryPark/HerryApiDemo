@@ -100,7 +100,7 @@ class FeedsPresenter : FeedsContract.Presenter() {
         this.categoryFeedsNodes.beginTransition()
         val nodes = NodeHelper.createNodeGroup()
         NodeHelper.addModels(nodes, *categoryFeedsPresenters.toTypedArray())
-        NodeHelper.upSert(this.categoryFeedsNodes, nodes)
+        NodeHelper.upsert(this.categoryFeedsNodes, nodes)
         this.categoryFeedsNodes.endTransition()
 
         view?.onScrollToCategory(currentCategoryPosition)

@@ -40,7 +40,7 @@ class ResizingUIPresenter: ResizingUIContract.Presenter() {
         NodeHelper.addModel(nodes, ResizingUIContract.MenuItemModel(R.drawable.ic_assetstore_sidemenu_transition_enabled))
         NodeHelper.addModel(nodes, ResizingUIContract.MenuItemModel(R.drawable.ic_assetstore_sidemenu_video_enabled))
 
-        NodeHelper.upSert(this.nodes, nodes)
+        NodeHelper.upsert(this.nodes, nodes)
         this.nodes.endTransition()
     }
 }

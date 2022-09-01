@@ -3,6 +3,7 @@ package com.herry.libs.mvp
 import androidx.annotation.MainThread
 import kotlinx.coroutines.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 
 class MVPPresenterLifecycle {
 
@@ -15,48 +16,44 @@ class MVPPresenterLifecycle {
         fun isAtLeast(state: State): Boolean = this.ordinal >= state.ordinal
     }
 
-    private val launchWhenPresenterBlocks: ConcurrentHashMap<State, MutableList<suspend CoroutineScope.() -> Unit>> = ConcurrentHashMap()
+    private val launchWhenPresenterBlocks: ConcurrentHashMap<State, ConcurrentLinkedQueue<suspend CoroutineScope.() -> Unit>> = ConcurrentHashMap()
 
     private var currentState: State = State.CREATED
 
     @MainThread
-    fun setState(lifecycleScope: CoroutineScope? = null, state: State) {
+    fun setState(viewLifecycleScope: CoroutineScope? = null, state: State) {
         if (this.currentState != state) {
             this.currentState = state
         }
 
-        lifecycleScope?.launch {
+        viewLifecycleScope?.launch {
             performPendingStateBlocks(state)
         }
     }
 
+    @MainThread
     fun getCurrentState(): State = this.currentState
 
     private fun addPresenterLaunchBlocks(state: State, block: suspend CoroutineScope.() -> Unit) {
         (launchWhenPresenterBlocks[state] ?: kotlin.run {
-            val value: MutableList<suspend CoroutineScope.() -> Unit> = mutableListOf()
-            launchWhenPresenterBlocks[state] = value
-            value
+            ConcurrentLinkedQueue<suspend CoroutineScope.() -> Unit>().also { launchWhenPresenterBlocks[state] = it }
         }).apply {
             add(block)
         }
     }
 
-    private suspend fun performPendingStateBlocks(maxState: State) {
-        withContext(Dispatchers.Main.immediate) {
-            val coroutineScope = this
-            coroutineScope.launch((Dispatchers.Main.immediate)) {
-                val remainLaunchBlocksStates = launchWhenPresenterBlocks.keys.filter { key ->
-                    key.ordinal <= maxState.ordinal && launchWhenPresenterBlocks[key]?.isNotEmpty() == true
-                }.sortedBy { it.ordinal }
-                remainLaunchBlocksStates.forEach { state ->
-                    launchWhenPresenterBlocks[state]?.let { actions ->
-                        val iterator = actions.iterator()
-                        while (iterator.hasNext()) {
-                            val block = iterator.next()
-                            block(coroutineScope)
-                            iterator.remove()
-                        }
+    private suspend fun performPendingStateBlocks(maxState: State) = withContext(Dispatchers.Main.immediate) {
+        val remainLaunchBlocksStates = launchWhenPresenterBlocks.keys.filter { key ->
+            key.ordinal <= maxState.ordinal && launchWhenPresenterBlocks[key]?.isNotEmpty() == true
+        }.sortedBy { it.ordinal }
+        remainLaunchBlocksStates.forEach { state ->
+            launchWhenPresenterBlocks[state]?.let { actions ->
+                val iterator = actions.iterator()
+                while (iterator.hasNext()) {
+                    if (currentState.ordinal >= State.LAUNCHED.ordinal) {
+                        iterator.next().also { iterator.remove() }.invoke(this/*CoroutineScope*/)
+                    } else {
+                        break
                     }
                 }
             }
@@ -73,11 +70,11 @@ class MVPPresenterLifecycle {
         }
     }
 
-    fun launchWhenPresenterLaunched(lifecycleScope: CoroutineScope, block: suspend CoroutineScope.() -> Unit): Job = lifecycleScope.launch {
+    fun launchWhenPresenterLaunched(viewLifecycleScope: CoroutineScope, block: suspend CoroutineScope.() -> Unit): Job = viewLifecycleScope.launch {
         launchWhenPresenterStateAtLeast(State.LAUNCHED, block)
     }
 
-    fun launchWhenPresenterResumed(lifecycleScope: CoroutineScope, block: suspend CoroutineScope.() -> Unit): Job = lifecycleScope.launch {
+    fun launchWhenPresenterResumed(viewLifecycleScope: CoroutineScope, block: suspend CoroutineScope.() -> Unit): Job = viewLifecycleScope.launch {
         launchWhenPresenterStateAtLeast(State.RESUMED, block)
     }
 }

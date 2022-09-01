@@ -146,7 +146,7 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
         } else {
             NodeHelper.addModel(nodes, SearchFeedsContract.EmptyModel())
         }
-        NodeHelper.upSert(this.autocompleteNodes, nodes)
+        NodeHelper.upsert(this.autocompleteNodes, nodes)
 
         this.autocompleteNodes.endTransition()
 
@@ -178,7 +178,7 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
         if(list.isNotEmpty()) {
             NodeHelper.addModels(recentlySearchWordNodes, *list.toTypedArray())
         }
-        NodeHelper.upSert(this.recentlyKeywordsNodes, recentlySearchWordNodes)
+        NodeHelper.upsert(this.recentlyKeywordsNodes, recentlySearchWordNodes)
 
         this.recentlyKeywordsNodes.endTransition()
     }
@@ -254,7 +254,7 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
                 Trace.d("Herry", "displaySearchFeedResults ${result.size}")
                 NodeHelper.addModels(nodes, *result.toTypedArray())
             }
-            NodeHelper.upSert(this.feedsNodes, nodes)
+            NodeHelper.upsert(this.feedsNodes, nodes)
         } else {
             NodeHelper.addModels(this.feedsNodes, *result.toTypedArray())
         }

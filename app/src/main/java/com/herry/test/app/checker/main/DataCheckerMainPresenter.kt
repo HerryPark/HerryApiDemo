@@ -42,7 +42,7 @@ class DataCheckerMainPresenter : DataCheckerMainContract.Presenter() {
         NodeHelper.addModel(nodes, DataCheckerMainContract.PasswordModel(
             PreferenceHelper.get(SharedPrefKeys.PASSWORD, "")
         ))
-        NodeHelper.upSert(this.passwordNodes, nodes)
+        NodeHelper.upsert(this.passwordNodes, nodes)
         this.passwordNodes.endTransition()
     }
 }

@@ -12,51 +12,57 @@ open class Node<M : Any> {
         }
 
     var model: M
-        set(value) {
-            if (value is INodeModelGroup) {
-                this@Node.nodeModelGroup?.setOnGetNode(null)
-                this@Node.nodeModelGroup?.setOnChangedExpansion(null)
-                this@Node.nodeModelGroup = value
-                this@Node.nodeModelGroup?.setOnGetNode {
-                    this@Node
-                }
-                this@Node.nodeModelGroup?.setOnChangedExpansion {
-                    changedNode()
-                    if (this@Node.nodeChildren.viewCount > 0) {
-                        this@Node.parent?.run {
-                            val param = NodeNotifyParam(
-                                if (it.isExpansion) NodeNotifyParam.STATE.INSERT else NodeNotifyParam.STATE.REMOVE,
-                                this@Node.viewPosition + if (this@Node.isVisible) 1 else 0,
-                                this@Node.nodeChildren.viewCount
-                            )
-
-                            val success = this@Node.parent?.notify(param) {
-
-                            } ?: true
-
-                            if (!success) {
-                                param.position = this@Node.viewPosition + if (this@Node.isVisible) 1 else 0
-                                this@Node.parent?.notify(param, null)
-                            }
-                        }
-                    }
-                }
-            } else if (value is INodeModel) {
-                this@Node.nodeModel?.setOnGetNode(null)
-                this@Node.nodeModel = value
-                this@Node.nodeModel?.setOnGetNode {
-                    this@Node
-                }
-            }
-
-            field = value
-            changedNode()
-        }
+        private set
 
     @Suppress("ConvertSecondaryConstructorToPrimary")
     constructor(model: M) {
         this.isVisible = model::class != NodeModelGroup::class
+        setModel(value = model)
         this.model = model
+    }
+
+    private fun setModel(value: M, onChangeCompare: ((src: Any, dest: Any) -> Boolean)? = null) {
+        if (value is INodeModelGroup) {
+            this@Node.nodeModelGroup?.setOnGetNode(null)
+            this@Node.nodeModelGroup?.setOnChangedExpansion(null)
+            this@Node.nodeModelGroup = value
+            this@Node.nodeModelGroup?.setOnGetNode {
+                this@Node
+            }
+            this@Node.nodeModelGroup?.setOnChangedExpansion {
+                changedNode()
+                if (this@Node.nodeChildren.viewCount > 0) {
+                    this@Node.parent?.run {
+                        val param = NodeNotifyParam(
+                            if (it.isExpansion) NodeNotifyParam.STATE.INSERT else NodeNotifyParam.STATE.REMOVE,
+                            this@Node.viewPosition + if (this@Node.isVisible) 1 else 0,
+                            this@Node.nodeChildren.viewCount
+                        )
+
+                        val success = this@Node.parent?.notify(param) {
+
+                        } ?: true
+
+                        if (!success) {
+                            param.position = this@Node.viewPosition + if (this@Node.isVisible) 1 else 0
+                            this@Node.parent?.notify(param, null)
+                        }
+                    }
+                }
+            }
+        } else if (value is INodeModel) {
+            this@Node.nodeModel?.setOnGetNode(null)
+            this@Node.nodeModel = value
+            this@Node.nodeModel?.setOnGetNode {
+                this@Node
+            }
+        }
+
+        val current = this.model
+        this.model = value
+        if (onChangeCompare?.invoke(current, value) ?: (current != value)) {
+            changedNode()
+        }
     }
 
     private var nodeModel: INodeModel? = null
@@ -95,7 +101,7 @@ open class Node<M : Any> {
 
     open fun getRoot(): NodeRoot? = parent?.getRoot()
 
-    internal fun getNodePosition(): NodePosition? {
+    internal fun getNodePosition(): NodePosition {
         var nodePosition = NodePosition(intArrayOf(viewPosition))
         var parentNode = parent
         while (parentNode != this) {
@@ -126,7 +132,7 @@ open class Node<M : Any> {
 
     fun getNode(nodePosition: NodePosition): Node<*>? {
         var result: Node<*>? = this
-        for (position in nodePosition.position) {
+        for (position in nodePosition.positions) {
             if (result == null) {
                 return null
             }
@@ -150,6 +156,8 @@ open class Node<M : Any> {
     fun getChildCount(): Int = nodeChildren.getCount()
 
     fun isEmpty(): Boolean = getChildCount() == 0
+
+    fun isNotEmpty(): Boolean = !isEmpty()
 
     fun getChildNode(position: Int): Node<*>? = nodeChildren.get(position)
 
@@ -198,37 +206,39 @@ open class Node<M : Any> {
         nodeChildren.remove(position, count)
     }
 
-    fun replace(node: Node<*>) {
+    fun replace(node: Node<*>, onChangeCompare: ((src: Any, dest: Any) -> Boolean)? = null) {
         if (node.model is INodeModelGroup) {
             val nodeModel = node.model as INodeModelGroup
             val childList = mutableListOf<Node<*>>()
-            for (i in 0 until node.getChildCount()) {
-                node.getChildNode(i)?.let {
+            for (index in 0 until node.getChildCount()) {
+                node.getChildNode(index)?.let {
                     childList.add(it)
                 }
             }
 
             if (isExpansion != nodeModel.isExpansion) {
+                // notify all data changed
                 nodeChildren.clear()
                 @Suppress("UNCHECKED_CAST")
-                this.model = node.model as M
+                setModel(value = node.model as M, onChangeCompare = onChangeCompare)
                 nodeChildren.add(this@Node, childList)
             } else {
                 @Suppress("UNCHECKED_CAST")
-                this.model = node.model as M
-                nodeChildren.replace(this@Node, node.nodeChildren)
+                setModel(value = node.model as M, onChangeCompare = onChangeCompare)
+                nodeChildren.replace(parent = this@Node, nodeChildren = node.nodeChildren, onChangeCompare = onChangeCompare)
             }
         } else {
             @Suppress("UNCHECKED_CAST")
-            this.model = node.model as M
+            setModel(value = node.model as M, onChangeCompare = onChangeCompare)
         }
     }
 
     internal open fun notifyFromChild(param: NodeNotifyParam, then: (() -> Unit)?) {
+        val parent = this.parent
         if (isExpansion && parent != null) {
-            val success = parent!!.notify(NodeNotifyParam(param.state, param.position + viewPosition + if (isVisible) 1 else 0, param.count), then)
+            val success = parent.notify(NodeNotifyParam(param.state, param.position + viewPosition + if (isVisible) 1 else 0, param.count), then)
             if (!success) {
-                parent!!.notify(NodeNotifyParam(param.state, param.position + viewPosition + if (isVisible) 1 else 0, param.count), null)
+                parent.notify(NodeNotifyParam(param.state, param.position + viewPosition + if (isVisible) 1 else 0, param.count), null)
             }
         } else {
             then?.let { it() }

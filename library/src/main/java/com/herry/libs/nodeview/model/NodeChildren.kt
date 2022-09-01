@@ -96,33 +96,34 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
         var removedViewPosition = -1
         var removedViewCount = 0
 
-        for (i: Int in 0 until count) {
-            if (position in 0 until list.size) {
+        if (list.getOrNull(position) != null) {
+            for (index in 0 until count) {
+                val node = list.getOrNull(position + index) ?: continue
                 if (removedViewPosition < 0) {
-                    removedViewPosition = list[position + i].viewPosition
+                    removedViewPosition = node.viewPosition
                 }
-                removedViewCount += list[position + i].getViewCount()
+                removedViewCount += node.getViewCount()
             }
         }
 
         if (removedViewPosition >= 0 && removedViewCount > 0) {
             notify(NodeNotifyParam(NodeNotifyParam.STATE.REMOVE, removedViewPosition, removedViewCount)) {
-                for (i: Int in 0 until count) {
-                    if (position in 0 until list.size) {
+                if (list.getOrNull(position) != null) {
+                    for (index in 0 until count) {
                         val node = list.removeAt(position)
                         node.parent = null
                     }
                 }
 
                 viewCount = removedViewPosition
-                for (i in position until list.size) {
-                    list[i].viewPosition = viewCount
-                    viewCount += list[i].getViewCount()
+                for (index in position until list.size) {
+                    list[index].viewPosition = viewCount
+                    viewCount += list[index].getViewCount()
                 }
             }
         } else {
-            for (i: Int in 0 until count) {
-                if (position in 0 until list.size) {
+            if (list.getOrNull(position) != null) {
+                for (index in 0 until count) {
                     val node = list.removeAt(position)
                     node.parent = null
                 }
@@ -133,42 +134,43 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
     internal fun getNodePosition(viewPosition: Int): NodePosition? {
         var low = 0
         var high = getCount() - 1
-        var mid = (low + high) / 2
+        var middle = (low + high) / 2
         while (low <= high) {
-            val node = get(mid)
+            val node = get(middle)
             if (node == null) {
                 high = (low + high) / 2
-                mid = (low + high) / 2
+                middle = (low + high) / 2
                 continue
             }
 
-            val cPos = node.getViewPosition()
-            val cCnt = node.getViewCount()
-            if (cCnt <= 0) {
-                mid++
+            val childViewPosition = node.getViewPosition()
+            val childViewCount = node.getViewCount()
+            if (childViewCount <= 0) {
+                middle++
                 continue
             }
 
-            if (cPos > viewPosition) {
-                high = if (mid < high) mid - 1 else high - 1
-            } else if (cPos + cCnt - 1 < viewPosition) {
-                low = mid + 1
+            if (childViewPosition > viewPosition) {
+                high = if (middle < high) middle - 1 else high - 1
+            } else if (childViewPosition + childViewCount - 1 < viewPosition) {
+                low = middle + 1
             } else {
                 break
             }
-            mid = (low + high) / 2
+            middle = (low + high) / 2
         }
-        val node = get(mid)
+        val node = get(middle)
         return if (node != null) {
             NodePosition.compose(
-                mid,
+                middle,
                 node.getNodePosition(viewPosition - node.getViewPosition())
             )
-        } else
+        } else {
             null
+        }
     }
 
-    internal fun replace(parent: Node<*>, nodeChildren: NodeChildren) {
+    internal fun replace(parent: Node<*>, nodeChildren: NodeChildren, onChangeCompare: ((src: Any, dest: Any) -> Boolean)? = null) {
         val fromList = getIdList(list)
         val toList = getIdList(nodeChildren.list)
         var fromIndex = 0
@@ -193,23 +195,23 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
                     else -> {
                         val fromIdList = fromList.removeAt(0)
                         val toIdList = toList.removeAt(0)
-                        var i = 0
-                        while (i < fromIdList.size && i < toIdList.size) {
-                            fromIdList[i].replace(toIdList[i])
-                            i++
+                        var index = 0
+                        while (index < fromIdList.size && index < toIdList.size) {
+                            fromIdList[index].replace(node = toIdList[index], onChangeCompare = onChangeCompare)
+                            index++
                         }
 
                         fromIndex += when {
-                            i < fromIdList.size -> {
-                                remove(fromIndex + i, fromIdList.size - i)
-                                i
+                            index < fromIdList.size -> {
+                                remove(fromIndex + index, fromIdList.size - index)
+                                index
                             }
-                            i < toIdList.size -> {
-                                add(parent, toIdList.subList(i, toIdList.size), fromIndex + i)
+                            index < toIdList.size -> {
+                                add(parent, toIdList.subList(index, toIdList.size), fromIndex + index)
                                 toIdList.size
                             }
                             else -> {
-                                i
+                                index
                             }
                         }
                     }
@@ -278,9 +280,9 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
     }
 
     private fun containIdList(list: MutableList<IdList>, id: Id): Int {
-        for (i in 0 until list.size) {
-            if (list[i].id == id) {
-                return i
+        for (index in 0 until list.size) {
+            if (list[index].id == id) {
+                return index
             }
         }
         return -1

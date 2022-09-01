@@ -133,7 +133,7 @@ class NewsPresenter : NewsContract.Presenter() {
         if(reset) {
             val nodes = NodeHelper.createNodeGroup()
             NodeHelper.addModels(nodes, *list.toTypedArray())
-            NodeHelper.upSert(this.nodes, nodes)
+            NodeHelper.upsert(this.nodes, nodes)
         } else {
             NodeHelper.addModels(this.nodes, *list.toTypedArray())
         }

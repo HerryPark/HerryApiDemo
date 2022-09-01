@@ -120,7 +120,7 @@ class FeedCategoryFeedsPresenter(val category: FeedCategory) : TabRecyclerPresen
         if (init) {
             val nodes = NodeHelper.createNodeGroup()
             NodeHelper.addModels(nodes, *list.toTypedArray())
-            NodeHelper.upSert(this.nodes, nodes)
+            NodeHelper.upsert(this.nodes, nodes)
 
             showEmpty = list.isEmpty()
         } else if(list.isNotEmpty()){
