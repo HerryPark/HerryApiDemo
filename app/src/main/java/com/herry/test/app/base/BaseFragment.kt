@@ -18,6 +18,7 @@ import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.helper.TransitionHelper
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.view.viewgroup.LoadingCountView
+import java.lang.ref.WeakReference
 
 open class BaseFragment : DialogFragment() {
 
@@ -153,7 +154,7 @@ open class BaseFragment : DialogFragment() {
         TransitionHelper(
             enterTransition = enterTransition,
             exitTransition = exitTransition,
-            listener = object : TransitionHelper.TransitionHelperListener {
+            listener = WeakReference(object : TransitionHelper.TransitionHelperListener {
                 override fun onTransitionStart() {
                     this@BaseFragment.onTransitionStart()
                 }
@@ -161,7 +162,7 @@ open class BaseFragment : DialogFragment() {
                 override fun onTransitionEnd() {
                     this@BaseFragment.onTransitionEnd()
                 }
-            }
+            })
         )
     }
 

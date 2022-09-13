@@ -32,7 +32,26 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
     private var adapter: RecyclerView.Adapter<*>? = null
     private val adapterObserver: RecyclerView.AdapterDataObserver = object : RecyclerView.AdapterDataObserver() {
         override fun onChanged() {
-            super.onChanged()
+            refresh()
+        }
+
+        override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
+            refresh()
+        }
+
+        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+            refresh()
+        }
+
+        override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+            refresh()
+        }
+
+        override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+            refresh()
+        }
+
+        private fun refresh() {
             updateSections()
             requestLayout()
         }

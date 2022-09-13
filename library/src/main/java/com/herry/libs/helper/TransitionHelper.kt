@@ -5,12 +5,13 @@ import android.transition.Transition
 import android.transition.TransitionInflater
 import androidx.annotation.TransitionRes
 import androidx.fragment.app.Fragment
+import java.lang.ref.WeakReference
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 open class TransitionHelper(
     @TransitionRes private val enterTransition: Int = 0,
     @TransitionRes private val exitTransition: Int = 0,
-    private val listener: TransitionHelperListener
+    private val listener: WeakReference<TransitionHelperListener>
 ) {
 
     interface TransitionHelperListener {
@@ -29,7 +30,7 @@ open class TransitionHelper(
             transitionCount++
             if (transitionCount <= 1) {
                 transitionCount = 1
-                listener.onTransitionStart()
+                listener.get()?.onTransitionStart()
             }
         }
 
@@ -37,7 +38,7 @@ open class TransitionHelper(
             transitionCount--
             if (transitionCount <= 0) {
                 transitionCount = 0
-                listener.onTransitionEnd()
+                listener.get()?.onTransitionEnd()
             }
         }
 

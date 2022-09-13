@@ -194,7 +194,7 @@ object NodeHelper {
         from.replace(node = to, onChangeCompare = onChangeCompare)
     }
 
-    inline fun <reified T : INodeModel> transition(node: Node<T>, block: (transitionNode: Node<T>) -> Unit) {
+    inline fun <reified T : Any> transition(node: Node<T>, block: (transitionNode: Node<T>) -> Unit) {
         node.beginTransition()
         block(node)
         node.endTransition()
