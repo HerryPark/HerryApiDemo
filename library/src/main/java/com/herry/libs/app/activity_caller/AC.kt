@@ -8,5 +8,5 @@ interface AC {
         const val REQ_NAVIGATION = 0xFFF5
     }
 
-    fun <T> call(caller: T)
+    fun <T> call(caller: T?)
 }

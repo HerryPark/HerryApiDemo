@@ -81,8 +81,8 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
         super.onDetach()
     }
 
-    override fun onLaunch(view: SearchFeedsContract.View, recreated: Boolean) {
-        launch {
+    override fun onResume(view: SearchFeedsContract.View, state: ResumeState) {
+        if (state.isLaunch()) {
             loadRecentlySearchKeywords()
 
             getAutoComplete("")

@@ -134,13 +134,23 @@
         <attr name="ad_bottomDividerHeight" format="dimension" />
 
         <!-- command button size -->
-        <attr name="ad_buttonHeight" format="dimension" />
+        <attr name="ad_buttonHeight" format="dimension">
+            <enum name="match_parent" value="-1" />
+            <enum name="wrap_content" value="-2" />
+        </attr>
         <attr name="ad_buttonWidth" format="dimension">
             <enum name="match_parent" value="-1" />
             <enum name="wrap_content" value="-2" />
         </attr>
         <attr name="ad_buttonMinWidth" format="dimension" />
+        <attr name="ad_buttonMinHeight" format="dimension" />
         <attr name="ad_buttonWeight" format="float" />
+        <attr name="ad_buttonLayoutOrientation">
+            <!-- Defines an horizontal widget. -->
+            <enum name="horizontal" value="0" />
+            <!-- Defines a vertical widget. -->
+            <enum name="vertical" value="1" />
+        </attr>
         <attr name="ad_buttonLayoutGravity">
             <!-- Push object to the top of its container, not changing its size. -->
             <flag name="top" value="0x01" />
@@ -182,7 +192,7 @@
         <attr name="ad_buttonMargin" format="dimension" />
 
         <attr name="ad_buttonDivider" format="reference|color" />
-        <attr name="ad_buttonDividerWidth" format="dimension" />
+        <attr name="ad_buttonDividerSize" format="dimension" />
 
         <!-- default command button background -->
         <attr name="ad_buttonBackground" format="reference|color" />

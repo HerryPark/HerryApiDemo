@@ -55,7 +55,8 @@ abstract class ACActivity : AppCompatActivity(), AC {
         super.onPause()
     }
 
-    override fun <T> call(caller: T) {
+    override fun <T> call(caller: T?) {
+        caller ?: return
         activityCaller.call(caller)
     }
 

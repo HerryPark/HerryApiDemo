@@ -40,16 +40,8 @@ class FeedsPresenter : FeedsContract.Presenter() {
         super.onDetach()
     }
 
-    override fun onLaunch(view: FeedsContract.View, recreated: Boolean) {
-        launch {
-            load(!recreated)
-        }
-    }
-
-    override fun onResume(view: FeedsContract.View) {
-        launch {
-            load(false)
-        }
+    override fun onResume(view: FeedsContract.View, state: ResumeState) {
+        load(state == ResumeState.LAUNCH)
     }
 
     private fun loadFeedCategories(): Observable<MutableList<FeedCategory>> {

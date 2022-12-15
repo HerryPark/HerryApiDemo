@@ -94,12 +94,12 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                             "fjeilafje\n" +
                             "\n" +
                             "fjeilafje")
-                    setPositiveButton("ok21313213213123128098129083209183092") { dialog, _ ->
+                    setPositiveButton("positive") { dialog, _ ->
                         dialog.dismiss()
                         ToastHelper.showToast(requireActivity(), "OK")
                     }
-                    setNegativeButton("cancel") { dialog, _ -> dialog.dismiss() }
-                    setNeutralButton("center") { dialog, _ -> dialog.dismiss() }
+                    setNegativeButton("negative") { dialog, _ -> dialog.dismiss() }
+                    setNeutralButton("neutral") { dialog, _ -> dialog.dismiss() }
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_2 -> {
@@ -193,9 +193,18 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
             AppDialogListContract.TestItemType.MESSAGE_BUTTON_3 -> {
                 Popup(requireActivity()).apply {
                     setMessage("message")
-                    setNegativeButton("button1")
-                    setNeutralButton("button2")
-                    setPositiveButton("button3")
+                    setNegativeButton("button1") { dialog, _ ->
+                        dialog.dismiss()
+                        ToastHelper.showToast(activity, "button1")
+                    }
+                    setNeutralButton("button2") { dialog, _ ->
+                        dialog.dismiss()
+                        ToastHelper.showToast(activity, "button2")
+                    }
+                    setPositiveButton("button3") { dialog, _ ->
+                        dialog.dismiss()
+                        ToastHelper.showToast(activity, "button3")
+                    }
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_VIEW -> {
@@ -271,6 +280,25 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                     setDialogDimAmount(0f)
                 }.show()
             }
+            AppDialogListContract.TestItemType.VERTICAL_BUTTONS -> {
+                Popup(requireActivity()).apply {
+                    setTitle("title")
+                    setMessage("message")
+                    setNegativeButton("negative") { dialog, which ->
+                        dialog.dismiss()
+                        ToastHelper.showToast(activity, "$which")
+                    }
+                    setNeutralButton("neutral") { dialog, which ->
+                        dialog.dismiss()
+                        ToastHelper.showToast(activity, "$which")
+                    }
+                    setPositiveButton("positive") { dialog, which ->
+                        dialog.dismiss()
+                        ToastHelper.showToast(activity, "$which")
+                    }
+                    setButtonOrientation(AppDialog.VERTICAL)
+                }.show()
+            }
         }
     }
 
@@ -304,6 +332,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 AppDialogListContract.TestItemType.VIEW_BUTTON_1 -> "VIEW_BUTTON_1"
                 AppDialogListContract.TestItemType.CUSTOM_VIEW -> "CUSTOM_VIEW"
                 AppDialogListContract.TestItemType.RESIZE_DIALOG -> "RESIZE_DIALOG"
+                AppDialogListContract.TestItemType.VERTICAL_BUTTONS -> "VERTICAL_BUTTONS"
             }
         }
     }

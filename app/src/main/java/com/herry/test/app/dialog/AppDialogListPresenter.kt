@@ -19,13 +19,11 @@ class AppDialogListPresenter : AppDialogListContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunch(view: AppDialogListContract.View, recreated: Boolean) {
-        if (recreated) {
-            return
+    override fun onResume(view: AppDialogListContract.View, state: ResumeState) {
+        if (state == ResumeState.LAUNCH) {
+            // sets list items
+            setTestItems()
         }
-
-        // sets list items
-        setTestItems()
     }
 
     private fun setTestItems() {

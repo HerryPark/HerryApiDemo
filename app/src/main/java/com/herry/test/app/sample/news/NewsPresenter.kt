@@ -60,22 +60,12 @@ class NewsPresenter : NewsContract.Presenter() {
         super.onDetach()
     }
 
-    override fun onLaunch(view: NewsContract.View, recreated: Boolean) {
-        launch {
-            load()
-        }
-    }
-
-    override fun onResume(view: NewsContract.View) {
-        launch {
-            load()
-        }
+    override fun onResume(view: NewsContract.View, state: ResumeState) {
+        load()
     }
 
     override fun onPause(view: NewsContract.View) {
-        launch {
-            stopPlayAll()
-        }
+        stopPlayAll()
     }
 
     private fun load() {

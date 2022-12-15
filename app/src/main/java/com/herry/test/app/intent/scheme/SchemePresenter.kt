@@ -18,14 +18,11 @@ class SchemePresenter : SchemeContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunch(view: SchemeContract.View, recreated: Boolean) {
-        if (recreated) {
-            return
-        }
-
-        // sets list items
+    override fun onResume(view: SchemeContract.View, state: ResumeState) {
+        if (state == ResumeState.LAUNCH) {
 //        setTestItems()
-        load()
+            load()
+        }
     }
 
     private fun load() {
@@ -36,10 +33,11 @@ class SchemePresenter : SchemeContract.Presenter() {
             SchemeContract.SchemaData("Asset store main", "kinemaster://kinemaster/kmasset/asset ", "https://kinema.link/page/enT8"),
             SchemeContract.SchemaData("Detail asset", "kinemaster://kinemaster/kmasset/asset/2561", "https://kinema.link/page/szAx"),
             SchemeContract.SchemaData("Unpublished Asset Item", "kinemaster://kinemaster/kmasset/asset/2931", "https://kinema.link/page/Hejk "),
-            SchemeContract.SchemaData("Asset store  category", "kinemaster://kinemaster/kmasset/category/2", "https://kinema.link/page/nPwh"),
-            SchemeContract.SchemaData("Asset store  category,  sub category", "kinemaster://kinemaster/kmasset/category/1/subcategory/35", "https://kinema.link/page/bwJu"),
+            SchemeContract.SchemaData("Asset store category", "kinemaster://kinemaster/kmasset/category/2", "https://kinema.link/page/nPwh"),
+            SchemeContract.SchemaData("Asset store category new", "kinemaster://kinemaster/kmasset/category/new", "https://kinema.link/page/enT8"),
+            SchemeContract.SchemaData("Asset store category, sub category", "kinemaster://kinemaster/kmasset/category/1/subcategory/35", "https://kinema.link/page/bwJu"),
             SchemeContract.SchemaData("Subscription", "kinemaster://kinemaster/subscribe", "https://kinema.link/page/vQci"),
-            SchemeContract.SchemaData("Subscription  with  sku ID", "kinemaster://kinemaster/subscribe?sku_monthly=1&sku_annual=1", "https://kinema.link/page/1B33"),
+            SchemeContract.SchemaData("Subscription with  sku ID", "kinemaster://kinemaster/subscribe?sku_monthly=1&sku_annual=1", "https://kinema.link/page/1B33"),
             SchemeContract.SchemaData("Notice ", "kinemaster://kinemaster/notice", "https://kinema.link/page/b1zV"),
             SchemeContract.SchemaData("Detail Notice page", "kinemaster://kinemaster/notice/619b57583787a72405552015", "https://kinema.link/page/s5L2"),
             SchemeContract.SchemaData("Project Feed Main page", "kinemaster://kinemaster/projectfeed", "https://kinema.link/page/zEih"),

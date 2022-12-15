@@ -10,6 +10,7 @@ import com.herry.libs.nodeview.model.NodeModelGroup
 import com.herry.test.data.GifMediaFileInfoData
 import com.herry.test.rx.RxCursorIterable
 import io.reactivex.Observable
+import kotlinx.coroutines.Dispatchers
 
 
 /**
@@ -26,20 +27,18 @@ class GifListPresenter : GifListContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunch(view: GifListContract.View, recreated: Boolean) {
-        if (recreated) {
-            return
+    override fun onResume(view: GifListContract.View, state: ResumeState) {
+        if (state == ResumeState.LAUNCH) {
+            // sets list items
+            loadGifList()
         }
-
-        // sets list items
-        loadGifList()
     }
 
     private fun loadGifList() {
         subscribeObservable(
             getGifContentsFromMediaStore()
             , {
-                launch {
+                launch(Dispatchers.Main) {
                     updateGifList(it)
                 }
             }

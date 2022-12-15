@@ -1,6 +1,9 @@
 package com.herry.test.app.sample.forms
 
 import android.content.Context
+import android.graphics.SurfaceTexture
+import android.view.TextureView
+import android.view.TextureView.SurfaceTextureListener
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,6 +14,8 @@ import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.herry.libs.helper.ApiHelper
+import com.herry.libs.log.Trace
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
@@ -50,7 +55,7 @@ class FeedForm(
             override fun onIsPlayingChanged(isPlaying: Boolean) {
 //                val model = NodeRecyclerForm.getBindModel(this@FeedForm, this@Holder)
 //                Trace.d("Herry", "feed ${model?.index} isPlaying changed = $isPlaying")
-                super.onIsPlayingChanged(isPlaying)
+//                super.onIsPlayingChanged(isPlaying)
                 cover?.let { cover ->
                     if (cover.isVisible && cover.alpha == 1f) {
                         ViewAnimPlayer().apply {
@@ -160,8 +165,8 @@ class FeedForm(
     }
 
     override fun onViewRecycled(context: Context, nodeRecyclerHolder: NodeRecyclerHolder) {
-//        val model = NodeRecyclerForm.getBindModel(this@FeedForm, nodeRecyclerHolder)
-//        Trace.d("Herry", "onViewRecycled for ${model?.index}")
+        val model = NodeRecyclerForm.getBindModel(this@FeedForm, nodeRecyclerHolder)
+        Trace.d("Herry", "onViewRecycled for ${model?.index}")
     }
 
     override fun onViewAttachedToWindow(context: Context, nodeRecyclerHolder: NodeRecyclerHolder) {
@@ -171,11 +176,42 @@ class FeedForm(
 
 //        Trace.d("Herry", "onViewAttachedToWindow for ${model?.index}")
 
-        videoView?.player?.removeListener(holder.videoViewPlayerListener)
-        videoView?.player = onAttachedVideoView(model)
-        videoView?.player?.addListener(holder.videoViewPlayerListener)
+        val onAvailableSurfaceView : () -> Unit = {
+            videoView?.player = onAttachedVideoView(model)
+            videoView?.player?.addListener(holder.videoViewPlayerListener)
 
-        holder.cover?.isVisible = !isAvailablePlaying(videoView)
+            holder.cover?.isVisible = !isAvailablePlaying(videoView)
+        }
+        videoView?.player?.removeListener(holder.videoViewPlayerListener)
+        (videoView?.videoSurfaceView as? TextureView)?.let { surfaceView ->
+            if (surfaceView.isAvailable) {
+                onAvailableSurfaceView()
+            } else {
+                surfaceView.surfaceTextureListener = object : SurfaceTextureListener {
+                    override fun onSurfaceTextureAvailable(surfaceTexture: SurfaceTexture, width: Int, height: Int) {
+                        Trace.d("Herry", "onSurfaceTextureAvailable width = $width, height = $height")
+                        onAvailableSurfaceView()
+                    }
+
+                    override fun onSurfaceTextureSizeChanged(surfaceTexture: SurfaceTexture, width: Int, height: Int) {
+                        Trace.d("Herry", "onSurfaceTextureSizeChanged width = $width, height = $height")
+                    }
+
+                    override fun onSurfaceTextureDestroyed(surfaceTexture: SurfaceTexture): Boolean {
+                        Trace.d("Herry", "onSurfaceTextureDestroyed")
+                        if (ApiHelper.hasOreo() && !surfaceTexture.isReleased) {
+                            Trace.d("Herry", "onSurfaceTextureDestroyed release")
+                            surfaceTexture.release()
+                        }
+                        return false
+                    }
+
+                    override fun onSurfaceTextureUpdated(surfaceTexture: SurfaceTexture) {
+                        Trace.d("Herry", "onSurfaceTextureUpdated")
+                    }
+                }
+            }
+        }
     }
 
     override fun onViewDetachedFromWindow(context: Context, nodeRecyclerHolder: NodeRecyclerHolder) {
@@ -183,10 +219,18 @@ class FeedForm(
         val model = NodeRecyclerForm.getBindModel(this@FeedForm, nodeRecyclerHolder)
         val videoView = holder.videoView
 
-//        Trace.d("Herry", "onViewDetachedFromWindow for ${model?.index}")
+        Trace.d("Herry", "onViewDetachedFromWindow for ${model?.index}")
         videoView?.player?.removeListener(holder.videoViewPlayerListener)
         videoView?.player = null
+        (videoView?.videoSurfaceView as? TextureView)?.let { surfaceView ->
+            if (ApiHelper.hasOreo() && surfaceView.surfaceTexture?.isReleased != true) {
+                Trace.d("Herry", "onViewDetachedFromWindow release")
+                surfaceView.surfaceTexture?.release()
+            }
+        }
 
         onDetachedVideoView(model)
     }
+
+    fun getVideoSurfaceView(): View? = holder?.videoView?.videoSurfaceView
 }

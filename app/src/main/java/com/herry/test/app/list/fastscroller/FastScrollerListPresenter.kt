@@ -16,12 +16,10 @@ class FastScrollerListPresenter : FastScrollerListContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunch(view: FastScrollerListContract.View, recreated: Boolean) {
-        if (recreated) {
-            return
+    override fun onResume(view: FastScrollerListContract.View, state: ResumeState) {
+        if (state == ResumeState.LAUNCH) {
+            loadList()
         }
-
-        loadList()
     }
 
     private fun loadList() {

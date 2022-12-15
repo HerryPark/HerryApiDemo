@@ -29,6 +29,7 @@ interface AppDialogListContract {
         VIEW,
         VIEW_BUTTON_1,
         CUSTOM_VIEW,
-        RESIZE_DIALOG
+        RESIZE_DIALOG,
+        VERTICAL_BUTTONS
     }
 }

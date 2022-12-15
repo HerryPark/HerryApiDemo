@@ -16,12 +16,10 @@ class IndexerListPresenter : IndexerListContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunch(view: IndexerListContract.View, recreated: Boolean) {
-        if (recreated) {
-            return
+    override fun onResume(view: IndexerListContract.View, state: ResumeState) {
+        if (state == ResumeState.LAUNCH) {
+            loadList()
         }
-
-        loadList()
     }
 
     private fun loadList() {

@@ -81,10 +81,10 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
 
             // calls system(navController) navigate up action
             if (!findNavController().navigateUp()) {
-                finishActivity(false, result)
+                finishActivity(NavBundleUtil.isNavigationResultOk(result), result)
             }
         } catch (ex: IllegalStateException) {
-            finishActivity(false, result)
+            finishActivity(NavBundleUtil.isNavigationResultOk(result), result)
         }
     }
 

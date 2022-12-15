@@ -15,12 +15,10 @@ class ListPresenter : ListContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunch(view: ListContract.View, recreated: Boolean) {
-        if (recreated) {
-            return
+    override fun onResume(view: ListContract.View, state: ResumeState) {
+        if (state == ResumeState.LAUNCH) {
+            loadList()
         }
-
-        loadList()
     }
 
     private fun loadList() {

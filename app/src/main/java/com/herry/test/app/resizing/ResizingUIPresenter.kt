@@ -17,8 +17,10 @@ class ResizingUIPresenter: ResizingUIContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunch(view: ResizingUIContract.View, recreated: Boolean) {
-        setMenuItems()
+    override fun onResume(view: ResizingUIContract.View, state: ResumeState) {
+        if (state.isLaunch()) {
+            setMenuItems()
+        }
     }
     
     private fun setMenuItems() {

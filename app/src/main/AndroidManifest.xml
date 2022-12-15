@@ -10,6 +10,11 @@
     <uses-feature android:name="android.hardware.camera"
         android:required="true" />
 
+    <supports-screens android:smallScreens="${supportSmallScreens}"
+        android:normalScreens="${supportNormalScreens}"
+        android:largeScreens="${supportLargeScreens}"
+        android:xlargeScreens="${supportXLargeScreens}"/>
+
     <application
         android:name=".app.base.BaseApplication"
         android:allowBackup="false"
@@ -19,6 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:resizeableActivity="${resizeableApplication}"
         android:requestLegacyExternalStorage="true"
         tools:targetApi="q">
         <!-- requestLegacyExternalStorage: This attribute is "false" by default on apps targeting Android Q. -->

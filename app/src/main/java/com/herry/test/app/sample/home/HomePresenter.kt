@@ -18,9 +18,9 @@ class HomePresenter : HomeContract.Presenter() {
         HomeBottomNavControlItemForm.Model(id = R.id.sample_me_navigation, icon = R.drawable.ic_navigation_me, "Me")
     )
 
-    override fun onLaunch(view: HomeContract.View, recreated: Boolean) {
-        launch {
-            loadNavigator(!recreated)
+    override fun onResume(view: HomeContract.View, state: ResumeState) {
+        if (state.isLaunch()) {
+            loadNavigator(state == ResumeState.LAUNCH)
         }
     }
 

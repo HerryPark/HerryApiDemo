@@ -7,12 +7,10 @@ class LayoutSamplePresenter : LayoutSampleContract.Presenter() {
 
     private var selectedRatio: LayoutSampleContract.AspectRatioType? = null
 
-    override fun onLaunch(view: LayoutSampleContract.View, recreated: Boolean) {
-        displayRatios(selectedRatio)
-    }
-
-    override fun onResume(view: LayoutSampleContract.View) {
-        super.onResume(view)
+    override fun onResume(view: LayoutSampleContract.View, state: ResumeState) {
+        if (state.isLaunch()) {
+            displayRatios(selectedRatio)
+        }
     }
 
     override fun selectRatio(type: LayoutSampleContract.AspectRatioType?) {

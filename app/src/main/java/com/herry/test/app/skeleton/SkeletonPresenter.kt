@@ -2,8 +2,10 @@ package com.herry.test.app.skeleton
 
 class SkeletonPresenter : SkeletonContract.Presenter() {
 
-    override fun onLaunch(view: SkeletonContract.View, recreated: Boolean) {
-        show()
+    override fun onResume(view: SkeletonContract.View, state: ResumeState) {
+        if (state.isLaunch()) {
+            show()
+        }
     }
 
     override fun show() {

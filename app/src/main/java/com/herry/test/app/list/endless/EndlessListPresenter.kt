@@ -16,12 +16,10 @@ class EndlessListPresenter : EndlessListContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunch(view: EndlessListContract.View, recreated: Boolean) {
-        if (recreated) {
-            return
+    override fun onResume(view: EndlessListContract.View, state: ResumeState) {
+        if (state == ResumeState.LAUNCH) {
+            loadList()
         }
-
-        loadList()
     }
 
     private fun createListItems(startIndex: Int, count: Int) : MutableList<EndlessListContract.ListItemData> {

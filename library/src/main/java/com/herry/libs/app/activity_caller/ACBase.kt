@@ -20,7 +20,8 @@ class ACBase(private val listener: ACBaseListener) : AC {
         )
     }
 
-    override fun <T> call(caller: T) {
+    override fun <T> call(caller: T?) {
+        caller ?: return
         if (Looper.myLooper() == Looper.getMainLooper()) {
             callOnMainLooper(caller)
         } else {

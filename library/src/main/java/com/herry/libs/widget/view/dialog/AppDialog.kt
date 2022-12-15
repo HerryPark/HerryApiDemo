@@ -59,10 +59,10 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     private var buttonContainer: LinearLayout? = null
 
     private var negativeButtonContainer: FrameLayout? = null
-    private var neutraButtonContainer: FrameLayout? = null
+    private var neutralButtonContainer: FrameLayout? = null
     private var positiveButtonContainer: FrameLayout? = null
     private var negativeButton: TextView? = null
-    private var neutraButton: TextView? = null
+    private var neutralButton: TextView? = null
     private var positiveButton: TextView? = null
     private var buttonLeftSeparatorView: View? = null
     private var buttonRightSeparatorView: View? = null
@@ -70,7 +70,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     // button listener
     private var positiveButtonOnClickListener: DialogInterface.OnClickListener? = null
     private var negativeButtonOnClickListener: DialogInterface.OnClickListener? = null
-    private var neutraButtonOnClickListener: DialogInterface.OnClickListener? = null
+    private var neutralButtonOnClickListener: DialogInterface.OnClickListener? = null
 
     private val nullOnClickListener = DialogInterface.OnClickListener { dialog, _ -> dialog.dismiss() }
     private var onCancelListener: DialogInterface.OnCancelListener? = null
@@ -132,9 +132,11 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     private var bottomDivider: Drawable? = null
     private var bottomDividerHeight = 0
     private var buttonHeight = 0
+    private var buttonMinHeight = ViewGroup.LayoutParams.WRAP_CONTENT
     private var buttonWidth = ViewGroup.LayoutParams.WRAP_CONTENT
     private var buttonMinWidth = 0
     private var buttonWeight = 1f
+    private var buttonLayoutOrientation = HORIZONTAL
     private var buttonLayoutGravity = Gravity.CENTER
     private var buttonTextSize = 0
     private var buttonTextColor: ColorStateList? = null
@@ -142,7 +144,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     private var buttonTextGravity = Gravity.CENTER
     private var buttonMargin = 0
     private var buttonDivider: Drawable? = null
-    private var buttonDividerWidth = ViewGroup.LayoutParams.WRAP_CONTENT
+    private var buttonDividerSize = ViewGroup.LayoutParams.WRAP_CONTENT
     private var buttonBackground: Drawable? = null
     private var buttonSelectableBackground: Drawable? = null
     private var leftButtonTextSize = 0
@@ -168,36 +170,36 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     private var listScrollbarFadingEnabled = true
 
     private val buttonOnClickListener = View.OnClickListener { v ->
-        when (v?.id) {
-            R.id.app_dialog_button_left_container -> {
+        when (v?.tag) {
+            BUTTON_NEGATIVE.toString() -> {
                 negativeButtonOnClickListener?.onClick(this@AppDialog, BUTTON_NEGATIVE)
             }
-            R.id.app_dialog_button_center_container -> {
-                neutraButtonOnClickListener?.onClick(this@AppDialog, BUTTON_NEUTRAL)
+            BUTTON_NEUTRAL.toString() -> {
+                neutralButtonOnClickListener?.onClick(this@AppDialog, BUTTON_NEUTRAL)
             }
-            R.id.app_dialog_button_right_container -> {
+            BUTTON_POSITIVE.toString() -> {
                 positiveButtonOnClickListener?.onClick(this@AppDialog, BUTTON_POSITIVE)
             }
         }
     }
 
     private val buttonOnLongClickListener = View.OnLongClickListener { v ->
-        return@OnLongClickListener when (v?.id) {
-            R.id.app_dialog_button_left_container -> {
+        return@OnLongClickListener when (v?.tag) {
+            BUTTON_NEGATIVE.toString() -> {
                 if (negativeButtonOnClickListener is OnClicksListener) {
                     (negativeButtonOnClickListener as OnClicksListener).onLongClick(this@AppDialog, BUTTON_NEGATIVE)
                 } else {
                     false
                 }
             }
-            R.id.app_dialog_button_center_container -> {
-                if (neutraButtonOnClickListener is OnClicksListener) {
-                    (neutraButtonOnClickListener as OnClicksListener).onLongClick(this@AppDialog, BUTTON_NEUTRAL)
+            BUTTON_NEUTRAL.toString() -> {
+                if (neutralButtonOnClickListener is OnClicksListener) {
+                    (neutralButtonOnClickListener as OnClicksListener).onLongClick(this@AppDialog, BUTTON_NEUTRAL)
                 } else {
                     false
                 }
             }
-            R.id.app_dialog_button_right_container -> {
+            BUTTON_POSITIVE.toString() -> {
                 if (positiveButtonOnClickListener is OnClicksListener) {
                     (positiveButtonOnClickListener as OnClicksListener).onLongClick(this@AppDialog, BUTTON_POSITIVE)
                 } else {
@@ -321,7 +323,13 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             bottomDividerHeight = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_bottomDividerHeight, 0)
 
             // sets buttons
-            buttonHeight = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_buttonHeight, 0)
+            val buttonHeightDimension = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_buttonHeight, 0)
+            buttonHeight = if (ViewGroup.LayoutParams.WRAP_CONTENT == buttonHeightDimension
+                || ViewGroup.LayoutParams.MATCH_PARENT == buttonHeightDimension) {
+                buttonHeightDimension
+            } else {
+                buttonHeightDimension.toFloat().roundToInt()
+            }
             val buttonWidthDimension = attrs.getLayoutDimension(R.styleable.AppDialog_ad_buttonWidth, 0)
             buttonWidth = if (ViewGroup.LayoutParams.WRAP_CONTENT == buttonWidthDimension
                 || ViewGroup.LayoutParams.MATCH_PARENT == buttonWidthDimension) {
@@ -330,7 +338,9 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
                 buttonWidthDimension.toFloat().roundToInt()
             }
             buttonWeight = attrs.getFloat(R.styleable.AppDialog_ad_buttonWeight, 0f)
+            buttonMinHeight = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_buttonMinHeight, 0)
             buttonMinWidth = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_buttonMinWidth, 0)
+            buttonLayoutOrientation = attrs.getInt(R.styleable.AppDialog_ad_buttonLayoutOrientation, HORIZONTAL)
             buttonLayoutGravity = getGravityValue(attrs.getInt(R.styleable.AppDialog_ad_buttonLayoutGravity, 0x30))
             buttonTextSize = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_buttonTextSize, 0)
             buttonTextColor = attrs.getColorStateList(R.styleable.AppDialog_ad_buttonTextColor)
@@ -338,7 +348,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             buttonTextGravity = getGravityValue(attrs.getInt(R.styleable.AppDialog_ad_buttonTextGravity, 0x30))
             buttonMargin = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_buttonMargin, 0)
             buttonDivider = attrs.getDrawable(R.styleable.AppDialog_ad_buttonDivider)
-            buttonDividerWidth = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_buttonDividerWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
+            buttonDividerSize = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_buttonDividerSize, ViewGroup.LayoutParams.WRAP_CONTENT)
             buttonBackground = attrs.getDrawable(R.styleable.AppDialog_ad_buttonBackground)
             buttonSelectableBackground = attrs.getDrawable(R.styleable.AppDialog_ad_buttonSelectableBackground)
             leftButtonTextSize = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_leftButtonTextSize, 0)
@@ -548,9 +558,6 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             buttonContainer = container.findViewById(R.id.app_dialog_button_container)
             buttonContainer?.run {
                 this.gravity = buttonLayoutGravity
-                if (buttonHeight > 0) {
-                    this.setViewHeight(buttonHeight)
-                }
 
                 var textStyle = Typeface.DEFAULT
                 when (buttonTextStyle) {
@@ -559,17 +566,14 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
 
                 negativeButtonContainer = container.findViewById(R.id.app_dialog_button_left_container)
                 negativeButtonContainer?.run {
-                    this.setViewWidth(buttonWidth)
+                    this.tag = BUTTON_NEGATIVE.toString()
                     this.setViewMargin(buttonMargin)
-                    if (0 == buttonWidth) {
-                        this.setViewWeight(buttonWeight)
-                    }
+
                     this.setOnClickListener(buttonOnClickListener)
                     this.clipToOutline = true
 
                     negativeButton = container.findViewById(R.id.app_dialog_button_left)
                     negativeButton?.run {
-                        this.minimumWidth = buttonMinWidth
                         if (leftButtonTextColor != null) {
                             this.setTextColor(leftButtonTextColor)
                         }
@@ -580,28 +584,17 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
                         this.setLayoutGravity(buttonTextGravity)
                     }
                 }
-
                 buttonLeftSeparatorView = container.findViewById(R.id.app_dialog_button_left_separator)
-                buttonLeftSeparatorView?.run {
-                    this.background = buttonDivider
-                    if (buttonDividerWidth >= 0) {
-                        this.setViewWidth(buttonDividerWidth)
-                    }
-                }
-
-                neutraButtonContainer = container.findViewById(R.id.app_dialog_button_center_container)
-                neutraButtonContainer?.run {
-                    this.setViewWidth(buttonWidth)
+                neutralButtonContainer = container.findViewById(R.id.app_dialog_button_center_container)
+                neutralButtonContainer?.run {
+                    this.tag = BUTTON_NEUTRAL.toString()
                     this.setViewMargin(buttonMargin)
-                    if (0 == buttonWidth) {
-                        this.setViewWeight(buttonWeight)
-                    }
+
                     this.setOnClickListener(buttonOnClickListener)
                     this.clipToOutline = true
 
-                    neutraButton = container.findViewById(R.id.app_dialog_button_center)
-                    neutraButton?.run {
-                        this.minimumWidth = buttonMinWidth
+                    neutralButton = container.findViewById(R.id.app_dialog_button_center)
+                    neutralButton?.run {
                         if (centerButtonTextColor != null) {
                             this.setTextColor(centerButtonTextColor)
                         }
@@ -612,28 +605,17 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
                         this.setLayoutGravity(buttonTextGravity)
                     }
                 }
-
                 buttonRightSeparatorView = container.findViewById(R.id.app_dialog_button_right_separator)
-                buttonRightSeparatorView?.run {
-                    this.background = buttonDivider
-                    if (buttonDividerWidth >= 0) {
-                        this.setViewWidth(buttonDividerWidth)
-                    }
-                }
-
                 positiveButtonContainer = container.findViewById(R.id.app_dialog_button_right_container)
                 positiveButtonContainer?.run {
-                    this.setViewWidth(buttonWidth)
+                    this.tag = BUTTON_POSITIVE.toString()
                     this.setViewMargin(buttonMargin)
-                    if (0 == buttonWidth) {
-                        this.setViewWeight(buttonWeight)
-                    }
+
                     this.setOnClickListener(buttonOnClickListener)
                     this.clipToOutline = true
 
                     positiveButton = container.findViewById(R.id.app_dialog_button_right)
                     positiveButton?.run {
-                        this.minimumWidth = buttonMinWidth
                         if (rightButtonTextColor != null) {
                             this.setTextColor(rightButtonTextColor)
                         }
@@ -644,6 +626,8 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
                         this.setLayoutGravity(buttonTextGravity)
                     }
                 }
+
+                applyButtonLayoutSize()
             }
 
             bottomSeparatorView = container.findViewById(R.id.app_dialog_bottom_separator)
@@ -815,6 +799,127 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         messageGapView?.isVisible = (messageTextView?.isVisible == true) && (subMessageTextView?.isVisible == true)
     }
 
+    /** @hide */
+    @IntDef(HORIZONTAL, VERTICAL)
+    private annotation class OrientationMode
+
+    private fun applyButtonLayoutSize() {
+        val buttonContainer = this.buttonContainer ?: return
+
+        val isHorizontalOrientation = buttonLayoutOrientation == HORIZONTAL
+
+        buttonContainer.orientation = if (isHorizontalOrientation) LinearLayout.HORIZONTAL else LinearLayout.VERTICAL
+
+        negativeButtonContainer?.run {
+            if (isHorizontalOrientation) {
+                this.setViewSize(buttonWidth, buttonHeight)
+                if (0 == buttonWidth) {
+                    this.setViewWeight(buttonWeight)
+                }
+            } else {
+                this.setViewSize(ViewGroup.LayoutParams.MATCH_PARENT, buttonHeight)
+            }
+
+            negativeButton?.run {
+                if (isHorizontalOrientation) {
+                    this.minimumWidth = buttonMinWidth
+                } else {
+                    this.minimumHeight = buttonMinHeight
+                }
+            }
+        }
+
+        buttonLeftSeparatorView?.run {
+            this.background = buttonDivider
+            buttonDividerSize.let { size ->
+                if (size >= 0) {
+                    if (isHorizontalOrientation) {
+                        this.setViewSize(size, ViewGroup.LayoutParams.MATCH_PARENT)
+                    } else {
+                        this.setViewSize(ViewGroup.LayoutParams.MATCH_PARENT, size)
+                    }
+                }
+            }
+        }
+
+        neutralButtonContainer?.run {
+            if (isHorizontalOrientation) {
+                this.setViewSize(buttonWidth, buttonHeight)
+                if (0 == buttonWidth) {
+                    this.setViewWeight(buttonWeight)
+                }
+            } else {
+                this.setViewSize(ViewGroup.LayoutParams.MATCH_PARENT, buttonHeight)
+            }
+
+            neutralButton?.run {
+                if (isHorizontalOrientation) {
+                    this.minimumWidth = buttonMinWidth
+                } else {
+                    this.minimumHeight = buttonMinHeight
+                }
+            }
+        }
+
+        buttonRightSeparatorView?.run {
+            this.background = buttonDivider
+            buttonDividerSize.let { size ->
+                if (size >= 0) {
+                    if (isHorizontalOrientation) {
+                        this.setViewSize(size, ViewGroup.LayoutParams.MATCH_PARENT)
+                    } else {
+                        this.setViewSize(ViewGroup.LayoutParams.MATCH_PARENT, size)
+                    }
+                }
+            }
+        }
+
+        positiveButtonContainer?.run {
+            if (isHorizontalOrientation) {
+                this.setViewSize(buttonWidth, buttonHeight)
+                if (0 == buttonWidth) {
+                    this.setViewWeight(buttonWeight)
+                }
+            } else {
+                this.setViewSize(ViewGroup.LayoutParams.MATCH_PARENT, buttonHeight)
+            }
+
+            positiveButton?.run {
+                if (isHorizontalOrientation) {
+                    this.minimumWidth = buttonMinWidth
+                } else {
+                    this.minimumHeight = buttonMinHeight
+                }
+            }
+        }
+
+        // sets button order
+        if (isHorizontalOrientation) {
+            // negative, neutral, positive
+            buttonContainer.removeAllViews()
+            negativeButtonContainer?.let { buttonContainer.addView(it) }
+            buttonLeftSeparatorView?.let { buttonContainer.addView(it) }
+            neutralButtonContainer?.let { buttonContainer.addView(it) }
+            buttonRightSeparatorView?.let { buttonContainer.addView(it) }
+            positiveButtonContainer?.let { buttonContainer.addView(it) }
+        } else {
+            buttonContainer.removeAllViews()
+            // positive
+            // neutral
+            // negative
+            positiveButtonContainer?.let { buttonContainer.addView(it) }
+            buttonLeftSeparatorView?.let { buttonContainer.addView(it) }
+            neutralButtonContainer?.let { buttonContainer.addView(it) }
+            buttonRightSeparatorView?.let { buttonContainer.addView(it) }
+            negativeButtonContainer?.let { buttonContainer.addView(it) }
+        }
+    }
+
+    fun setButtonOrientation(@OrientationMode orientation: Int) {
+        buttonLayoutOrientation = orientation
+        applyButtonLayoutSize()
+    }
+
     fun setPositiveButton(@StringRes textId: Int) {
         setPositiveButton(textId, null, null)
     }
@@ -949,7 +1054,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     }
 
     fun setNeutralButton(@StringRes textId: Int, color: ColorStateList? = null, listener: DialogInterface.OnClickListener? = null) {
-        neutraButton?.run {
+        neutralButton?.run {
             this.setText(textId)
             if (color != null) {
                 this.setTextColor(color)
@@ -972,7 +1077,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     }
 
     fun setNeutralButton(text: CharSequence?, color: ColorStateList? = null, listener: DialogInterface.OnClickListener? = null) {
-        neutraButton?.run {
+        neutralButton?.run {
             this.text = text
             if (color != null) {
                 this.setTextColor(color)
@@ -985,7 +1090,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     private fun showNeutralButton(listener: DialogInterface.OnClickListener? = null) {
         bottomContainer?.isVisible = true
 
-        neutraButtonContainer?.run {
+        neutralButtonContainer?.run {
             this.isVisible = true
             this.setOnClickListener(buttonOnClickListener)
             if (listener is OnClicksListener) {
@@ -993,7 +1098,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             }
         }
 
-        neutraButtonOnClickListener = listener ?: nullOnClickListener
+        neutralButtonOnClickListener = listener ?: nullOnClickListener
 
         setButtonStyles()
     }
@@ -1239,7 +1344,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             leftButtonVisible = true
         }
 
-        if (neutraButtonContainer?.isVisible == true) {
+        if (neutralButtonContainer?.isVisible == true) {
             centerButtonVisible = true
         }
 
@@ -1262,10 +1367,10 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             }
 
             centerButtonBackground?.let { drawable ->
-                neutraButtonContainer?.background = drawable
+                neutralButtonContainer?.background = drawable
             }
             centerButtonSelectableBackground?.let { drawable ->
-                neutraButtonContainer?.foreground = drawable
+                neutralButtonContainer?.foreground = drawable
             }
 
             leftButtonIn3ButtonsBackground?.let { drawable ->
@@ -1287,10 +1392,10 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             }
             if (centerButtonVisible) {
                 centerButtonBackground?.let { drawable ->
-                    neutraButtonContainer?.background = drawable
+                    neutralButtonContainer?.background = drawable
                 }
                 centerButtonSelectableBackground?.let { drawable ->
-                    neutraButtonContainer?.foreground = drawable
+                    neutralButtonContainer?.foreground = drawable
                 }
             }
             if (leftButtonVisible) {
@@ -1312,10 +1417,10 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             }
 
             leftButtonBackground?.let { drawable ->
-                neutraButtonContainer?.background = drawable
+                neutralButtonContainer?.background = drawable
             }
             leftButtonSelectableBackground?.let { drawable ->
-                neutraButtonContainer?.foreground = drawable
+                neutralButtonContainer?.foreground = drawable
             }
         } else {
             buttonBackground?.let { drawable ->
@@ -1326,7 +1431,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
                     negativeButtonContainer?.background = drawable
                 }
                 if (centerButtonVisible) {
-                    neutraButtonContainer?.background = drawable
+                    neutralButtonContainer?.background = drawable
                 }
             }
 
@@ -1338,7 +1443,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
                     negativeButtonContainer?.foreground = drawable
                 }
                 if (centerButtonVisible) {
-                    neutraButtonContainer?.foreground = drawable
+                    neutralButtonContainer?.foreground = drawable
                 }
             }
         }
@@ -1364,7 +1469,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         when (button) {
             BUTTON_POSITIVE -> return positiveButton
             BUTTON_NEGATIVE -> return negativeButton
-            BUTTON_NEUTRAL -> return neutraButton
+            BUTTON_NEUTRAL -> return neutralButton
         }
         return null
     }
@@ -1528,6 +1633,10 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
          * The identifier for the neutral button.
          */
         const val BUTTON_NEUTRAL = DialogInterface.BUTTON_NEUTRAL
+
+        const val HORIZONTAL: Int = 0
+        const val VERTICAL: Int = 1
+
         private const val ARG_STYLE = "style"
     }
 

@@ -37,8 +37,8 @@ import com.herry.test.app.base.ScreenWindowStyle
 import com.herry.test.app.base.StatusBarStyle
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.sample.forms.FeedForm
-import com.herry.test.app.sample.tags.TagsFragment
 import com.herry.test.app.sample.repository.database.feed.Feed
+import com.herry.test.app.sample.tags.TagsFragment
 import com.herry.test.widget.TitleBarForm
 import java.util.*
 

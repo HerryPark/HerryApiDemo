@@ -53,8 +53,8 @@ class TagsPresenter(private val tag: String) : TagsContract.Presenter(){
         super.onDetach()
     }
 
-    override fun onLaunch(view: TagsContract.View, recreated: Boolean) {
-        launch {
+    override fun onResume(view: TagsContract.View, state: ResumeState) {
+        if (state.isLaunch()) {
             view.onUpdateTitle(tag)
             load()
         }

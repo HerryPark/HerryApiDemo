@@ -11,12 +11,14 @@ class PasswordSettingPresenter : PasswordSettingContract.Presenter() {
 
     private val passwordChecker: DataCheckerChangeData<String> = DataCheckerChangeData()
 
-    override fun onLaunch(view: PasswordSettingContract.View, recreated: Boolean) {
-        if (!recreated) {
-            passwordChecker.setBase(PreferenceHelper.get(SharedPrefKeys.PASSWORD, ""))
+    override fun onResume(view: PasswordSettingContract.View, state: ResumeState) {
+        if (state.isLaunch()) {
+            if (state == ResumeState.LAUNCH) {
+                passwordChecker.setBase(PreferenceHelper.get(SharedPrefKeys.PASSWORD, ""))
+            }
+            // sets list items
+            display()
         }
-        // sets list items
-        display()
     }
 
     private fun display() {

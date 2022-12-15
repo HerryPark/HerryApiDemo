@@ -8,6 +8,7 @@ import com.herry.libs.nodeview.model.NodeModelGroup
 import com.herry.test.data.MediaFileInfoData
 import com.herry.test.rx.RxCursorIterable
 import io.reactivex.Observable
+import kotlinx.coroutines.Dispatchers
 
 
 /**
@@ -24,20 +25,18 @@ class ShareMediaListPresenter : ShareMediaListContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunch(view: ShareMediaListContract.View, recreated: Boolean) {
-        if (recreated) {
-            return
+    override fun onResume(view: ShareMediaListContract.View, state: ResumeState) {
+        if (state == ResumeState.LAUNCH) {
+            // sets list items
+            loadGifList()
         }
-
-        // sets list items
-        loadGifList()
     }
 
     private fun loadGifList() {
         subscribeObservable(
             getMediaContentsFromMediaStore()
             , {
-                launch {
+                launch(Dispatchers.Main) {
                     updateMediaList(it)
                 }
             }

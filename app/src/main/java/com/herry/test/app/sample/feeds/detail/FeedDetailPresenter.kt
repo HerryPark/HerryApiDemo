@@ -64,22 +64,12 @@ class FeedDetailPresenter(
         super.onDetach()
     }
 
-    override fun onLaunch(view: FeedDetailContract.View, recreated: Boolean) {
-        launch {
-            load()
-        }
-    }
-
-    override fun onResume(view: FeedDetailContract.View) {
-        launch {
-            load()
-        }
+    override fun onResume(view: FeedDetailContract.View, state: ResumeState) {
+        load()
     }
 
     override fun onPause(view: FeedDetailContract.View) {
-        launch {
-            stopPlayAll()
-        }
+        stopAll()
     }
 
     private fun load() {
@@ -225,7 +215,7 @@ class FeedDetailPresenter(
         }
     }
 
-    private fun stopPlayAll() {
+    private fun stopAll() {
         exoPlayerManger.stopAll()
     }
 

@@ -19,7 +19,6 @@ import com.herry.libs.app.activity_caller.module.ACPermission
 import com.herry.libs.app.activity_caller.module.ACTake
 import com.herry.libs.helper.ToastHelper
 import com.herry.libs.log.Trace
-import com.herry.libs.media.media_scanner.MediaScanner
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
@@ -28,7 +27,6 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.widget.TitleBarForm
-import java.io.File
 import java.io.IOException
 
 class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Presenter>(), PickListContract.View {

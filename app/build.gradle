@@ -12,12 +12,43 @@ android {
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
+
+        manifestPlaceholders = [
+                resizeableApplication:"false",
+                supportSmallScreens:"true",
+                supportNormalScreens:"true",
+                supportLargeScreens:"true",
+                supportXLargeScreens:"true"
+        ]
     }
 
     buildTypes {
-        release {
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
             minifyEnabled false
+        }
+
+        release {
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "mode"
+
+    productFlavors {
+        phone {
+            dimension "mode"
+        }
+
+        tablet {
+            manifestPlaceholders = [
+                    resizeableApplication:"true",
+                    supportSmallScreens:"false",
+                    supportNormalScreens:"false"
+            ]
+            dimension "mode"
         }
     }
 

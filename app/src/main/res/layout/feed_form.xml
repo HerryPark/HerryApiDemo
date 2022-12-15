@@ -13,6 +13,8 @@
         android:id="@+id/feed_form_video_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:show_buffering="when_playing"
+        app:surface_type="texture_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

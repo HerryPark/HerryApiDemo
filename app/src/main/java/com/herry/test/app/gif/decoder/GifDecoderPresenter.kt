@@ -4,6 +4,7 @@ import com.herry.libs.media.gif.decoder.GifDecoder
 import com.herry.libs.media.gif.decoder.GifHeader
 import com.herry.test.data.GifMediaFileInfoData
 import io.reactivex.Observable
+import kotlinx.coroutines.Dispatchers
 
 
 /**
@@ -11,15 +12,17 @@ import io.reactivex.Observable
  **/
 class GifDecoderPresenter(private val data: GifMediaFileInfoData) : GifDecoderContract.Presenter() {
 
-    override fun onLaunch(view: GifDecoderContract.View, recreated: Boolean) {
-        decode()
+    override fun onResume(view: GifDecoderContract.View, state: ResumeState) {
+        if (state.isLaunch()) {
+            decode()
+        }
     }
 
     private fun decode() {
         subscribeObservable(
             getDecodedGif(data)
             , {
-                launch {
+                launch(Dispatchers.Main) {
                     view?.onDecoded(it)
                 }
             },

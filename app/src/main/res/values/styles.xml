@@ -58,6 +58,7 @@
         <item name="ad_bottomPaddingBottom">0dp</item>
         <item name="ad_bottomDivider">@null</item>
         <item name="ad_bottomDividerHeight">0dp</item>
+        <item name="ad_buttonLayoutOrientation">horizontal</item>
         <item name="ad_buttonHeight">@dimen/size44</item>
         <item name="ad_buttonTextSize">@dimen/size15</item>
         <item name="ad_buttonTextColor">@color/tbc_10</item>
@@ -69,7 +70,7 @@
         <item name="ad_buttonWeight">1</item>
         <item name="ad_buttonLayoutGravity">center</item>
         <item name="ad_buttonDivider">@null</item>
-        <item name="ad_buttonDividerWidth">@dimen/size01</item>
+        <item name="ad_buttonDividerSize">@dimen/size01</item>
         <item name="ad_buttonBackground">@color/tbc_70</item>
         <item name="ad_buttonSelectableBackground">?android:attr/selectableItemBackground</item>
 <!--        <item name="ad_leftButtonTextSize">@dimen/size17</item>-->
