@@ -4,31 +4,39 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.activity_caller.module.ACPermission
+import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.log.Trace
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
+import com.herry.libs.util.BundleUtil
 import com.herry.libs.widget.extension.navigateTo
+import com.herry.libs.widget.extension.setImage
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.nbnf.NBNFActivity
-import com.herry.test.app.sample.SampleActivity
 import com.herry.test.app.nestedfragments.NestedNavFragmentsActivity
+import com.herry.test.app.sample.SampleActivity
+import com.herry.test.widget.Popup
 import com.herry.test.widget.TitleBarForm
 
 
@@ -134,6 +142,29 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
             MainContract.TestItemType.SAMPLE_APP -> {
                 activityCaller?.call(ACNavigation.IntentCaller(Intent(requireActivity(), SampleActivity::class.java)))
             }
+            MainContract.TestItemType.PAINTER -> {
+                navigateTo(destinationId = R.id.painter_fragment)
+            }
+            MainContract.TestItemType.TENSOR_FLOW_LITE -> {
+                navigateTo(destinationId = R.id.tflite_list_fragment)
+            }
+        }
+    }
+
+    override fun onNavigateUpResult(fromNavigationId: Int, result: Bundle) {
+        if (fromNavigationId == R.id.painter_fragment) {
+            if (NavBundleUtil.isNavigationResultOk(result)) {
+                val activity = this.activity ?: return
+                val bitmapArray = BundleUtil[result, "bitmap", ByteArray::class.java] ?: return
+                val bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.size)
+                Popup(activity).apply {
+                    val imageView = AppCompatImageView(activity)
+                    imageView.layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                    imageView.setImage(BitmapDrawable(bitmap))
+                    this.setView(imageView)
+                    this.setPositiveButton(android.R.string.ok)
+                }.show()
+            }
         }
     }
 
@@ -167,6 +198,8 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                 MainContract.TestItemType.SKELETON -> "Skeleton"
                 MainContract.TestItemType.RESIZING_UI -> "Resizing UI"
                 MainContract.TestItemType.SAMPLE_APP -> "Sample Application"
+                MainContract.TestItemType.PAINTER -> "Painter"
+                MainContract.TestItemType.TENSOR_FLOW_LITE -> "Tensorflow-lite"
             }
         }
     }

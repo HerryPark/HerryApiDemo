@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:viewBindingIgnore="true">
+
+    <com.herry.libs.draw.DrawView
+        android:id="@+id/painter_fragment_draw_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/tbc_10"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/painter_fragment_close"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_close"
+        android:tint="#C2C2C2"
+        android:layout_margin="10dp"
+        android:padding="12dp"
+        android:foreground="?android:selectableItemBackgroundBorderless"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/painter_fragment_done"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_done"
+        android:tint="#C2C2C2"
+        android:layout_margin="10dp"
+        android:padding="12dp"
+        android:foreground="?android:selectableItemBackgroundBorderless"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/painter_fragment_draw_tools"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/painter_fragment_draw_eraser"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_eraser"
+                android:padding="16dp"
+                android:tint="@color/selector_icon"
+                android:foreground="?selectableItemBackground"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/painter_fragment_draw_width"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/painter_fragment_draw_width"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_adjust"
+                android:padding="16dp"
+                android:tint="@color/selector_icon"
+                android:foreground="?selectableItemBackground"
+                app:layout_constraintStart_toEndOf="@id/painter_fragment_draw_eraser"
+                app:layout_constraintEnd_toStartOf="@id/painter_fragment_draw_color"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/painter_fragment_draw_color"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_color_lens"
+                android:padding="16dp"
+                android:tint="@color/selector_icon"
+                android:foreground="?selectableItemBackground"
+                app:layout_constraintStart_toEndOf="@id/painter_fragment_draw_width"
+                app:layout_constraintEnd_toStartOf="@id/painter_fragment_draw_opacity"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/painter_fragment_draw_opacity"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_opacity"
+                android:padding="16dp"
+                android:tint="@color/selector_icon"
+                android:foreground="?selectableItemBackground"
+                app:layout_constraintStart_toEndOf="@id/painter_fragment_draw_color"
+                app:layout_constraintEnd_toStartOf="@id/painter_fragment_draw_undo"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/painter_fragment_draw_undo"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_undo"
+                android:padding="16dp"
+                android:tint="@color/selector_icon"
+                android:foreground="?selectableItemBackground"
+                app:layout_constraintStart_toEndOf="@id/painter_fragment_draw_opacity"
+                app:layout_constraintEnd_toStartOf="@id/painter_fragment_draw_redo"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/painter_fragment_draw_redo"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_redo"
+                android:padding="16dp"
+                android:tint="@color/selector_icon"
+                android:foreground="?selectableItemBackground"
+                app:layout_constraintStart_toEndOf="@id/painter_fragment_draw_undo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <FrameLayout
+            android:id="@+id/painter_fragment_draw_tools_extension_container"
+            android:layout_width="match_parent"
+            android:layout_height="56dp">
+
+            <LinearLayout
+                android:id="@+id/painter_fragment_draw_width_setter"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <SeekBar
+                    android:id="@+id/painter_fragment_seekbar_width"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:progress="0"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" />
+
+                <com.herry.libs.draw.CircleView
+                    android:id="@+id/painter_fragment_circle_view_width"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/painter_fragment_draw_opacity_setter"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <SeekBar
+                    android:id="@+id/painter_fragment_seekbar_opacity"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:progress="100"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" />
+
+                <com.herry.libs.draw.CircleView
+                    android:id="@+id/painter_fragment_circle_view_opacity"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"/>
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

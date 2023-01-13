@@ -29,6 +29,8 @@ interface MainContract {
         LIST,
         SKELETON,
         RESIZING_UI,
-        SAMPLE_APP
+        SAMPLE_APP,
+        PAINTER,
+        TENSOR_FLOW_LITE
     }
 }

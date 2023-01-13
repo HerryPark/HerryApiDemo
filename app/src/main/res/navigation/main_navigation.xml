@@ -96,4 +96,19 @@
         android:id="@+id/resizing_ui_fragment"
         android:name="com.herry.test.app.resizing.ResizingUIFragment"
         tools:layout="@layout/resizing_ui_fragment" />
+
+    <fragment
+        android:id="@+id/painter_fragment"
+        android:name="com.herry.test.app.painter.PainterFragment"
+        tools:layout="@layout/painter_fragment" />
+
+    <fragment
+        android:id="@+id/tflite_list_fragment"
+        android:name="com.herry.test.app.tflite.list.TFLiteListFragment"
+        tools:layout="@layout/tflite_list_fragment" />
+
+    <fragment
+        android:id="@+id/digit_classifier_fragment"
+        android:name="com.herry.test.app.tflite.digitclassifier.DigitClassifierFragment"
+        tools:layout="@layout/digit_classifier_fragment" />
 </navigation>

@@ -2,6 +2,7 @@
 
 package com.herry.libs.widget.extension
 
+import android.content.res.ColorStateList
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
@@ -12,6 +13,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.herry.libs.util.ViewUtil
@@ -249,5 +251,17 @@ fun View.getViewMeasuredHeight(): Int {
 }
 
 fun View.measure() {
-    measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+    measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+}
+
+fun ImageView.setTint(@ColorRes statefulColorSateResId: Int) {
+    setImage(drawable, statefulColorSateResId, statefulColorSateResId)
+}
+
+fun ImageView.setTint(@ColorRes statefulColorSateResId: Int, @ColorRes notStatefulColorSateResId: Int) {
+    setImage(drawable, statefulColorSateResId, notStatefulColorSateResId)
+}
+
+fun ImageView.setTintColor(@ColorInt color: Int) {
+    this.imageTintList = ColorStateList.valueOf(color)
 }
