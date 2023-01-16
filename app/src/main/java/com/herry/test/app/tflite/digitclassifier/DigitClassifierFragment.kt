@@ -43,7 +43,7 @@ class DigitClassifierFragment : BaseNavView<DigitClassifierContract.View, DigitC
     private var resultView: TextView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return this.container ?: inflater.inflate(R.layout.digit_classifier_fragment, container, false)?.apply { init(this) }.also { this.container = it}
+        return this.container ?: inflater.inflate(R.layout.image_classifier_fragment, container, false)?.apply { init(this) }.also { this.container = it}
     }
 
     @SuppressLint("QueryPermissionsNeeded")
@@ -52,11 +52,11 @@ class DigitClassifierFragment : BaseNavView<DigitClassifierContract.View, DigitC
             activity = { requireActivity() },
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
-            bindFormHolder(view.context, view.findViewById(R.id.digit_classifier_fragment_title))
+            bindFormHolder(view.context, view.findViewById(R.id.image_classifier_fragment_title))
             bindFormModel(view.context, TitleBarForm.Model(title = "Digit Image Classifier", backEnable = true))
         }
 
-        loadImageButton = view.findViewById<View?>(R.id.digit_classifier_fragment_load_image)?.apply {
+        loadImageButton = view.findViewById<View?>(R.id.image_classifier_fragment_load_image)?.apply {
             this.setOnProtectClickListener {
                 Popup(requireActivity()).apply {
                     setTitle("Choice from")
@@ -106,9 +106,9 @@ class DigitClassifierFragment : BaseNavView<DigitClassifierContract.View, DigitC
             }
         }
 
-        loadedImageView = view.findViewById(R.id.digit_classifier_fragment_image)
+        loadedImageView = view.findViewById(R.id.image_classifier_fragment_image)
 
-        classifyView = view.findViewById<View?>(R.id.digit_classifier_fragment_classify)?.apply {
+        classifyView = view.findViewById<View?>(R.id.image_classifier_fragment_classify)?.apply {
             this.setOnProtectClickListener {
                 loadedImageView?.let { imageView ->
                     (imageView.drawable as?BitmapDrawable)?.bitmap?.let { bitmap ->
@@ -117,12 +117,12 @@ class DigitClassifierFragment : BaseNavView<DigitClassifierContract.View, DigitC
                 }
             }
         }
-        clearView = view.findViewById<View?>(R.id.digit_classifier_fragment_clear)?.apply {
+        clearView = view.findViewById<View?>(R.id.image_classifier_fragment_clear)?.apply {
             this.setOnProtectClickListener {
                 presenter?.clear()
             }
         }
-        resultView = view.findViewById(R.id.digit_classifier_fragment_result)
+        resultView = view.findViewById(R.id.image_classifier_fragment_result)
     }
 
     override fun onLoadedImage(loadedImage: Any?) {

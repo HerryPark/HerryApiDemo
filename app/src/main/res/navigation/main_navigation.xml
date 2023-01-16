@@ -110,5 +110,10 @@
     <fragment
         android:id="@+id/digit_classifier_fragment"
         android:name="com.herry.test.app.tflite.digitclassifier.DigitClassifierFragment"
-        tools:layout="@layout/digit_classifier_fragment" />
+        tools:layout="@layout/image_classifier_fragment" />
+
+    <fragment
+        android:id="@+id/image_classifier_fragment"
+        android:name="com.herry.test.app.tflite.imageclassifier.ImageClassifierFragment"
+        tools:layout="@layout/image_classifier_fragment" />
 </navigation>

@@ -60,8 +60,11 @@ class TFLiteListFragment : BaseNavView<TFLiteListContract.View, TFLiteListContra
         override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
             list.add(ListItemForm { form, holder ->
                 when (NodeRecyclerForm.getBindModel(form, holder)) {
-                    TFLiteListContract.Item.IMAGE_CLASSIFIER -> {
+                    TFLiteListContract.Item.DIGIT_CLASSIFIER -> {
                         navigateTo(destinationId = R.id.digit_classifier_fragment)
+                    }
+                    TFLiteListContract.Item.IMAGE_CLASSIFIER -> {
+                        navigateTo(destinationId = R.id.image_classifier_fragment)
                     }
                     null -> {}
                 }

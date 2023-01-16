@@ -11,6 +11,7 @@ interface TFLiteListContract {
     abstract class Presenter : BasePresenter<View>()
 
     enum class Item {
+        DIGIT_CLASSIFIER,
         IMAGE_CLASSIFIER
     }
 }
