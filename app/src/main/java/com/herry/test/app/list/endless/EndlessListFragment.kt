@@ -45,7 +45,7 @@ class EndlessListFragment : BaseNavView<EndlessListContract.View, EndlessListCon
             activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.list_fragment_title))
-            bindFormModel(view.context, TitleBarForm.Model(title = "Endless List"))
+            bindFormModel(view.context, TitleBarForm.Model(title = "Endless List", backEnable = true))
         }
 
         view.findViewById<RecyclerView>(R.id.list_fragment_list)?.apply {

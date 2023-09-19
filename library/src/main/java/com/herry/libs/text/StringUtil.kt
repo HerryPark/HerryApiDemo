@@ -393,7 +393,7 @@ object StringUtil {
             if (0 < size) {
                 val buffer = ByteArray(size)
                 /*val read = */inputStream.read(buffer)
-                //                Trace.d("Herry", "Read counts = " + read);
+                //                Trace.d("Read counts = " + read);
                 return String(buffer, Charsets.UTF_8)
             }
         } catch (ex: IOException) {

@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -24,6 +23,7 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
+import com.herry.libs.widget.extension.launchWhenResumed
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.widget.TitleBarForm
@@ -57,7 +57,7 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
             activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.pick_list_fragment_title))
-            bindFormModel(view.context, TitleBarForm.Model(title = "Test List"))
+            bindFormModel(view.context, TitleBarForm.Model(title = "Pick List", backEnable = true))
         }
 
         view.findViewById<RecyclerView>(R.id.pick_list_fragment_list)?.apply {
@@ -136,16 +136,16 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                             if (type == PickListContract.PickType.TAKE_PHOTO) {
                                 activityCaller?.call(ACTake.TakePicture(saveFileURI) { result ->
                                     val activity = result.callActivity
-                                    activity.lifecycleScope.launchWhenResumed {
+                                    activity.launchWhenResumed {
                                         presenter?.picked(tempFile = tempFile, picked = result.uris.firstOrNull(), type = type, result.success)
                                     }
                                 })
                             } else {
                                 activityCaller?.call(ACTake.TakeVideo(saveFileURI) { result ->
                                     val activity = result.callActivity
-                                    Trace.d("Herry", "call return: Activity.${activity.lifecycle.currentState}")
-                                    Trace.d("Herry", "call return: View.${lifecycle.currentState}")
-                                    activity.lifecycleScope.launchWhenResumed {
+                                    Trace.d("call return: Activity.${activity.lifecycle.currentState}")
+                                    Trace.d("call return: View.${lifecycle.currentState}")
+                                    activity.launchWhenResumed {
                                         presenter?.picked(tempFile = tempFile, picked = result.uris.firstOrNull(), type = type, result.success)
                                     }
                                 })

@@ -143,7 +143,7 @@ abstract class RecyclerForm : NodeView<RecyclerForm.Holder>() {
 
         holder?.loadingView?.let { view ->
             when (view) {
-                is LoadingCountView -> view.hide(object: LoadingCountView.OnHideListener {
+                is LoadingCountView -> view.hide(listener = object: LoadingCountView.OnHideListener {
                     override fun onDone() {
                         loadingContainerView?.isVisible = false
                     }

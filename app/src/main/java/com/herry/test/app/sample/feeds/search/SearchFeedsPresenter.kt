@@ -119,7 +119,7 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
             )
                 .subscribe { searchText ->
                     if (searchText.isNotEmpty()) {
-//                        Trace.d("Herry", "autoComplete search keyword load : $searchText")
+//                        Trace.d("autoComplete search keyword load : $searchText")
 //                        view.onLoadViewVisible(true)
                         subscribeObservable(
                             getAutoCompleteKeywords(searchText),
@@ -197,7 +197,7 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
     override fun searchFeeds(keyword: String) {
         view ?: return
 
-        Trace.d("Herry", "searchFeeds $keyword")
+        Trace.d("searchFeeds $keyword")
         view?.onChangedViewMode(SearchFeedsContract.ViewMode.SEARCH_RESULT)
         loadFeeds(true, keyword)
         // save
@@ -251,7 +251,7 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
         if (reset || result == null) {
             val nodes = NodeHelper.createNodeGroup()
             if (result != null) {
-                Trace.d("Herry", "displaySearchFeedResults ${result.size}")
+                Trace.d("displaySearchFeedResults ${result.size}")
                 NodeHelper.addModels(nodes, *result.toTypedArray())
             }
             NodeHelper.upsert(this.feedsNodes, nodes)

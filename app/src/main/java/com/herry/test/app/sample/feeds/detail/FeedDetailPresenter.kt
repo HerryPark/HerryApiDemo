@@ -1,6 +1,7 @@
 package com.herry.test.app.sample.feeds.detail
 
-import com.google.android.exoplayer2.ExoPlayer
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import com.herry.libs.media.exoplayer.ExoPlayerManager
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
@@ -12,7 +13,7 @@ import com.herry.test.rx.LastOneObservable
 import com.herry.test.rx.RxUtil
 import io.reactivex.Observable
 
-class FeedDetailPresenter(
+@UnstableApi class FeedDetailPresenter(
     private val callData: FeedDetailCallData
 ) : FeedDetailContract.Presenter() {
 

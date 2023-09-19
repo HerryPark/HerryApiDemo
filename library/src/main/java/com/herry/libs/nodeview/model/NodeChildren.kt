@@ -170,7 +170,7 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
         }
     }
 
-    internal fun replace(parent: Node<*>, nodeChildren: NodeChildren, onChangeCompare: ((src: Any, dest: Any) -> Boolean)? = null) {
+    internal fun replace(parent: Node<*>, nodeChildren: NodeChildren, onCompareForChange: ((src: Any, dest: Any) -> Boolean)? = null) {
         val fromList = getIdList(list)
         val toList = getIdList(nodeChildren.list)
         var fromIndex = 0
@@ -197,7 +197,7 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
                         val toIdList = toList.removeAt(0)
                         var index = 0
                         while (index < fromIdList.size && index < toIdList.size) {
-                            fromIdList[index].replace(node = toIdList[index], onChangeCompare = onChangeCompare)
+                            fromIdList[index].replace(node = toIdList[index], onCompareForChange = onCompareForChange)
                             index++
                         }
 

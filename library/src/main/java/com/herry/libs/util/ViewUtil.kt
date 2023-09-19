@@ -7,10 +7,10 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.content.res.TypedArray
-import android.graphics.Color
-import android.graphics.Rect
+import android.graphics.*
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.os.ResultReceiver
 import android.text.*
 import android.text.method.LinkMovementMethod
@@ -23,6 +23,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
+
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 object ViewUtil {
@@ -289,7 +290,7 @@ object ViewUtil {
     fun convertDpToPixel(dp: Float): Float {
         val metrics = Resources.getSystem().displayMetrics
         //float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        //Trace.d("Herry", "convertDpToPixel dp:" + dp + " to px:" + px);
+        //Trace.d("convertDpToPixel dp:" + dp + " to px:" + px);
         return dp * (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
     }
 
@@ -302,7 +303,7 @@ object ViewUtil {
     fun convertPixelsToDp(px: Float): Float {
         val metrics = Resources.getSystem().displayMetrics
         //float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        //Trace.d("Herry", "convertPixelsToDp px:" + px + " to dp:" + dp);
+        //Trace.d("convertPixelsToDp px:" + px + " to dp:" + dp);
         return px / (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
     }
 
@@ -552,4 +553,110 @@ object ViewUtil {
     fun hasFocus(view: View?): Boolean {
         return null != view && view.hasFocus()
     }
+
+    fun createPaint(color: Int): Paint {
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        paint.style = Paint.Style.STROKE
+        paint.color = color
+        return paint
+    }
+
+    fun createPaint(): Paint {
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        paint.style = Paint.Style.STROKE
+        return paint
+    }
+
+    fun mutatePaint(paint: Paint?, color: Int, strokeWidth: Float, style: Paint.Style? = null) {
+        mutatePaint(paint, true, color, strokeWidth, style)
+    }
+
+    fun mutatePaint(paint: Paint?, antiAlias: Boolean, color: Int, strokeWidth: Float, style: Paint.Style? = null) {
+        if (null == paint) {
+            return
+        }
+        paint.reset()
+        paint.isAntiAlias = antiAlias
+        paint.color = color
+        paint.strokeWidth = strokeWidth
+        if (null != style) {
+            paint.style = style
+        }
+    }
+
+    private fun between(startColor: Int, endColor: Int, factor: Int, steps: Int): Int {
+        val ratio = factor.toFloat() / steps
+        return (endColor * ratio + startColor * (1 - ratio)).toInt()
+    }
+
+    fun gradient(startColor: Int, endColor: Int, factor: Int, steps: Int): Int {
+        val alpha: Int = between(Color.alpha(startColor), Color.alpha(endColor), factor, steps)
+        val red: Int = between(Color.red(startColor), Color.red(endColor), factor, steps)
+        val green: Int = between(Color.green(startColor), Color.green(endColor), factor, steps)
+        val blue: Int = between(Color.blue(startColor), Color.blue(endColor), factor, steps)
+        return Color.argb(alpha, red, green, blue)
+    }
+
+    fun composeRoundedRectPath(rect: RectF, topLeftRadius: Float, topRightRadius: Float, bottomLeftRadius: Float, bottomRightRadius: Float): Path {
+        val path = Path()
+        val topLeft = if (topLeftRadius < 0) 0f else topLeftRadius
+        val topRight = if (topRightRadius < 0) 0f else topRightRadius
+        val bottomLeft = if (bottomLeftRadius < 0) 0f else bottomLeftRadius
+        val bottomRight = if (bottomRightRadius < 0) 0f else bottomRightRadius
+        path.moveTo(rect.left + topLeft, rect.top)
+        path.lineTo(rect.right - topRight, rect.top)
+        path.quadTo(rect.right, rect.top, rect.right, rect.top + topRight)
+        path.lineTo(rect.right, rect.bottom - bottomRight)
+        path.quadTo(rect.right, rect.bottom, rect.right - bottomRight, rect.bottom)
+        path.lineTo(rect.left + bottomLeft, rect.bottom)
+        path.quadTo(rect.left, rect.bottom, rect.left, rect.bottom - bottomLeft)
+        path.lineTo(rect.left, rect.top + topLeft)
+        path.quadTo(rect.left, rect.top, rect.left + topLeft, rect.top)
+        path.close()
+        return path
+    }
+
+    fun isRTL(context: Context?): Boolean {
+        if (context?.resources == null) {
+            return false
+        }
+        return context.resources.configuration?.layoutDirection == View.LAYOUT_DIRECTION_RTL
+    }
+
+    /**
+     * Creates shape drawable
+     * @param context context
+     * @param color drawable fill color
+     * @param radius edge radius (dimen size)
+     * @param applyEdge apply edge (ex Gravity.TOP | Gravity.START | Gravity.BOTTOM | Gravity.END)
+     * @return drawable
+     */
+    fun createShapeDrawable(context: Context, color: Int, radius: Float, applyEdge: Int): Drawable {
+        val drawable = GradientDrawable()
+        drawable.setColor(color)
+        drawable.shape = GradientDrawable.RECTANGLE
+        val startTopEdge = applyEdge and (Gravity.TOP or Gravity.START) == Gravity.TOP or Gravity.START
+        val startBottomEdge = applyEdge and (Gravity.BOTTOM or Gravity.START) == Gravity.BOTTOM or Gravity.START
+        val endTopEdge = applyEdge and (Gravity.TOP or Gravity.END) == Gravity.TOP or Gravity.END
+        val endBottomEdge = applyEdge and (Gravity.BOTTOM or Gravity.END) == Gravity.BOTTOM or Gravity.END
+        val values = floatArrayOf(
+            if (startTopEdge) radius else 0f, if (startTopEdge) radius else 0f,
+            if (endTopEdge) radius else 0f, if (endTopEdge) radius else 0f,
+            if (endBottomEdge) radius else 0f, if (endBottomEdge) radius else 0f,
+            if (startBottomEdge) radius else 0f, if (startBottomEdge) radius else 0f
+        )
+        if (isRTL(context)) {
+            val values2 = floatArrayOf(
+                values[2], values[3],
+                values[0], values[1],
+                values[6], values[7],
+                values[4], values[5]
+            )
+            drawable.cornerRadii = values2
+        } else {
+            drawable.cornerRadii = values
+        }
+        return drawable
+    }
+
 }

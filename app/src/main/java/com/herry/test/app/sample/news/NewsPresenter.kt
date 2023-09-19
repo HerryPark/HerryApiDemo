@@ -1,6 +1,7 @@
 package com.herry.test.app.sample.news
 
-import com.google.android.exoplayer2.ExoPlayer
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import com.herry.libs.media.exoplayer.ExoPlayerManager
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
@@ -13,7 +14,7 @@ import com.herry.test.rx.RxUtil
 import io.reactivex.Observable
 
 
-class NewsPresenter : NewsContract.Presenter() {
+@UnstableApi class NewsPresenter : NewsContract.Presenter() {
 
     companion object {
         const val PAGE_SIZE = 10

@@ -60,6 +60,10 @@ class MVPPresenterLifecycle {
         }
     }
 
+    fun clearPendingStateBlocks() {
+        launchWhenPresenterBlocks.clear()
+    }
+
     private suspend fun launchWhenPresenterStateAtLeast(state: State, block: suspend CoroutineScope.() -> Unit) {
         withContext(Dispatchers.Main.immediate) {
             if (getCurrentState().isAtLeast(state)) {

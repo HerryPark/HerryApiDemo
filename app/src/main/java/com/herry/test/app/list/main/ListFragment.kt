@@ -47,7 +47,7 @@ class ListFragment : BaseNavView<ListContract.View, ListContract.Presenter>(), L
             activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.list_fragment_title))
-            bindFormModel(view.context, TitleBarForm.Model(title = "List"))
+            bindFormModel(view.context, TitleBarForm.Model(title = "List", backEnable = true))
         }
 
         view.findViewById<RecyclerView>(R.id.list_fragment_list)?.apply {

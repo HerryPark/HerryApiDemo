@@ -58,7 +58,7 @@ class LinearSnapExHelper(private val snapStyle: SnapStyle = SnapStyle.CENTER) : 
 
     private fun maybeNotifySnapPositionChange(recyclerView: RecyclerView, idle: Boolean) {
         val snapPosition = getSnapPosition(recyclerView)
-//        Trace.d("Herry", "maybeNotifySnapPositionChange snapPosition : " + snapPosition + ", idle = " + idle);
+//        Trace.d("maybeNotifySnapPositionChange snapPosition : " + snapPosition + ", idle = " + idle);
         if (idle) {
             onSnapPositionChangeListener?.onSnapped(snapPosition)
         } else {
@@ -74,7 +74,7 @@ class LinearSnapExHelper(private val snapStyle: SnapStyle = SnapStyle.CENTER) : 
 //                SnapStyle.START_AND_END -> {
 //                    val start = distanceToStart(targetView, getHorizontalHelper(layoutManager))
 //                    val end = distanceToEnd(targetView, getHorizontalHelper(layoutManager))
-//                    Trace.d("Herry", "LinearSnapExHelper calculateDistanceToFinalSnap start=$start, end=$end")
+//                    Trace.d("LinearSnapExHelper calculateDistanceToFinalSnap start=$start, end=$end")
 //                    out[0] = start
 //                }
                 SnapStyle.START -> {
@@ -114,7 +114,7 @@ class LinearSnapExHelper(private val snapStyle: SnapStyle = SnapStyle.CENTER) : 
 
     override fun findTargetSnapPosition(layoutManager: RecyclerView.LayoutManager, velocityX: Int, velocityY: Int): Int {
         val targetPos: Int = super.findTargetSnapPosition(layoutManager, velocityX, velocityY)
-        Trace.d("Herry", "findTargetSnapPosition targetPos = $targetPos")
+        Trace.d("findTargetSnapPosition targetPos = $targetPos")
         return targetPos
     }
 

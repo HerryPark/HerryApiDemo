@@ -12,6 +12,7 @@ interface TFLiteListContract {
 
     enum class Item {
         DIGIT_CLASSIFIER,
-        IMAGE_CLASSIFIER
+        IMAGE_CLASSIFIER,
+        LIVE_CLASSIFIER
     }
 }

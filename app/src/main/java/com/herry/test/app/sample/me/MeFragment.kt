@@ -1,5 +1,6 @@
 package com.herry.test.app.sample.me
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,7 @@ import com.herry.test.app.base.nav.BaseNavFragment
 
 class MeFragment: BaseNavFragment() {
 
-    override fun onScreenWindowStyle(): ScreenWindowStyle = ScreenWindowStyle(isFullScreen = true)
+    override fun onScreenWindowStyle(context: Context): ScreenWindowStyle = ScreenWindowStyle(isFullScreen = true)
 
     private var container: View? = null
 

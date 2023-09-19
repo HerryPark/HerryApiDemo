@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide
 import com.herry.libs.app.activity_caller.module.ACPermission
 import com.herry.libs.app.activity_caller.module.ACTake
 import com.herry.libs.app.nav.NavBundleUtil
+import com.herry.libs.log.Trace
 import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.setImage
 import com.herry.libs.widget.extension.setOnProtectClickListener

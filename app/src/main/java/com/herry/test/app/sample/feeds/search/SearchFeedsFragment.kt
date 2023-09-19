@@ -39,7 +39,7 @@ import java.util.*
 
 class SearchFeedsFragment: BaseNavView<SearchFeedsContract.View, SearchFeedsContract.Presenter>(), SearchFeedsContract.View {
 
-    override fun onScreenWindowStyle(): ScreenWindowStyle = ScreenWindowStyle(false, StatusBarStyle.LIGHT)
+    override fun onScreenWindowStyle(context: Context): ScreenWindowStyle = ScreenWindowStyle(false, StatusBarStyle.LIGHT)
 
     override fun onCreatePresenter(): SearchFeedsContract.Presenter = SearchFeedsPresenter()
 
@@ -196,7 +196,7 @@ class SearchFeedsFragment: BaseNavView<SearchFeedsContract.View, SearchFeedsCont
     }
 
     override fun onUpdatedSearchFeedResult() {
-        Trace.d("Herry", "onUpdatedSearchFeedResult")
+        Trace.d("onUpdatedSearchFeedResult")
         keywordForm.requestFocus(focus = false, withKeyboard = true)
         // hide soft keyboard
         ViewUtil.hideSoftKeyboard(requireContext(), container)

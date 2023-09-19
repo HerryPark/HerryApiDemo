@@ -87,6 +87,15 @@ fun ImageView.setImage(
     setImage(drawable, statefulColorSateResId, notStatefulColorSateResId)
 }
 
+fun ImageView.setImage(drawable: Drawable?, statefulColorSate: ColorStateList?, notStatefulColorSate: ColorStateList?) {
+    // set drawable to image view
+    setImageDrawable(drawable)
+
+    drawable ?: return
+
+    // sets color sate list
+    imageTintList = if (drawable.isStateful) statefulColorSate else notStatefulColorSate
+}
 
 fun View.setViewSize(width: Int, height: Int) {
     val params = this.layoutParams ?: ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -262,6 +271,21 @@ fun ImageView.setTint(@ColorRes statefulColorSateResId: Int, @ColorRes notStatef
     setImage(drawable, statefulColorSateResId, notStatefulColorSateResId)
 }
 
+fun ImageView.setTint(statefulColorSate: ColorStateList?) {
+    setTint(statefulColorSate, statefulColorSate)
+}
+
+fun ImageView.setTint(statefulColorSate: ColorStateList?, notStatefulColorSate: ColorStateList?) {
+    setImage(drawable, statefulColorSate, notStatefulColorSate)
+}
+
 fun ImageView.setTintColor(@ColorInt color: Int) {
     this.imageTintList = ColorStateList.valueOf(color)
 }
+
+fun View.convertDpToPx(dp: Float): Int {
+    return if (null == context) {
+        0
+    } else (dp * context.resources.displayMetrics.density + 0.5f).toInt()
+}
+

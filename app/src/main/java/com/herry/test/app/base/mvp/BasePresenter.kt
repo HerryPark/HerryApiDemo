@@ -1,5 +1,8 @@
 package com.herry.test.app.base.mvp
 
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -7,6 +10,12 @@ import com.herry.libs.log.Trace
 import com.herry.libs.mvp.MVPPresenter
 import com.herry.libs.mvp.MVPPresenterLifecycle
 import com.herry.libs.mvp.MVPView
+import com.herry.libs.util.network.NetworkConnectionChecker
+import com.herry.libs.util.network.OnNetworkConnectionChanged
+import com.herry.libs.util.perform.PerformBlocks
+import com.herry.libs.widget.extension.launchWhenCreated
+import com.herry.libs.widget.extension.launchWhenResumed
+import com.herry.libs.widget.extension.launchWhenStarted
 import com.herry.test.rx.LastOneObservable
 import com.herry.test.rx.RxSchedulerProvider
 import io.reactivex.Observable
@@ -36,6 +45,8 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
 
     private var relaunched = false
 
+    private var networkConnectionChecker: NetworkConnectionChecker? = null
+
     protected var viewLifecycleOwner: LifecycleOwner? = null
         private set
 
@@ -53,12 +64,32 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
             _compositeDisposable = CompositeDisposable()
         }
 
+        (view as? MVPView<*>)?.getViewContext()?.let { context: Context ->
+            networkConnectionChecker = NetworkConnectionChecker(context, object : NetworkConnectionChecker.OnConnection {
+                override fun onConnected() {
+                    launch(LaunchWhenPresenter.LAUNCHED) {
+                        (view as? OnNetworkConnectionChanged)?.onChangedNetwork(OnNetworkConnectionChanged.NetworkStatus.CONNECTED)
+                        changeNetworkTo(true)
+                    }
+                }
+
+                override fun onDisconnected() {
+                    launch(LaunchWhenPresenter.LAUNCHED) {
+                        (view as? OnNetworkConnectionChanged)?.onChangedNetwork(OnNetworkConnectionChanged.NetworkStatus.DISCONNECTED)
+                        changeNetworkTo(false)
+                    }
+                }
+            })
+        }
+
         presenterLifecycle.setState(state = MVPPresenterLifecycle.State.ATTACHED)
     }
 
     override fun onDetach() {
         this.view = null
         this.viewLifecycleOwner = null
+
+        networkConnectionChecker = null
 
         compositeDisposable.dispose()
 
@@ -82,23 +113,24 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         fun isLaunch() = this == LAUNCH || this == RELAUNCH
     }
 
-    final override fun onLaunch() {
+    final override fun onResume() {
         val action: () -> Unit = {
             this.view?.let {
+                networkConnectionChecker?.register()
                 val viewLifecycleScope = viewLifecycleOwner?.lifecycleScope
                 if (!launched) {
                     launched = true
                     Trace.d(TAG, "onResume (LAUNCH) [${this::class.java.simpleName}] ")
-                    onResume(it, ResumeState.LAUNCH)
+                    setResumeState(it, ResumeState.LAUNCH)
                     presenterLifecycle.setState(viewLifecycleScope = viewLifecycleScope, state = MVPPresenterLifecycle.State.LAUNCHED)
                 } else if (relaunched) {
                     relaunched = false
                     Trace.d(TAG, "onResume (RELAUNCH) [${this::class.java.simpleName}] ")
-                    onResume(it, ResumeState.RELAUNCH)
+                    setResumeState(it, ResumeState.RELAUNCH)
                     presenterLifecycle.setState(viewLifecycleScope = viewLifecycleScope, state = MVPPresenterLifecycle.State.LAUNCHED)
                 } else {
                     Trace.d(TAG, "onResume (RESUME) [${this::class.java.simpleName}] ")
-                    onResume(it, ResumeState.RESUME)
+                    setResumeState(it, ResumeState.RESUME)
                     presenterLifecycle.setState(viewLifecycleScope = viewLifecycleScope, state = MVPPresenterLifecycle.State.RESUMED)
                 }
             }
@@ -109,7 +141,17 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         } ?: action()
     }
 
+    private var currentResumeState: ResumeState? = null
+
+    private fun setResumeState(view: V, resumeState: ResumeState) {
+        currentResumeState = resumeState
+        onResume(view, resumeState)
+    }
+
+    protected fun getResumeState(): ResumeState? = currentResumeState
+
     final override fun onPause() {
+        networkConnectionChecker?.unregister()
         compositeDisposable.clear()
         this.view?.let {
             onPause(it)
@@ -140,11 +182,11 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
     protected open fun launch(
         launchWhen: LaunchWhenView,
         block: suspend CoroutineScope.() -> Unit): Job? {
-        return viewLifecycleOwner?.lifecycleScope?.run {
+        return viewLifecycleOwner?.run {
             when (launchWhen) {
-                LaunchWhenView.CREATED -> launchWhenCreated(block)
-                LaunchWhenView.STARTED -> launchWhenStarted(block)
-                LaunchWhenView.RESUMED -> launchWhenResumed(block)
+                LaunchWhenView.CREATED -> this.launchWhenCreated(block = block)
+                LaunchWhenView.STARTED -> this.launchWhenStarted(block = block)
+                LaunchWhenView.RESUMED -> this.launchWhenResumed(block = block)
             }
         }
     }
@@ -168,6 +210,24 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         }
     }
 
+    protected fun clearPendingLaunch() {
+        presenterLifecycle.clearPendingStateBlocks()
+    }
+
+    private val postOnUIThreadHandler = Handler(Looper.getMainLooper())
+
+    protected fun postOnUIThread(delayMs: Long = 0L, function: () -> Unit) {
+        if (view != null) {
+            postOnUIThreadHandler.postDelayed({
+                function.invoke()
+            }, delayMs)
+        }
+    }
+
+    protected fun cancelOnUIThreadPosting() {
+        postOnUIThreadHandler.removeCallbacksAndMessages(null)
+    }
+
     private var launchWhenAfterTransition: ConcurrentLinkedQueue<suspend CoroutineScope.() -> Unit>? = null
 
     protected fun startTransition() {
@@ -185,6 +245,18 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
                 blocks.clear()
             }?.also {
                 launchWhenAfterTransition = null
+            }
+        }
+    }
+
+    protected fun runOnUIThread(function: () -> Unit) {
+        if (view != null) {
+            if (Looper.myLooper() == Looper.getMainLooper()) {
+                function.invoke()
+            } else {
+                Handler(Looper.getMainLooper()).post {
+                    function.invoke()
+                }
             }
         }
     }
@@ -284,4 +356,28 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
             )
         )
     }
+
+    @Suppress("SameParameterValue")
+    protected fun createPerformBlocks(
+        launchWhen: LaunchWhenPresenter = LaunchWhenPresenter.LAUNCHED
+    ): PerformBlocks = object : PerformBlocks() {
+        override fun performActionsJob(block: suspend CoroutineScope.() -> Unit): Job? {
+            return launch(launchWhen) { block() }
+        }
+
+        override fun actionJob(block: suspend CoroutineScope.() -> Unit): Job? {
+            return launch(launchWhen) { block() }
+        }
+    }
+
+
+    private fun changeNetworkTo(on: Boolean) {
+        val view = this.view ?: return
+
+        onChangedNetworkConnection(view, on)
+    }
+
+    protected open fun onChangedNetworkConnection(view: V, on: Boolean) {}
+
+    protected fun isConnectedNetwork(): Boolean = networkConnectionChecker?.isConnected() ?: false
 }

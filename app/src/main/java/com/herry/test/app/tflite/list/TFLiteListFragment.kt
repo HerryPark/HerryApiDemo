@@ -66,6 +66,9 @@ class TFLiteListFragment : BaseNavView<TFLiteListContract.View, TFLiteListContra
                     TFLiteListContract.Item.IMAGE_CLASSIFIER -> {
                         navigateTo(destinationId = R.id.image_classifier_fragment)
                     }
+                    TFLiteListContract.Item.LIVE_CLASSIFIER -> {
+                        navigateTo(destinationId = R.id.live_classifier_fragment)
+                    }
                     null -> {}
                 }
             })

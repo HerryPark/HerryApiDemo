@@ -1,6 +1,6 @@
 package com.herry.test.app.sample.news
 
-import com.google.android.exoplayer2.ExoPlayer
+import androidx.media3.exoplayer.ExoPlayer
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
 import com.herry.test.app.base.nav.BaseNavPresenter

@@ -50,7 +50,7 @@ class IntentListFragment : BaseNavView<IntentListContract.View, IntentListContra
             activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.intent_list_fragment_title))
-            bindFormModel(view.context, TitleBarForm.Model(title = "Test List"))
+            bindFormModel(view.context, TitleBarForm.Model(title = "Intent List", backEnable = true))
         }
 
         view.findViewById<RecyclerView>(R.id.intent_list_fragment_list)?.apply {

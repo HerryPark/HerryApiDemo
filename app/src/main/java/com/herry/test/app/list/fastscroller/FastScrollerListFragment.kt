@@ -46,7 +46,7 @@ class FastScrollerListFragment: BaseNavView<FastScrollerListContract.View, FastS
             activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.fast_scroller_list_fragment_title))
-            bindFormModel(view.context, TitleBarForm.Model(title = "Fast Scroller List"))
+            bindFormModel(view.context, TitleBarForm.Model(title = "Fast Scroller List", backEnable = true))
         }
 
         val recyclerViewFastScroller = view.findViewById<RecyclerViewFastScrollerView>(R.id.fast_scroller_list_fragment_rvfs)

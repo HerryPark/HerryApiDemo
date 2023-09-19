@@ -119,7 +119,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                     ACNavigation.IntentCaller(
                         Intent(requireActivity(), NestedNavFragmentsActivity::class.java), onResult = { result ->
                             if (result.resultCode == Activity.RESULT_OK) {
-                                Trace.d("Herry", "result = OK")
+                                Trace.d("result = OK")
                             }
                         }
                     ))
@@ -147,6 +147,12 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
             }
             MainContract.TestItemType.TENSOR_FLOW_LITE -> {
                 navigateTo(destinationId = R.id.tflite_list_fragment)
+            }
+            MainContract.TestItemType.WIDGETS -> {
+                navigateTo(destinationId = R.id.widgets_fragment)
+            }
+            MainContract.TestItemType.TIMELINE -> {
+                navigateTo(destinationId = R.id.timeline_fragment)
             }
         }
     }
@@ -200,6 +206,8 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                 MainContract.TestItemType.SAMPLE_APP -> "Sample Application"
                 MainContract.TestItemType.PAINTER -> "Painter"
                 MainContract.TestItemType.TENSOR_FLOW_LITE -> "Tensorflow-lite"
+                MainContract.TestItemType.WIDGETS -> "Widgets"
+                MainContract.TestItemType.TIMELINE -> "Timeline"
             }
         }
     }

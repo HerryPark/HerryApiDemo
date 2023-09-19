@@ -25,4 +25,10 @@ object ApiHelper {
     fun hasOSv11(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R // 30
 
     fun hasOSv12(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S // 31
+
+    fun hasOSv12L(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S_V2 // 32
+
+    fun hasOSv13(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU // 33
+
+    fun hasOSv14(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE // 34
 }

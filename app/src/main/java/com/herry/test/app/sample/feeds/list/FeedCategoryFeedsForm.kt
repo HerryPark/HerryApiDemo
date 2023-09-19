@@ -83,7 +83,7 @@ class FeedCategoryFeedsForm(
 
     override fun onScrolled(holder: Holder, recyclerView: RecyclerView, dx: Int, dy: Int) {
         val presenter = holder.presenter ?: return
-//        Trace.d("Herry", "onScrolled presenter (${(holder.presenter as? FeedCategoryFeedsPresenter)?.category})")
+//        Trace.d("onScrolled presenter (${(holder.presenter as? FeedCategoryFeedsPresenter)?.category})")
         val spanCount = (recyclerView.layoutManager as? StaggeredGridLayoutManager)?.spanCount ?: return
         val positionArray = IntArray(spanCount)
         val firstVisiblePosition =(recyclerView.layoutManager as? StaggeredGridLayoutManager)?.findFirstCompletelyVisibleItemPositions(positionArray) ?: positionArray
@@ -129,16 +129,16 @@ class FeedCategoryFeedsForm(
 
     override fun onAttachedTabRecyclerView(view: TabRecyclerContract.View, presenter: TabRecyclerContract.Presenter) {
 //        if (presenter !is FeedCategoryFeedsPresenter) return
-//        Trace.d("Herry", "onAttachedTabRecyclerView ${presenter.category}")
+//        Trace.d("onAttachedTabRecyclerView ${presenter.category}")
     }
 
     override fun onDetachedTabRecyclerView(view: TabRecyclerContract.View, presenter: TabRecyclerContract.Presenter) {
 //        if (presenter !is FeedCategoryFeedsPresenter) return
-//        Trace.d("Herry", "onDetachedTabRecyclerView ${presenter.category}")
+//        Trace.d("onDetachedTabRecyclerView ${presenter.category}")
     }
 
     override fun onRecycledTabRecyclerView(view: TabRecyclerContract.View, presenter: TabRecyclerContract.Presenter) {
 //        if (presenter !is FeedCategoryFeedsPresenter) return
-//        Trace.d("Herry", "onRecycledTabRecyclerView ${presenter.category}")
+//        Trace.d("onRecycledTabRecyclerView ${presenter.category}")
     }
 }

@@ -1,5 +1,6 @@
 package com.herry.test.app.sample.news
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +26,7 @@ import com.herry.test.app.sample.tags.TagsFragment
 
 class NewsFragment: BaseNavView<NewsContract.View, NewsContract.Presenter>(), NewsContract.View {
 
-    override fun onScreenWindowStyle(): ScreenWindowStyle = ScreenWindowStyle(true, StatusBarStyle.DARK)
+    override fun onScreenWindowStyle(context: Context): ScreenWindowStyle = ScreenWindowStyle(true, StatusBarStyle.DARK)
 
     override fun onCreatePresenter(): NewsContract.Presenter = NewsPresenter()
 

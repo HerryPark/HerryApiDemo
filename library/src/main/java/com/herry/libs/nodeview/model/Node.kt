@@ -21,7 +21,7 @@ open class Node<M : Any> {
         this.model = model
     }
 
-    private fun setModel(value: M, onChangeCompare: ((src: Any, dest: Any) -> Boolean)? = null) {
+    private fun setModel(value: M, onCompareForChange: ((src: Any, dest: Any) -> Boolean)? = null) {
         if (value is INodeModelGroup) {
             this@Node.nodeModelGroup?.setOnGetNode(null)
             this@Node.nodeModelGroup?.setOnChangedExpansion(null)
@@ -60,7 +60,7 @@ open class Node<M : Any> {
 
         val current = this.model
         this.model = value
-        if (onChangeCompare?.invoke(current, value) ?: (current != value)) {
+        if (onCompareForChange?.invoke(current, value) ?: (current != value)) {
             changedNode()
         }
     }
@@ -206,7 +206,7 @@ open class Node<M : Any> {
         nodeChildren.remove(position, count)
     }
 
-    fun replace(node: Node<*>, onChangeCompare: ((src: Any, dest: Any) -> Boolean)? = null) {
+    fun replace(node: Node<*>, onCompareForChange: ((src: Any, dest: Any) -> Boolean)? = null) {
         if (node.model is INodeModelGroup) {
             val nodeModel = node.model as INodeModelGroup
             val childList = mutableListOf<Node<*>>()
@@ -220,16 +220,16 @@ open class Node<M : Any> {
                 // notify all data changed
                 nodeChildren.clear()
                 @Suppress("UNCHECKED_CAST")
-                setModel(value = node.model as M, onChangeCompare = onChangeCompare)
+                setModel(value = node.model as M, onCompareForChange = onCompareForChange)
                 nodeChildren.add(this@Node, childList)
             } else {
                 @Suppress("UNCHECKED_CAST")
-                setModel(value = node.model as M, onChangeCompare = onChangeCompare)
-                nodeChildren.replace(parent = this@Node, nodeChildren = node.nodeChildren, onChangeCompare = onChangeCompare)
+                setModel(value = node.model as M, onCompareForChange = onCompareForChange)
+                nodeChildren.replace(parent = this@Node, nodeChildren = node.nodeChildren, onCompareForChange = onCompareForChange)
             }
         } else {
             @Suppress("UNCHECKED_CAST")
-            setModel(value = node.model as M, onChangeCompare = onChangeCompare)
+            setModel(value = node.model as M, onCompareForChange = onCompareForChange)
         }
     }
 

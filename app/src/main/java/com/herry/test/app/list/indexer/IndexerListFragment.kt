@@ -49,7 +49,7 @@ class IndexerListFragment : BaseNavView<IndexerListContract.View, IndexerListCon
             activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.alphabet_indexer_scroller_list_fragment_title))
-            bindFormModel(view.context, TitleBarForm.Model(title = "Indexer List"))
+            bindFormModel(view.context, TitleBarForm.Model(title = "Indexer List", backEnable = true))
         }
 
         val recyclerViewScroller = view.findViewById<RecyclerViewAlphabetIndexerScrollerView>(R.id.alphabet_indexer_scroller_list_fragment_rvais)

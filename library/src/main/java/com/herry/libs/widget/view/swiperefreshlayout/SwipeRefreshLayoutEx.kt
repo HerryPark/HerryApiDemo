@@ -27,9 +27,7 @@ class SwipeRefreshLayoutEx: SwipeRefreshLayout {
     }
 
     override fun canChildScrollUp(): Boolean {
-        return if (null != mOnChildScrollUpListener) {
-            mOnChildScrollUpListener!!.canChildScrollUp()
-        } else super.canChildScrollUp()
+        return mOnChildScrollUpListener?.canChildScrollUp() ?: super.canChildScrollUp()
     }
 
     fun setBlockRefreshingTouch(blockRefreshingTouch: Boolean) {

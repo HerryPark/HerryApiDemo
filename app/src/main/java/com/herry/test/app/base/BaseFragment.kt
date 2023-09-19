@@ -30,7 +30,7 @@ open class BaseFragment : DialogFragment() {
         private const val TAG = "ARG_TAG"
     }
 
-    protected open fun onScreenWindowStyle(): ScreenWindowStyle? = null
+    protected open fun onScreenWindowStyle(context: Context): ScreenWindowStyle? = null
 
     private fun createTag(): String = "${this::class.java.simpleName}#${System.currentTimeMillis()}"
 
@@ -74,9 +74,10 @@ open class BaseFragment : DialogFragment() {
     override fun onResume() {
         super.onResume()
 
+        val context = this.context ?: return
         val defaultScreenWindowStyle = ScreenWindowStyle(isFullScreen = ViewUtil.isSystemFullScreen(context))
         val screenStyle = if (ViewUtil.isPortraitOrientation(context)) {
-            onScreenWindowStyle() ?: defaultScreenWindowStyle
+            onScreenWindowStyle(context) ?: defaultScreenWindowStyle
         } else {
             defaultScreenWindowStyle
         }
@@ -88,12 +89,10 @@ open class BaseFragment : DialogFragment() {
                 StatusBarStyle.DARK -> ViewUtil.setStatusBarTransparent(activity, mode = ViewUtil.StatusBarMode.DARK)
                 null -> {
                     val typedValue = TypedValue()
-                    val attrs: TypedArray? = context?.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.statusBarColor))
-                    if (attrs != null) {
-                        val color = attrs.getColor(0, 0)
-                        ViewUtil.setStatusBarColor(activity, color)
-                        attrs.recycle()
-                    }
+                    val attrs: TypedArray = context.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.statusBarColor))
+                    val color = attrs.getColor(0, 0)
+                    ViewUtil.setStatusBarColor(activity, color)
+                    attrs.recycle()
                 }
             }
         }
@@ -140,12 +139,12 @@ open class BaseFragment : DialogFragment() {
         loading?.show()
     }
 
-    protected open fun hideLoading() {
+    protected open fun hideLoading(force: Boolean = false) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
-            loading?.hide()
+            loading?.hide(force)
         } else {
             Handler(Looper.getMainLooper()).post {
-                loading?.hide()
+                loading?.hide(force)
             }
         }
     }

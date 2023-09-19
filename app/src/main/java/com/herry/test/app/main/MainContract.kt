@@ -31,6 +31,8 @@ interface MainContract {
         RESIZING_UI,
         SAMPLE_APP,
         PAINTER,
-        TENSOR_FLOW_LITE
+        TENSOR_FLOW_LITE,
+        WIDGETS,
+        TIMELINE
     }
 }

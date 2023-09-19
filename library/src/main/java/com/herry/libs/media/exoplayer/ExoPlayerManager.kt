@@ -3,29 +3,35 @@ package com.herry.libs.media.exoplayer
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.*
-import com.google.android.exoplayer2.util.EventLogger
+import androidx.annotation.MainThread
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.herry.libs.log.Trace
-import java.util.concurrent.ConcurrentHashMap
 
-
-@Suppress("unused")
+@UnstableApi @Suppress("unused")
 class ExoPlayerManager(
     private val context: () -> Context?,
     private val isSingleInstance: Boolean = false,
     private val progressUpdateIntervalMs: Long = MAX_UPDATE_INTERVAL_MS,
+    private val loadControl: DefaultLoadControl? = DefaultLoadControl.Builder()
+        .setBufferDurationsMs(8 * 1024, 64 * 1024, 50, 1024)
+        .build(),
     private val onListener: OnListener? = null
 ) {
 
     companion object {
-        private const val TAG = "ExoPlayerManager"
         private const val MAX_UPDATE_INTERVAL_MS = 1_000L
     }
 
-    private val playerMap = ConcurrentHashMap<String, ExoPlayer>()
-    private val playerProgressUpdater = ConcurrentHashMap<String, Handler>()
+    private val tag = "ExoPlayerManager"
+    private val playerMap = HashMap<String, ExoPlayer>()
+    private val playerProgressUpdater = HashMap<String, Handler>()
     private var isMute = false
 
     interface OnListener {
@@ -35,16 +41,13 @@ class ExoPlayerManager(
         fun onProgressUpdated(id: String, current: Long, buffered: Long, total: Long) {}
     }
 
-    enum class PlayerState(val value: Int) {
-        UNKNOWN (-1),
-        IDLE (Player.STATE_IDLE),
-        BUFFERING (Player.STATE_BUFFERING),
-        READY (Player.STATE_READY),
-        ENDED (Player.STATE_ENDED);
-
-        companion object {
-            fun generate(value: Int): PlayerState = values().firstOrNull { it.value == value } ?: UNKNOWN
-        }
+    enum class PlayerState {
+        UNKNOWN,
+        IDLE,
+        BUFFERING,
+        PLAYING,
+        PAUSED,
+        ENDED
     }
 
     enum class PlayWhenReadyChangeReason(val value: Int) {
@@ -65,169 +68,153 @@ class ExoPlayerManager(
         }
     }
 
-    private fun internalPrepare(id: String, url: String, playWhenReady: Boolean): ExoPlayer? {
+    private fun internalPrepare(id: String, url: String, fromPlay: Boolean): ExoPlayer? {
         val context = context.invoke() ?: return null
 
         var player = playerMap[id]
         if (player == null) {
-            Trace.d(TAG, "[$id] create player")
-            player = ExoPlayer.Builder(context)
-                .setRenderersFactory(DefaultRenderersFactory(context))
-//                .setLoadControl(DefaultLoadControl.Builder().build())
-                .build().apply {
-                addAnalyticsListener(EventLogger())
+            player = ExoPlayer.Builder(context).apply {
+                loadControl?.let {
+                    setLoadControl(it)
+                }
+            }.build().apply {
                 addListener(object : Player.Listener {
-                    private var prevState: PlayerState? = null
                     override fun onPlaybackStateChanged(playbackState: Int) {
-                        val state = PlayerState.generate(playbackState)
-//                        if (prevState == PlayerState.READY && state == PlayerState.BUFFERING) {
-//                            (playerMap[id])?.let { player ->
-//                                player.seekTo(0)
-//                            }
-//                        }
-                        prevState = state
-//                        if (state == PlayerState.READY) {
-//                            (playerMap[id])?.let { player ->
-//                                player.seekTo(player.currentPosition)
-//                            }
-
-//                        }
-                        Trace.d(TAG, "onPlaybackStateChanged[$id]: playbackState: $state")
+                        val state = convertToPlayerState(id, playbackState)
+                        Trace.d(tag, "onPlaybackStateChanged[$id]: playbackState: $state")
                         onListener?.onPlayerStateChanged(id, state)
                         updateProgress(id)
                     }
 
                     override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                         val playWhenReadyChangeReason = PlayWhenReadyChangeReason.generate(reason)
-                        Trace.d(TAG, "onPlayWhenReadyChanged[$id]: playWhenReady: $playWhenReady reason: $playWhenReadyChangeReason")
+                        Trace.d(tag, "onPlayWhenReadyChanged[$id]: playWhenReady: $playWhenReady reason: $playWhenReadyChangeReason")
                         onListener?.onPlayWhenReadyChanged(id, playWhenReady, playWhenReadyChangeReason)
                         updateProgress(id)
                     }
 
                     override fun onIsPlayingChanged(isPlaying: Boolean) {
-                        Trace.d(TAG, "onIsPlayingChanged[$id]: isPlaying: $isPlaying")
+                        Trace.d(tag, "onIsPlayingChanged[$id]: isPlaying: $isPlaying")
                         onListener?.onIsPlayingChanged(id, isPlaying)
                         updateProgress(id)
                     }
 
-                    override fun onEvents(player: Player, events: Player.Events) {
-                        val playerId: String = playerMap.filter { it.value === player }.keys.firstOrNull() ?: "?"
-                        if (events.contains(Player.EVENT_SURFACE_SIZE_CHANGED)) {
-                            Trace.d("Herry", "onEvents [$playerId]: isPlaying: ${player.isPlaying}, changed surface size = ${player.surfaceSize}")
-                        }
-//                        Trace.d(TAG, "onEvents[$playerId]: isPlaying: ${player.isPlaying}, event = $events")
+                    override fun onIsLoadingChanged(isLoading: Boolean) {
+                        Trace.d(tag, "onIsLoadingChanged[$id]: isLoading: $isLoading")
+                        super.onIsLoadingChanged(isLoading)
                     }
 
                     override fun onPlayerError(error: PlaybackException) {
-                        Trace.d(TAG, "onPlayerError: $error")
+                        Trace.d(tag, "onPlayerError[$id]: error: ${error.errorCode} ${error.errorCodeName}")
+                        super.onPlayerError(error)
                     }
 
                     override fun onPlayerErrorChanged(error: PlaybackException?) {
-                        Trace.d(TAG, "onPlayerErrorChanged: $error")
-                    }
-
-                    override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {
-                        Trace.d(TAG, "onAvailableCommandsChanged: $availableCommands")
+                        Trace.d(tag, "onPlayerErrorChanged[$id]: error: ${error?.errorCode} ${error?.errorCodeName}")
+                        super.onPlayerErrorChanged(error)
                     }
                 })
             }
-
             playerMap[id] = player
         }
 
-        Trace.d(TAG, "[$id] > playbackState = ${PlayerState.generate(player.playbackState)}")
         if (player.playbackState == Player.STATE_IDLE) {
-//            player.setMediaItem(MediaItem.fromUri("file:///android_asset/reEncoding_2I26ZcBPRFjIgRnFg9etjAha0mf.mp4"))
             player.setMediaSource(
-//                ProgressiveMediaSource.Factory(DefaultHttpDataSource.Factory())
                 ProgressiveMediaSource.Factory(DefaultDataSource.Factory(context))
-//                    .createMediaSource(MediaItem.fromUri(url))
-                    .createMediaSource(MediaItem.fromUri("file:///android_asset/reEncoding_2I26ZcBPRFjIgRnFg9etjAha0mf.mp4"))
-//                    .createMediaSource(MediaItem.fromUri("file:///android_asset/BigBuckBunny.mp4"))
-//                    .createMediaSource(MediaItem.fromUri("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"))
+                    .createMediaSource(MediaItem.fromUri(url))
             )
 
             if (isSingleInstance) {
-                if (playWhenReady) {
-                    Trace.d(TAG, "[$TAG] prepare for $id")
-                    player.playWhenReady = true
+                if (fromPlay) {
+                    Trace.d(tag, "[$id] prepare for $url")
                     player.prepare()
                 }
             } else {
-                Trace.d(TAG, "[$TAG] prepare for $id")
-                player.playWhenReady = playWhenReady
+                Trace.d(tag, "[$id] prepare for $url")
                 player.prepare()
             }
         }
 
-        Trace.d(TAG, "[$TAG] using media code counts: (${playerMap.size})")
+        Trace.d(tag, "prepare using media code counts: (${playerMap.size})")
 
         return player
     }
 
+    @MainThread
     fun prepare(id: String, url: String): ExoPlayer? {
-        Trace.d(TAG, "[$TAG] call prepare for $id")
-        return internalPrepare(id = id, url = url, playWhenReady = false)
+        return internalPrepare(id, url, false)
     }
 
+    @MainThread
     fun getPlayer(id: String): ExoPlayer? = playerMap[id]
 
+    @MainThread
     fun play(id: String, url: String, repeat: Boolean = false) {
         var player = playerMap[id]
-        Trace.d(TAG, "[$TAG] call play for $id")
+
+        // release unused players for the single instance mode
+        if (isSingleInstance) {
+            playerMap.keys.filter { it != id }.forEach { unusedPlayerId -> stop(unusedPlayerId) }
+        }
+
         if (player == null) {
-            player = internalPrepare(id = id, url = url, playWhenReady = true) ?: return
+            player = internalPrepare(id, url, true) ?: return
             player.repeatMode = if (repeat) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
+            player.playWhenReady = true
         } else {
             player.repeatMode = if (repeat) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
-            if (isSingleInstance) {
-                Trace.d(TAG, "[$TAG] prepare for $id")
-                player.playWhenReady = true
-                player.prepare()
-
-                Trace.d(TAG, "[$TAG] using media code counts: (${playerMap.size})")
-            } else {
-                Trace.d(TAG, "[$TAG] play for $id")
+            if (player.playbackState == Player.STATE_ENDED) {
+                player.seekTo( 0L)
                 player.play()
+            } else {
+                if (isSingleInstance) {
+                    Trace.d(tag, "[$id] prepare")
+                    player.prepare()
+                    player.playWhenReady = true
+                } else {
+                    Trace.d(tag, "[$id] play")
+                    player.play()
+                }
             }
+            Trace.d(tag, "play using media code counts: (${playerMap.size})")
         }
 
         setVolume(player, isMute)
     }
 
+    @MainThread
     fun stop(id: String) {
         val player = playerMap[id]
-        player?.let { data ->
-//            exoPlayer.stop()
-//            exoPlayer.clearMediaItems()
-            player.release()
+        player?.let { exoPlayer ->
+            exoPlayer.stop()
+            exoPlayer.release()
 
             playerMap.remove(id)
 
-            Trace.d(TAG, "[$TAG] stopped for $id, player total counts = ${playerMap.size}")
+            Trace.d(tag, "[$id] stopped, player total counts = ${playerMap.size}")
         }
 
-        Trace.d(TAG, "[$TAG] using media code counts: (${playerMap.size})")
+        Trace.d(tag, "stop using media code counts: (${playerMap.size})")
 
         stopProgressUpdater(id)
     }
 
+    @MainThread
     fun stopAll() {
-        Trace.d(TAG, "[$TAG] stop all (${playerMap.size})")
-        playerMap.forEach { (_, exoPlayer) ->
-            //            exoPlayer.stop()
-//            exoPlayer.clearMediaItems()
+        Trace.d(tag, "stop all (${playerMap.size})")
+        playerMap.values.forEach { exoPlayer ->
+            exoPlayer.stop()
             exoPlayer.release()
-            exoPlayer.clearVideoSurface()
         }
         playerMap.clear()
 
         stopAllProgressUpdater()
     }
 
+    @MainThread
     fun isPlaying(id: String): Boolean {
         val player = playerMap[id] ?: return false
-        return player.playbackState == Player.STATE_READY && player.isPlaying
+        return player.isPlaying
     }
 
     fun isReadyToPlay(id: String): Boolean {
@@ -235,27 +222,54 @@ class ExoPlayerManager(
         return player.playbackState == Player.STATE_READY
     }
 
+    @MainThread
+    fun isPaused(id: String): Boolean {
+        return getPlayerStatus(id) == PlayerState.PAUSED
+    }
+
+    @MainThread
     fun isEnd(id: String): Boolean {
         val player = playerMap[id] ?: return false
-        return player.playbackState == Player.STATE_ENDED
+        return player.playbackState == Player.STATE_ENDED || player.duration <= player.currentPosition + 1L
     }
 
+    @MainThread
+    fun isIdle(id: String): Boolean {
+        val player = playerMap[id] ?: return false
+        return player.playbackState == Player.STATE_IDLE
+    }
+
+    @MainThread
     fun pause(id: String) {
-        playerMap[id]?.pause()
+        playerMap[id]?.let { player ->
+            Trace.d(tag, "[$id] pause")
+            player.pause()
+        }
     }
 
+    @MainThread
     fun resume(id: String) {
         playerMap[id]?.let { player ->
+            Trace.d(tag, "[$id] resume")
             setVolume(player, isMute)
-            if (PlayerState.generate(player.playbackState) == PlayerState.ENDED) {
+            val currentPosition = player.currentPosition
+            val totalDuration = player.duration - 1
+            if (currentPosition >= totalDuration || convertToPlayerState(id, player.playbackState) == PlayerState.ENDED) {
                 player.seekTo(0)
             }
             player.play()
         }
     }
 
+    @MainThread
     fun seekTo(id: String, time: Long) {
-        playerMap[id]?.seekTo(time)
+        playerMap[id]?.let { player ->
+            val seekingTime = (if (player.duration <= time) player.duration - 1L else time).run {
+                if (this < 0L) 0L else this
+            }
+            Trace.d(tag, "[$id] seekTo ($time > $seekingTime)")
+            player.seekTo(seekingTime)
+        }
     }
 
     fun isMute(): Boolean = this.isMute
@@ -264,6 +278,7 @@ class ExoPlayerManager(
         player.volume = if (mute) 0f else 1f
     }
 
+    @MainThread
     fun mute() {
         playerMap.values.forEach { exoPlayer ->
             setVolume(exoPlayer, true)
@@ -271,6 +286,7 @@ class ExoPlayerManager(
         this.isMute = true
     }
 
+    @MainThread
     fun unMute() {
         playerMap.values.forEach { exoPlayer ->
             setVolume(exoPlayer, false)
@@ -306,7 +322,7 @@ class ExoPlayerManager(
             // Constrain the delay to avoid too frequent / infrequent updates.
             delayMs = kotlin.math.max(progressUpdateIntervalMs, kotlin.math.min(delayMs, MAX_UPDATE_INTERVAL_MS))
             postProgressUpdatingDelayed(id, delayMs)
-        } else if (playbackState != Player.STATE_ENDED && playbackState != Player.STATE_IDLE) {
+        } else if (playbackState == Player.STATE_BUFFERING) {
             postProgressUpdatingDelayed(id, MAX_UPDATE_INTERVAL_MS)
         }
     }
@@ -335,5 +351,26 @@ class ExoPlayerManager(
             handler.removeCallbacksAndMessages(null)
         }
         playerProgressUpdater.clear()
+    }
+
+    @MainThread
+    private fun convertToPlayerState(id: String, playbackState: Int): PlayerState {
+        return when (playbackState) {
+            Player.STATE_IDLE -> PlayerState.IDLE
+            Player.STATE_BUFFERING -> PlayerState.BUFFERING
+            Player.STATE_READY -> {
+                getPlayer(id)?.playWhenReady?.let { playing ->
+                    if (playing) PlayerState.PLAYING else PlayerState.PAUSED
+                } ?: PlayerState.UNKNOWN
+            }
+            Player.STATE_ENDED -> PlayerState.ENDED
+            else -> PlayerState.UNKNOWN
+        }
+    }
+
+    @MainThread
+    fun getPlayerStatus(id: String): PlayerState {
+        val player = getPlayer(id) ?: return PlayerState.UNKNOWN
+        return convertToPlayerState(id, player.playbackState)
     }
 }

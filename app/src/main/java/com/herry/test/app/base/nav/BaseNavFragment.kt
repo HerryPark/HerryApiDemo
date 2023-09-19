@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.IdRes
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.DialogFragmentNavigator
 import androidx.navigation.fragment.findNavController
 import com.herry.libs.app.nav.NavBundleUtil
@@ -11,10 +12,12 @@ import com.herry.libs.app.nav.NavMovement
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.extension.getNavCurrentDestinationID
+import com.herry.libs.widget.extension.launchWhenResumed
 import com.herry.libs.widget.extension.setFragmentResult
 import com.herry.libs.widget.extension.setFragmentResultListener
 import com.herry.test.app.base.BaseActivity
 import com.herry.test.app.base.BaseFragment
+import kotlinx.coroutines.*
 
 @Suppress("SameParameterValue", "KDocUnresolvedReference")
 open class BaseNavFragment : BaseFragment(), NavMovement {
@@ -42,16 +45,36 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
 
     override fun onNavigateUpResult(@IdRes fromNavigationId: Int, result: Bundle) {}
 
-    protected fun navigateUp(resultOK: Boolean = false, result: Bundle? = null, force: Boolean = false) {
-        navigateUp(NavBundleUtil.createNavigationBundle(resultOK, result), force)
+    private var isOnNavigateUpDelay: Boolean = false
+
+    protected fun navigateUp(resultOK: Boolean = false, result: Bundle? = null, force: Boolean = false, delayMs: Long = 0L) {
+        navigateUp(NavBundleUtil.createNavigationBundle(resultOK, result), force, delayMs)
     }
 
     /**
      * finish fragment
      * @param result result value
      * @param force true is ignore blocked navigate up
+     * @param delayMs action delay millisecond
      */
-    protected fun navigateUp(result: Bundle? = null, force: Boolean = false) {
+    protected fun navigateUp(result: Bundle? = null, force: Boolean = false, delayMs: Long = 0L) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            if (isOnNavigateUpDelay) {
+                return@launch
+            }
+            if (delayMs > 0L && !force) {
+                withContext(Dispatchers.Default) {
+                    isOnNavigateUpDelay = true
+                    delay(delayMs)
+                    isOnNavigateUpDelay = false
+                }
+            }
+
+            navigateUpInternal(result, force)
+        }
+    }
+
+    private fun navigateUpInternal(result: Bundle? = null, force: Boolean = false) {
         if (!force && onNavigateUp()) {
             return
         }
@@ -67,7 +90,9 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
         }
 
         if (currentNavDestination is DialogFragmentNavigator.Destination) {
-            navigateUpDialogFragment(result)
+            launchWhenResumed {
+                navigateUpDialogFragment(result)
+            }
             return
         }
 
@@ -88,6 +113,7 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
         }
     }
 
+    // This function must be called from onResume.
     private fun navigateUpDialogFragment(bundle: Bundle? = null) {
         val callNavigationId = findNavController().previousBackStackEntry?.destination?.id
         val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
@@ -95,7 +121,7 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
         if (callNavigationId != null && currentDestinationId != null) {
             findNavController().popBackStack()
 
-            val result = bundle ?: NavBundleUtil.createNavigationBundle(false)
+            val result = bundle ?: getNavigateUpResult()
             NavBundleUtil.addFromNavigationId(result, currentDestinationId)
             setFragmentResult(
                 callNavigationId.toString(),
@@ -136,8 +162,8 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(NavigationID, navigationID)
         super.onSaveInstanceState(outState)
+        outState.putInt(NavigationID, navigationID)
     }
 
     /**

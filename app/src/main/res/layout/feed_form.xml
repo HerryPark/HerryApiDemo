@@ -9,7 +9,7 @@
     tools:viewBindingIgnore="true"
     tools:ignore="HardcodedText" >
 
-    <com.google.android.exoplayer2.ui.StyledPlayerView
+    <androidx.media3.ui.PlayerView
         android:id="@+id/feed_form_video_view"
         android:layout_width="0dp"
         android:layout_height="0dp"

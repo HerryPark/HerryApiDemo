@@ -177,9 +177,9 @@ object NodeHelper {
             node.endTransition()
     }
 
-    fun <T : INodeModel> upsert(parent: Node<out INodeModel>, from: Node<T>?, to: Node<T>, onChangeCompare: ((src: Any, dest: Any) -> Boolean)? = null): Node<T> {
+    fun <T : INodeModel> upsert(parent: Node<out INodeModel>, from: Node<T>?, to: Node<T>, onCompareForChange: ((src: Any, dest: Any) -> Boolean)? = null): Node<T> {
         return if (from != null) {
-            from.replace(node = to, onChangeCompare = onChangeCompare)
+            from.replace(node = to, onCompareForChange = onCompareForChange)
             from
         } else {
             addNode(parent, to)
@@ -190,8 +190,8 @@ object NodeHelper {
     /**
      * Changes node (if 'from' is A and 'to' is B, Changes A to B).
      */
-    fun <T : INodeModel> upsert(from: Node<T>, to: Node<T>, onChangeCompare: ((src: Any, dest: Any) -> Boolean)? = null) {
-        from.replace(node = to, onChangeCompare = onChangeCompare)
+    fun <T : INodeModel> upsert(from: Node<T>, to: Node<T>, onCompareForChange: ((src: Any, dest: Any) -> Boolean)? = null) {
+        from.replace(node = to, onCompareForChange = onCompareForChange)
     }
 
     inline fun <reified T : Any> transition(node: Node<T>, block: (transitionNode: Node<T>) -> Unit) {

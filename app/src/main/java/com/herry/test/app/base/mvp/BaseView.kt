@@ -33,7 +33,7 @@ abstract class BaseView<V: MVPView<P>, P: MVPPresenter<V>>: BaseFragment(), MVPV
     override fun onResume() {
         super.onResume()
 
-        presenter?.onLaunch()
+        presenter?.onResume()
     }
 
     override fun onPause() {

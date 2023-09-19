@@ -36,7 +36,7 @@ abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment()
     override fun onResume() {
         super.onResume()
 
-        presenter?.onLaunch()
+        presenter?.onResume()
     }
 
     override fun onPause() {
@@ -74,10 +74,10 @@ abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment()
     }
 
     final override fun showViewLoading() {
-        super.showLoading()
+        showLoading()
     }
 
     final override fun hideViewLoading(success: Boolean) {
-        super.hideLoading()
+        hideLoading()
     }
 }

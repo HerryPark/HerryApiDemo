@@ -57,7 +57,7 @@ class ShareMediaListFragment : BaseNavView<ShareMediaListContract.View, ShareMed
             activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.share_media_list_fragment_title))
-            bindFormModel(view.context, TitleBarForm.Model(title = "Share Media List"))
+            bindFormModel(view.context, TitleBarForm.Model(title = "Share Media List", backEnable = true))
         }
 
         view.findViewById<RecyclerView>(R.id.share_media_list_fragment_list)?.apply {

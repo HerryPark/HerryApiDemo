@@ -1,6 +1,7 @@
 package com.herry.libs.widget.view.recyclerview.tabrecycler
 
 import android.os.Parcelable
+import androidx.lifecycle.lifecycleScope
 import com.herry.libs.nodeview.model.NodeHelper
 
 abstract class TabRecyclerPresenter : TabRecyclerContract.Presenter() {
@@ -8,9 +9,20 @@ abstract class TabRecyclerPresenter : TabRecyclerContract.Presenter() {
     protected var view: TabRecyclerContract.View? = null
         private set
     private var launched = false
+    private var relaunched = false
+
     private var saveInstanceState: Parcelable? = null
 
     protected val nodes = NodeHelper.createNodeGroup()
+
+    private var currentResumeState: ResumeState? = null
+
+    private fun setResumeState(view: TabRecyclerContract.View, resumeState: ResumeState) {
+        currentResumeState = resumeState
+        onResume(view, resumeState)
+    }
+
+    protected fun getResumeState(): ResumeState? = currentResumeState
 
     override fun onAttach(view: TabRecyclerContract.View) {
         this.view = view
@@ -19,11 +31,15 @@ abstract class TabRecyclerPresenter : TabRecyclerContract.Presenter() {
             it.clearChild()
             NodeHelper.addNode(it, nodes)
             it.endTransition()
+
             if (!launched) {
                 launched = true
-                onLaunch()
+                setResumeState(view, ResumeState.LAUNCH)
+            } else if (relaunched) {
+                relaunched = false
+                setResumeState(view, ResumeState.RELAUNCH)
             } else {
-                onResume()
+                setResumeState(view, ResumeState.RESUME)
             }
         }
         view.onAttached(saveInstanceState)
@@ -42,7 +58,7 @@ abstract class TabRecyclerPresenter : TabRecyclerContract.Presenter() {
 
     fun init() {
         launched = if (view != null) {
-            onLaunch()
+            onResume()
             true
         } else {
             nodes.clearChild()

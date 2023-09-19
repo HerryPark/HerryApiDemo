@@ -43,13 +43,6 @@ class PickListPresenter : PickListContract.Presenter() {
         NodeHelper.upsert(this.nodes, nodes)
 
         this.nodes.endTransition()
-
-        launch(LaunchWhenPresenter.RESUMED) {
-            Trace.d("Herry", "do resumed 1 at loadList()")
-        }
-        launch(LaunchWhenPresenter.RESUMED) {
-            Trace.d("Herry", "do resumed 2 at loadList()")
-        }
     }
 
     override fun pick(type: PickListContract.PickType) {
@@ -104,16 +97,16 @@ class PickListPresenter : PickListContract.Presenter() {
     }
 
     override fun picked(tempFile: File, picked: Uri?, type: PickListContract.PickType, success: Boolean) {
-        Trace.d("Herry", "picked 1 currentState = Presenter.${getCurrentPresenterState()}")
+        Trace.d("picked 1 currentState = Presenter.${getCurrentPresenterState()}")
         launch(LaunchWhenView.RESUMED) {
-            Trace.d("Herry", "do View.RESUMED : called from picked()")
+            Trace.d("do View.RESUMED : called from picked()")
         }
         launch(LaunchWhenPresenter.RESUMED) {
-            Trace.d("Herry", "1 Presenter.RESUMED : called from picked() currentState = Presenter.${getCurrentPresenterState()} thread = ${Thread.currentThread().name}")
+            Trace.d("1 Presenter.RESUMED : called from picked() currentState = Presenter.${getCurrentPresenterState()} thread = ${Thread.currentThread().name}")
         }
-        Trace.d("Herry", "picked 2 currentState = Presenter.${getCurrentPresenterState()}")
+        Trace.d("picked 2 currentState = Presenter.${getCurrentPresenterState()}")
         launch(LaunchWhenPresenter.LAUNCHED) {
-            Trace.d("Herry", "2 Presenter.LAUNCHED : called from picked() currentState = Presenter.${getCurrentPresenterState()}")
+            Trace.d("2 Presenter.LAUNCHED : called from picked() currentState = Presenter.${getCurrentPresenterState()}")
             val context = view?.getViewContext() ?: return@launch
             if (type == PickListContract.PickType.TAKE_PHOTO) {
                 if (success) {
@@ -122,7 +115,7 @@ class PickListPresenter : PickListContract.Presenter() {
                             mediaScanning(tempFile.absolutePath)
                         }
 
-                        Trace.d("Herry", "path: ${tempFile.absolutePath}")
+                        Trace.d("path: ${tempFile.absolutePath}")
 
                         view?.onPicked("taked ${tempFile.absolutePath}")
                     } else {
@@ -139,7 +132,7 @@ class PickListPresenter : PickListContract.Presenter() {
                             mediaScanning(tempFile.absolutePath)
                         }
 
-                        Trace.d("Herry", "path: ${tempFile.absolutePath}")
+                        Trace.d("path: ${tempFile.absolutePath}")
 
                         view?.onPicked("taked ${tempFile.absolutePath}")
                     } else {
@@ -151,7 +144,7 @@ class PickListPresenter : PickListContract.Presenter() {
                 }
             }
         }
-        Trace.d("Herry", "picked 3 currentState = Presenter.${getCurrentPresenterState()}")
+        Trace.d("picked 3 currentState = Presenter.${getCurrentPresenterState()}")
     }
 
 

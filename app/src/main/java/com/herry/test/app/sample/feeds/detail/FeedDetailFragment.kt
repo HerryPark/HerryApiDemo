@@ -73,7 +73,7 @@ class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContrac
         }
     }
 
-    override fun onScreenWindowStyle(): ScreenWindowStyle = ScreenWindowStyle(true, StatusBarStyle.DARK)
+    override fun onScreenWindowStyle(context: Context): ScreenWindowStyle = ScreenWindowStyle(true, StatusBarStyle.DARK)
 
     override fun onCreatePresenter(): FeedDetailContract.Presenter? {
         val callData = getCallData(arguments) ?: return null

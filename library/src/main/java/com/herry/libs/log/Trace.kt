@@ -2,21 +2,10 @@ package com.herry.libs.log
 
 import android.util.Log
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicReference
 
 @Suppress("unused")
 object Trace {
-    private val TAG = AtomicReference<String>()
-
     private val DEBUG = AtomicBoolean(false)
-
-    fun setTAG(tag: String?) {
-        TAG.set(tag ?: "")
-    }
-
-    private fun getTAG(): String? {
-        return TAG.get()
-    }
 
     fun setDebug(debug: Boolean) {
         DEBUG.set(debug)
@@ -26,31 +15,56 @@ object Trace {
         return DEBUG.get()
     }
 
-    fun e(tag: String? = getTAG(), log: String?, throwable: Throwable? = null) {
+    fun e(tag: String, log: String, throwable: Throwable? = null) {
         Log.e(tag, log, throwable)
     }
 
-    fun d(tag: String? = getTAG(), log: String?) {
+    fun e(log: String, throwable: Throwable? = null) {
+        val callerElement = Exception().stackTrace[1]
+        this.e(callerElement.fileName, "[${callerElement.fileName} (${callerElement.lineNumber})] $log", throwable)
+    }
+    
+    fun d(tag: String, log: String) {
         if (isDebug()) {
-            Log.d(tag, log!!)
+            Log.d(tag, log)
         }
     }
 
-    fun w(tag: String? = getTAG(), log: String?) {
+    fun d(log: String) {
+        val callerElement = Exception().stackTrace[1]
+        this.d(callerElement.fileName, "[${callerElement.fileName} (${callerElement.lineNumber})] $log")
+    }
+
+    fun w(tag: String, log: String) {
         if (isDebug()) {
-            Log.w(tag, log!!)
+            Log.w(tag, log)
         }
     }
 
-    fun i(tag: String? = getTAG(), log: String?) {
+    fun w(log: String) {
+        val callerElement = Exception().stackTrace[1]
+        this.w(callerElement.fileName, "[${callerElement.fileName} (${callerElement.lineNumber})] $log")
+    }
+
+    fun i(tag: String, log: String) {
         if (isDebug()) {
-            Log.i(tag, log!!)
+            Log.i(tag, log)
         }
     }
 
-    fun v(tag: String? = getTAG(), log: String?) {
+    fun i(log: String) {
+        val callerElement = Exception().stackTrace[1]
+        this.i(callerElement.fileName, "[${callerElement.fileName} (${callerElement.lineNumber})] $log")
+    }
+
+    fun v(tag: String, log: String) {
         if (isDebug()) {
-            Log.v(tag, log!!)
+            Log.v(tag, log)
         }
+    }
+
+    fun v(log: String) {
+        val callerElement = Exception().stackTrace[1]
+        this.v(callerElement.fileName, "[${callerElement.fileName} (${callerElement.lineNumber})] $log")
     }
 }

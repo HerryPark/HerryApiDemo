@@ -10,6 +10,9 @@ import android.graphics.Point
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
@@ -1311,15 +1314,31 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         listView?.isScrollbarFadingEnabled = fade
     }
 
-    fun show() {
+    private val showHandler: Handler = object : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            if (msg.what == MESSAGE_SHOW) {
+                if (!isShowing()) {
+                    show()
+                }
+            }
+        }
+    }
+
+    fun show(delayMillis: Long = 0L) {
+        showHandler.removeCallbacksAndMessages(null)
         try {
-            dialog?.show()
+            if (delayMillis <= 0L) {
+                dialog?.show()
+            } else {
+                showHandler.sendEmptyMessageDelayed(MESSAGE_SHOW, delayMillis)
+            }
         } catch (e: Exception) {
             Log.e(this.javaClass.simpleName, e.message, e)
         }
     }
 
     override fun cancel() {
+        showHandler.removeCallbacksAndMessages(null)
         try {
             dialog?.cancel()
         } catch (e: Exception) {
@@ -1328,6 +1347,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     }
 
     override fun dismiss() {
+        showHandler.removeCallbacksAndMessages(null)
         try {
             dialog?.dismiss()
         } catch (e: Exception) {
@@ -1457,7 +1477,13 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         }
     }
 
-    fun isShowing(): Boolean = dialog?.isShowing == true
+    fun isShowing(): Boolean {
+        if (showHandler.hasMessages(MESSAGE_SHOW)) {
+            return true
+        }
+
+        return dialog?.isShowing == true
+    }
 
     fun setBackgroundDrawable(drawable: Drawable?) {
         // set dialog background
@@ -1624,6 +1650,8 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         const val WRAP_CONTENT = WindowManager.LayoutParams.WRAP_CONTENT
         const val BUTTON_POSITIVE = DialogInterface.BUTTON_POSITIVE
 
+        private const val MESSAGE_SHOW: Int = 1
+
         /**
          * The identifier for the negative button.
          */
@@ -1659,6 +1687,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             }
 
             this.dialog = object : Dialog(_context, dialogThemeResId) {
+
                 override fun onBackPressed() {
                     if (onBackPressedListener?.onBackPressed() == true) {
                         return

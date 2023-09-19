@@ -469,4 +469,153 @@
             <flag name="marquee" value="4" />
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="PieChartView">
+        <attr name="pieChartViewLineWidth" format="dimension" />
+        <attr name="pieChartViewBackgroundColor" format="color" />
+        <attr name="pieChartViewStyle" format="integer">
+            <flag name="line" value="0" />
+            <flag name="fill" value="1" />
+        </attr>
+        <attr name="pieChartViewWidthRatio" format="float" />
+    </declare-styleable>
+
+    <!-- RadarChartView -->
+    <declare-styleable name="RadarChartView">
+        <attr name="rcv_startLocation" format="enum" >
+            <enum name="north" value="0" />
+            <enum name="east" value="1" />
+            <enum name="south" value="2" />
+            <enum name="west" value="3" />
+        </attr>
+        <attr name="rcv_direction" format="enum" >
+            <enum name="right" value="0" />
+            <enum name="left" value="1" />
+        </attr>
+        <attr name="rcv_outLineColor" format="reference|color" />
+        <attr name="rcv_outLineWidth" format="dimension" />
+        <attr name="rcv_outLineStyle" format="enum" >
+            <enum name="line" value="0" />
+            <enum name="dot" value="1" />
+        </attr>
+        <attr name="rcv_outLineDotDash" format="dimension" />
+        <attr name="rcv_outLineDotGap" format="dimension" />
+
+        <attr name="rcv_inLineColor" format="reference|color" />
+        <attr name="rcv_inLineWidth" format="dimension" />
+        <attr name="rcv_inLineStyle" format="enum" >
+            <enum name="line" value="0" />
+            <enum name="dot" value="1" />
+        </attr>
+        <attr name="rcv_inLineDotDash" format="dimension" />
+        <attr name="rcv_inLineDotGap" format="dimension" />
+
+        <attr name="rcv_tickLineColor" format="reference|color" />
+        <attr name="rcv_tickLineWidth" format="dimension" />
+        <attr name="rcv_tickLineStyle" format="enum" >
+            <enum name="line" value="0" />
+            <enum name="dot" value="1" />
+        </attr>
+        <attr name="rcv_tickLineDotDash" format="dimension" />
+        <attr name="rcv_tickLineDotGap" format="dimension" />
+        <attr name="rcv_ticks" format="string" />
+
+        <attr name="rcv_radius" format="dimension" />
+        <attr name="rcv_maxValue" format="integer" />
+
+        <attr name="rcv_titlesColor" format="reference|color" />
+        <attr name="rcv_titlesMargin" format="dimension" />
+        <attr name="rcv_titlesSize" format="dimension" />
+
+        <attr name="rcv_titles" format="string" />
+        <!--<attr name="rcv_items" format="string" />-->
+
+    </declare-styleable>
+
+    <!-- CircularProgressChartView -->
+    <declare-styleable name="CircularProgressChartView">
+        <attr name="ccv_startLocation" format="enum" >
+            <enum name="north" value="0" />
+            <enum name="east" value="1" />
+            <enum name="south" value="2" />
+            <enum name="west" value="3" />
+        </attr>
+        <attr name="ccv_direction" format="enum" >
+            <enum name="right" value="0" />
+            <enum name="left" value="1" />
+        </attr>
+        <attr name="ccv_startEdge" format="enum" >
+            <enum name="butt" value="0" />
+            <enum name="round" value="1" />
+        </attr>
+        <attr name="ccv_endEdge" format="enum" >
+            <enum name="butt" value="0" />
+            <enum name="round" value="1" />
+        </attr>
+        <attr name="ccv_radius" format="dimension" />
+        <attr name="ccv_maxValue" format="integer" />
+        <attr name="ccv_maxAngle" format="float" />
+
+        <attr name="ccv_axisGap" format="dimension" />
+
+        <attr name="ccv_baseColor" format="reference|color" />
+
+        <attr name="ccv_bars" format="string" />
+        <attr name="ccv_barThickness" format="dimension" />
+
+    </declare-styleable>
+
+    <!-- BarProgressCharView -->
+    <declare-styleable name="ProgressBarChartView">
+        <attr name="bpcv_direction" format="enum" >
+            <enum name="left_to_right" value="1" />
+            <enum name="right_to_left" value="2" />
+            <enum name="top_to_bottom" value="3" />
+            <enum name="bottom_to_top" value="4" />
+        </attr>
+        <attr name="bpcv_barColor" format="reference|color" />
+        <attr name="bpcv_max" format="float" />
+        <attr name="bpcv_value" format="float" />
+        <attr name="bpcv_roundEdgeTopStart" format="dimension" />
+        <attr name="bpcv_roundEdgeTopEnd" format="dimension" />
+        <attr name="bpcv_roundEdgeBottomStart" format="dimension" />
+        <attr name="bpcv_roundEdgeBottomEnd" format="dimension" />
+
+        <attr name="bpcv_labelLocation" format="enum" >
+            <enum name="start" value="1" />
+            <enum name="end" value="2" />
+        </attr>
+        <attr name="bpcv_labelText" format="reference|string" />
+        <attr name="bpcv_labelTextSize" format="dimension" />
+        <attr name="bpcv_labelMargin" format="dimension" />
+        <attr name="bpcv_labelInnerTextColor" format="reference|color" />
+        <attr name="bpcv_labelOuterTextColor" format="reference|color" />
+        <attr name="bpcv_labelTextStyle"  format="enum" >
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+        </attr>
+
+    </declare-styleable>
+
+    <declare-styleable name="SpinnerView">
+        <attr name="sv_textColor" format="reference|color" />
+        <attr name="sv_overlayColor" format="reference|color" />
+        <attr name="sv_smallDotRadius" format="dimension" />
+        <attr name="sv_bigDotRadius" format="dimension" />
+        <attr name="sv_indicatorInset" format="dimension" />
+        <attr name="sv_indicatorWidth" format="dimension" />
+        <attr name="sv_textSize" format="dimension" />
+        <attr name="sv_textFormatPattern" format="string" />
+        <attr name="sv_maxValue" format="float" />
+        <attr name="sv_minValue" format="float" />
+        <attr name="sv_value" format="float" />
+        <attr name="sv_stepGapSize" format="dimension" />
+        <attr name="sv_stepMarginStart" format="dimension" />
+        <attr name="sv_stepMarginEnd" format="dimension" />
+        <attr name="sv_stepValue" format="float" />
+        <attr name="sv_stepBigValue" format="float" />
+        <attr name="sv_textStepValue" format="float" />
+        <attr name="sv_flingEnabled" format="boolean" />
+        <attr name="sv_showEdgeText" format="boolean" />
+    </declare-styleable>
 </resources>

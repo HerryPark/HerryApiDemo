@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 
+@Suppress("unused")
 class CircleView : View {
 
     private val paint = Paint()
@@ -23,10 +24,8 @@ class CircleView : View {
         }
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
-        canvas ?: return
 
         val width = width.toFloat()
         val height = height.toFloat()

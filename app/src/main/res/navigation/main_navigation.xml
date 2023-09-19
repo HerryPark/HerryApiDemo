@@ -116,4 +116,24 @@
         android:id="@+id/image_classifier_fragment"
         android:name="com.herry.test.app.tflite.imageclassifier.ImageClassifierFragment"
         tools:layout="@layout/image_classifier_fragment" />
+
+    <fragment
+        android:id="@+id/live_classifier_fragment"
+        android:name="com.herry.test.app.tflite.liveclassifier.LiveClassifierFragment"
+        tools:layout="@layout/live_classifier_fragment" />
+
+    <fragment
+        android:id="@+id/widgets_fragment"
+        android:name="com.herry.test.app.widgets.main.WidgetsFragment"
+        tools:layout="@layout/widgets_fragment" />
+
+    <fragment
+        android:id="@+id/spinners_fragment"
+        android:name="com.herry.test.app.widgets.spinner.SpinnerFragment"
+        tools:layout="@layout/spinners_fragment" />
+
+    <fragment
+        android:id="@+id/timeline_fragment"
+        android:name="com.herry.test.app.timeline.TimelineFragment"
+        tools:layout="@layout/timeline_fragment" />
 </navigation>

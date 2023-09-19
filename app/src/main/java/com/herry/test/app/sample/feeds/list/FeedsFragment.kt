@@ -1,5 +1,6 @@
 package com.herry.test.app.sample.feeds.list
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +26,7 @@ import com.herry.test.widget.TabLayoutForm
 
 class FeedsFragment: BaseNavView<FeedsContract.View, FeedsContract.Presenter>(), FeedsContract.View {
 
-    override fun onScreenWindowStyle(): ScreenWindowStyle = ScreenWindowStyle(false, StatusBarStyle.LIGHT)
+    override fun onScreenWindowStyle(context: Context): ScreenWindowStyle = ScreenWindowStyle(false, StatusBarStyle.LIGHT)
 
     override fun onCreatePresenter(): FeedsContract.Presenter = FeedsPresenter()
 

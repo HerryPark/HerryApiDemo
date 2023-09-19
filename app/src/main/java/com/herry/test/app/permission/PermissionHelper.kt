@@ -2,6 +2,7 @@ package com.herry.test.app.permission
 
 import android.Manifest
 import android.content.Context
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.view.dialog.AppDialog
@@ -29,18 +30,24 @@ object PermissionHelper {
         return permissions.firstOrNull { context.checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED } == null
     }
 
-    fun createPermissionSettingScreenPopup(context: Context?, permissions: Array<String>): AppDialog? {
+    fun createPermissionSettingScreenPopup(context: Context?, onCancel: ((dialog: DialogInterface) -> Unit)? = null): AppDialog? {
         context ?: return null
 
         return Popup(context).apply {
             setCancelable(false)
             setTitle("Setting permissions")
             setMessage("Permission settings are turned off and can not access those services.\n\nPlease turn in [Settings] > [authority].")
-            setPositiveButton("OK") { dialog, _ ->
+            setPositiveButton(android.R.string.ok) { dialog, _ ->
                 dialog.dismiss()
                 AppUtil.showAppInfoSettingScreen(context)
             }
-            setNegativeButton("Cancel")
+            setNegativeButton(android.R.string.cancel,
+                if (onCancel != null) {
+                    DialogInterface.OnClickListener { dialog, _ ->
+                        onCancel.invoke(dialog)
+                    }
+                } else null
+            )
         }
     }
 }

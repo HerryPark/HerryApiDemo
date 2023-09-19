@@ -43,19 +43,31 @@ class FeedCategoryFeedsPresenter(val category: FeedCategory) : TabRecyclerPresen
         super.onDetach()
     }
 
-    override fun onLaunch() {
-//        Trace.d("Herry", "onLaunch : $category")
-        loadFeeds(true)
-    }
-
-    override fun onResume() {
-//        Trace.d("Herry", "onResume  $category to : $currentPosition")
-        if (isEmpty()) {
+    override fun onResume(view: TabRecyclerContract.View, state: ResumeState) {
+        if (state.isLaunch()) {
             loadFeeds(true)
         } else {
-            view?.onScrollToPosition(currentPosition)
+            if (isEmpty()) {
+                loadFeeds(true)
+            } else {
+                view?.onScrollToPosition(currentPosition)
+            }
         }
     }
+
+    //    override fun onResume() {
+////        Trace.d("onLaunch : $category")
+//        loadFeeds(true)
+//    }
+//
+//    override fun onResume() {
+////        Trace.d("onResume  $category to : $currentPosition")
+//        if (isEmpty()) {
+//            loadFeeds(true)
+//        } else {
+//            view?.onScrollToPosition(currentPosition)
+//        }
+//    }
 
     override fun loadMore() {
         loadFeeds(false)
@@ -66,7 +78,7 @@ class FeedCategoryFeedsPresenter(val category: FeedCategory) : TabRecyclerPresen
 
     override fun setCurrentPosition(position: Int) {
         this.currentPosition = position
-//        Trace.d("Herry", "scrollToPosition  $category to : $currentPosition")
+//        Trace.d("scrollToPosition  $category to : $currentPosition")
     }
 
     override fun onPause() {

@@ -77,7 +77,7 @@ abstract class BaseActivity : ACActivity() {
     }
 
     override fun getBlockedPermissionPopup(permissions: Array<String>): Dialog? {
-        return PermissionHelper.createPermissionSettingScreenPopup(this, permissions)?.getDialog()
+        return PermissionHelper.createPermissionSettingScreenPopup(this)?.getDialog()
     }
 
     protected fun finish(withoutAnimation: Boolean) {

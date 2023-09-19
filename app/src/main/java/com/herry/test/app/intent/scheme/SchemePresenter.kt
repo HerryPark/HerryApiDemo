@@ -42,12 +42,19 @@ class SchemePresenter : SchemeContract.Presenter() {
             SchemeContract.SchemaData("Detail Notice page", "kinemaster://kinemaster/notice/619b57583787a72405552015", "https://kinema.link/page/s5L2"),
             SchemeContract.SchemaData("Project Feed Main page", "kinemaster://kinemaster/projectfeed", "https://kinema.link/page/zEih"),
             SchemeContract.SchemaData("Detail Project Feed ", "kinemaster://kinemaster/projectfeed/61fb33a130535402f7a7dcf0 ", "https://kinema.link/page/w8m1"),
+            SchemeContract.SchemaData("Detail Project Feed > Comment", "kinemaster://kinemaster/projectfeed/604def9401071402c972bb2e/comment/245 ", ""),
             SchemeContract.SchemaData("Project Feed category", "kinemaster://kinemaster/projectfeed/category/5fbcff7150ab1428a91ee16f", "https://kinema.link/page/DheA"),
             SchemeContract.SchemaData("Project Keyword search result", "kinemaster://kinemaster/projectfeed/search/background", "https://kinema.link/page/7Q5L"),
-            SchemeContract.SchemaData("Mix", "", ""),
-            SchemeContract.SchemaData("Mix Detail Feed", "", ""),
-            SchemeContract.SchemaData("Me", "", ""),
-            SchemeContract.SchemaData("Create", "", ""),
+            SchemeContract.SchemaData("Me", "kinemaster://kinemaster/me", ""),
+            SchemeContract.SchemaData("Me > Edit Profile", "kinemaster://kinemaster/me/profile", ""),
+            SchemeContract.SchemaData("Me > Mix", "kinemaster://kinemaster/me/mix", ""),
+            SchemeContract.SchemaData("Me > Follow", "kinemaster://kinemaster/me/follower", ""),
+            SchemeContract.SchemaData("User (Me)", "kinemaster://kinemaster/user/395", ""),
+            SchemeContract.SchemaData("User (Me) > Mix", "kinemaster://kinemaster/user/395/mix", ""),
+            SchemeContract.SchemaData("User (Me) > Follow", "kinemaster://kinemaster/user/395/follower", ""),
+            SchemeContract.SchemaData("User", "kinemaster://kinemaster/user/245", ""),
+            SchemeContract.SchemaData("User > Mix", "kinemaster://kinemaster/user/245/mix", ""),
+            SchemeContract.SchemaData("User > Follow", "kinemaster://kinemaster/user/245/follower", ""),
         )
 
         this.nodes.beginTransition()

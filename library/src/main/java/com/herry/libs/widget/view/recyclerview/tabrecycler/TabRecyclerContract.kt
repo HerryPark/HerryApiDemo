@@ -20,8 +20,17 @@ interface TabRecyclerContract {
     }
 
     abstract class Presenter: MVPPresenter<View>() {
+        enum class ResumeState {
+            LAUNCH,
+            RELAUNCH,
+            RESUME;
 
-        protected open fun onResume() {}
+            fun isLaunch() = this == LAUNCH || this == RELAUNCH
+        }
+
+        final override fun onResume() {}
+
+        protected abstract fun onResume(view: View, state: ResumeState)
 
         abstract fun loadMore()
         abstract fun refresh(loading: TabRecyclerLoadingType)

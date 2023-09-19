@@ -52,7 +52,7 @@ class GifListFragment : BaseNavView<GifListContract.View, GifListContract.Presen
             activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.gif_list_fragment_title))
-            bindFormModel(view.context, TitleBarForm.Model(title = "Gif List"))
+            bindFormModel(view.context, TitleBarForm.Model(title = "Gif List", backEnable = true))
         }
 
         view.findViewById<RecyclerView>(R.id.gif_list_fragment_list)?.apply {

@@ -128,4 +128,26 @@
         <item name="android:focusableInTouchMode">true</item>
         <item name="firstActionDrawableSrc">@drawable/ic_back</item>
     </style>
+    
+    <style name="Spinner">
+        <item name="sv_textColor">@color/tbc_100</item>
+        <item name="sv_overlayColor">@color/tbc_0</item>
+        <item name="sv_smallDotRadius">1dp</item>
+        <item name="sv_bigDotRadius">2dp</item>
+        <item name="sv_indicatorInset">3dp</item>
+        <item name="sv_indicatorWidth">6dp</item>
+        <item name="sv_textSize">14dp</item>
+        <item name="sv_textFormatPattern">"#"</item>
+        <item name="sv_maxValue">100.0</item>
+        <item name="sv_minValue">0.0</item>
+        <item name="sv_value">10.0</item>
+        <item name="sv_stepGapSize">10dp</item>
+        <item name="sv_stepMarginStart">10dp</item>
+        <item name="sv_stepMarginEnd">10dp</item>
+        <item name="sv_stepValue">1.0</item>
+        <item name="sv_stepBigValue">5.0</item>
+        <item name="sv_textStepValue">10.0</item>
+        <item name="sv_flingEnabled">true</item>
+        <item name="sv_showEdgeText">false</item>
+    </style>
 </resources>

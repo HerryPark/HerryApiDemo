@@ -1499,7 +1499,7 @@ class TitleBar : FrameLayout {
         }
 
 //        if (null != mTitleTextView) {
-//            Trace.d("Herry", "containerWidth: " + containerWidth + ", startActionsWidth:" + startActionsWidth
+//            Trace.d("containerWidth: " + containerWidth + ", startActionsWidth:" + startActionsWidth
 //                    + ", endActionsWidth:" + endActionsWidth + ", titleWidth:" + titleWidth
 //                    + ", containerWidth - (startActionsWidth + endActionsWidth):" + (containerWidth - ( 2 * (startActionsWidth > endActionsWidth ? startActionsWidth : endActionsWidth)))
 //                    + "\n title = " + mTitleTextView.getText().toString());
@@ -1522,7 +1522,7 @@ class TitleBar : FrameLayout {
                 paddingEnd += endActionsWidth
             }
 
-//            Trace.d("Herry", "containerWidth: paddingStart=" + paddingStart + ", paddingEnd:" + paddingEnd);
+//            Trace.d("containerWidth: paddingStart=" + paddingStart + ", paddingEnd:" + paddingEnd);
             titleTextView.setViewPadding(paddingStart, paddingTop, paddingEnd, paddingBottom)
         }
     }

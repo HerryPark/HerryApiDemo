@@ -141,10 +141,9 @@ class DrawView : View {
         paths[path] = option
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        canvas ?: return
         for ((key, value) in paths) {
             changePaint(value)
             canvas.drawPath(key, paint)

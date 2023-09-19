@@ -350,7 +350,7 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
 
     private fun getSectionIndexByPoint(y: Float): Int {
         val sections = this.sections
-        if (sections == null || sections.isEmpty()) return RecyclerView.NO_POSITION
+        if (sections.isNullOrEmpty()) return RecyclerView.NO_POSITION
 
         return when {
             y < sectionBarRect.top + sectionBarPaddingTop -> {
@@ -379,8 +379,7 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
         }
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        canvas ?: return
+    override fun onDraw(canvas: Canvas) {
 
         // draws FrameLayout attributes
         super.onDraw(canvas)
@@ -559,12 +558,10 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
 
     override fun onSaveInstanceState(): Parcelable? {
         val superState: Parcelable? = super.onSaveInstanceState()
-        superState?.let {
-            val state = SavedState(superState)
-            state.currentSectionIndex = currentSectionIndex
-            return state
-        } ?: run {
-            return superState
+        return superState?.let {
+            SavedState(superState).apply {
+                this.currentSectionIndex = this@RecyclerViewAlphabetIndexerScrollerView.currentSectionIndex
+            }
         }
     }
 
