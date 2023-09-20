@@ -16,4 +16,9 @@
         android:name="com.herry.test.app.nbnf.screen1.NBNFScreen1Child2Sub1Fragment"
         tools:layout="@layout/nbnf_screen_1_child_2_sub_1_fragment" />
 
+    <fragment
+        android:id="@+id/nbnf_screen_1_child_2_sub_2_fragment"
+        android:name="com.herry.test.app.nbnf.screen1.NBNFScreen1Child2Sub2Fragment"
+        tools:layout="@layout/nbnf_screen_1_child_2_sub_2_fragment" />
+
 </navigation>

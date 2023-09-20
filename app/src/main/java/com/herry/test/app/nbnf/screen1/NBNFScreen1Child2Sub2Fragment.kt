@@ -4,19 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.extension.navigateTo
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
 
-class NBNFScreen1Child2Sub1Fragment : BaseNavFragment() {
+class NBNFScreen1Child2Sub2Fragment : BaseNavFragment() {
 
     private var container: View? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (this.container == null) {
-            this.container = inflater.inflate(R.layout.nbnf_screen_1_child_2_sub_1_fragment, container, false)
+            this.container = inflater.inflate(R.layout.nbnf_screen_1_child_2_sub_2_fragment, container, false)
             init(this.container)
         } else {
             // fixed: "java.lang.IllegalStateException: The specified child already has a parent.
@@ -28,9 +26,5 @@ class NBNFScreen1Child2Sub1Fragment : BaseNavFragment() {
 
     private fun init(view: View?) {
         view ?: return
-
-        view.findViewById<Button>(R.id.nbnf_screen_1_child_2_sub_1_fragment_go_sub_2)?.setOnClickListener {
-            navigateTo(destinationId = R.id.nbnf_screen_1_child_2_sub_2_fragment)
-        }
     }
 }

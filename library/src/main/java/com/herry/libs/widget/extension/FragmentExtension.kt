@@ -26,8 +26,7 @@ fun Fragment.hasNavDestinationID(@IdRes id: Int): Boolean {
 }
 
 private fun NavController.hasNavDestinationID(@IdRes id: Int): Boolean {
-    return this.findDestination(id) != null
-//    return this.backQueue.firstOrNull { backStack -> backStack.destination.id == id } != null
+    return this.currentBackStack.value.firstOrNull { it.destination.id == id } != null
 }
 
 fun Fragment.addNestedNavHostFragment(@IdRes containerViewId: Int, navHostFragment: NavHostFragment?, tag: String? = null, listener: ((requestKey: String, bundle: Bundle) -> Unit)? = null): Boolean {
@@ -379,7 +378,8 @@ fun BottomNavHostFragment.setNavigate(@IdRes destinationId: Int, navAnim: NavAni
                 }
                 val entryDestination = navController.graph.findStartDestination()
                 this.setPopUpTo(destinationId = entryDestination.id, inclusive = false, saveState = true)
-            }.build()
+            }.build(),
+            singleInstance = true
         )
     } catch (_: IllegalArgumentException) {
     }
