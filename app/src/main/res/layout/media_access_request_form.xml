@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:transitionGroup="true"
+    android:background="@color/tbc_10"
+    tools:viewBindingIgnore="true"
+    tools:ignore="HardcodedText,SpUsage">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/media_access_request_from_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:gravity="center"
+        android:textStyle="normal"
+        android:textSize="12dp"
+        android:textColor="@color/tbc_100"
+        android:text="To continue, give access to your photos"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/media_access_request_from_goto_settings"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/media_access_request_from_goto_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="32dp"
+        android:minWidth="120dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="GO TO SETTINGS"
+        android:textSize="14dp"
+        android:textStyle="normal"
+        android:textColor="@color/selector_text2"
+        android:background="@drawable/shape_r04_bg_tbc10_st_01dp_tbc100"
+        app:layout_constraintStart_toStartOf="@id/media_access_request_from_message"
+        app:layout_constraintEnd_toEndOf="@id/media_access_request_from_message"
+        app:layout_constraintTop_toBottomOf="@id/media_access_request_from_message"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

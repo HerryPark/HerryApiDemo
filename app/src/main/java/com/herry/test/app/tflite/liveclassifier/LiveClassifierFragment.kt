@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.camera.view.PreviewView
-import androidx.lifecycle.lifecycleScope
 import com.herry.libs.app.activity_caller.module.ACPermission
 import com.herry.libs.helper.ToastHelper
 import com.herry.libs.log.Trace
@@ -15,7 +14,7 @@ import com.herry.libs.widget.extension.launchWhenResumed
 import com.herry.libs.widget.view.dialog.AppDialog
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
-import com.herry.test.app.permission.PermissionHelper
+import com.herry.libs.permission.PermissionHelper
 import com.herry.test.widget.TitleBarForm
 
 

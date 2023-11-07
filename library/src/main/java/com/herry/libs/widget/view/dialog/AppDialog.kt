@@ -1778,6 +1778,8 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             window.attributes = lp
         }
     }
+
+    fun getContext(): ContextThemeWrapper? = this.context
 }
 
 data class TextLinkAttribute(val target: String, val url: String?)

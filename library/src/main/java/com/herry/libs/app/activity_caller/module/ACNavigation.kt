@@ -5,17 +5,16 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
-import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityOptionsCompat
 import com.herry.libs.app.activity_caller.ACModule
 import com.herry.libs.app.activity_caller.activity.ACActivity
 import com.herry.libs.app.nav.NavMovement
 import java.io.Serializable
 
-open class ACNavigation(private val caller: Caller, private val listener: ACModule.OnListener<ACNavigation>): ACModule {
+open class ACNavigation(private val caller: Caller, private val listener: ACModule.OnIntentListener): ACModule {
 
     data class Result(
-        val callActivity: ComponentActivity,
+        val callActivity: Activity,
         val resultCode: Int,
         val intent: Intent?,
         val data: Bundle?
@@ -74,9 +73,7 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
         }
     }
 
-    override fun call() {
-        val activity = listener.getActivity()
-
+    override fun call(activity: Activity) {
         val intent = getCallerIntent(activity) ?: return
 
         val onResult = caller.onResult
@@ -103,14 +100,14 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
                 }
 
                 if (onResult != null) {
-                    listener.launchActivity(intent, options, onResult)
+                    listener.launchIntent(intent, options, onResult)
                 } else {
                     activity.startActivity(intent, options.toBundle())
                 }
             }
         } else {
             if (onResult != null) {
-                listener.launchActivity(intent, null, onResult)
+                listener.launchIntent(intent, null, onResult)
             } else {
                 activity.startActivity(intent)
             }

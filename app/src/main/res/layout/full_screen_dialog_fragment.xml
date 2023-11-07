@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tbc_100_a50"
+    tools:viewBindingIgnore="true"
+    tools:ignore="HardcodedText,SpUsage" >
+
+    <include
+        android:id="@+id/full_screen_dialog_fragment_title"
+        layout="@layout/title_bar_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/bottom_sheet_dialog_fragment_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="32dp"
+        android:textColor="@color/tbc_10"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="FULL SCREEN DIALOG"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintTop_toBottomOf="@id/full_screen_dialog_fragment_title"
+        app:layout_constraintBottom_toTopOf="@id/bottom_sheet_dialog_fragment_cancel" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/bottom_sheet_dialog_fragment_cancel"
+        android:layout_width="80dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="32dp"
+        android:foreground="?android:selectableItemBackgroundBorderless"
+        android:gravity="center"
+        android:text="@android:string/cancel"
+        android:textColor="@color/selector_text2"
+        android:background="@drawable/shape_r05_bg_tbc10"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/bottom_sheet_dialog_fragment_ok"
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_dialog_fragment_message"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/bottom_sheet_dialog_fragment_ok"
+        android:layout_width="80dp"
+        android:layout_height="32dp"
+        android:foreground="?android:selectableItemBackgroundBorderless"
+        android:gravity="center"
+        android:text="@android:string/ok"
+        android:textColor="@color/selector_text2"
+        android:background="@drawable/shape_r05_bg_tbc10"
+        app:layout_constraintStart_toEndOf="@id/bottom_sheet_dialog_fragment_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/bottom_sheet_dialog_fragment_cancel"
+        app:layout_constraintBottom_toBottomOf="@id/bottom_sheet_dialog_fragment_cancel"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

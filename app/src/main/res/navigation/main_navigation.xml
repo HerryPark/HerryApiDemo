@@ -62,9 +62,24 @@
         tools:layout="@layout/pick_list_fragment" />
 
     <fragment
+        android:id="@+id/dialog_list_fragment"
+        android:name="com.herry.test.app.dialog.list.DialogListFragment"
+        tools:layout="@layout/list_fragment" />
+
+    <fragment
         android:id="@+id/app_dialog_list_fragment"
-        android:name="com.herry.test.app.dialog.AppDialogListFragment"
+        android:name="com.herry.test.app.dialog.appdialog.AppDialogListFragment"
         tools:layout="@layout/app_dialog_list_fragment" />
+
+    <dialog
+        android:id="@+id/full_screen_dialog_fragment"
+        android:name="com.herry.test.app.dialog.fullscreendialog.FullScreenDialogFragment"
+        tools:layout="@layout/full_screen_dialog_fragment" />
+
+    <dialog
+        android:id="@+id/bottom_sheet_dialog_fragment"
+        android:name="com.herry.test.app.dialog.bottomsheetdialog.BottomSheetDialogFragment"
+        tools:layout="@layout/bottom_sheet_dialog_fragment" />
 
     <fragment
         android:id="@+id/list_fragment"

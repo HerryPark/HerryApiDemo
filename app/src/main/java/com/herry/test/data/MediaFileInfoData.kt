@@ -10,6 +10,6 @@ open class MediaFileInfoData(
     val mimeType: String,
     val path: String,
     val name: String,
-    val size: Int = 0,
+    val size: Long = 0L,
     val date: Long = 0
 ) : Serializable

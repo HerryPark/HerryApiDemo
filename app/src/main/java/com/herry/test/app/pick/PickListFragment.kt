@@ -1,20 +1,19 @@
 package com.herry.test.app.pick
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.herry.libs.app.activity_caller.module.ACPermission
+import com.herry.libs.app.activity_caller.module.ACPick
 import com.herry.libs.app.activity_caller.module.ACTake
 import com.herry.libs.helper.ToastHelper
 import com.herry.libs.log.Trace
@@ -26,6 +25,7 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.widget.extension.launchWhenResumed
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
+import com.herry.libs.permission.PermissionHelper
 import com.herry.test.widget.TitleBarForm
 import java.io.IOException
 
@@ -75,83 +75,98 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
     override fun onScreen(type: PickListContract.PickType) {
         when (type) {
             PickListContract.PickType.PICK_PHOTO -> {
-                val intent = Intent(Intent.ACTION_PICK).apply {
-                    setType(MediaStore.Images.Media.CONTENT_TYPE)
-                    data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                }
-                intent.resolveActivity(requireActivity().packageManager ?: return) ?: return
-
-                activityCaller?.call(
-                    ACPermission.Caller(
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        onGranted = {
-                            activityCaller?.call(ACTake.PickPicture { result ->
-                                if (result.success) {
-                                    val picked: Uri? = result.uris.firstOrNull()
-                                    ToastHelper.showToast(activity, "selected photo: ${picked.toString()}")
-                                } else {
-                                    ToastHelper.showToast(activity, "cancel photo selection")
-                                }
-                            })
-                        }
-                    ))
+                activityCaller?.call(ACPick.PickImageOnly { result ->
+                    if (result.success) {
+                        val picked: Uri? = result.uris.firstOrNull()
+                        Trace.d("selected photo counts: ${result.uris.size}")
+                        ToastHelper.showToast(activity, "selected photo: ${picked.toString()}")
+                    } else {
+                        ToastHelper.showToast(activity, "cancel photo selection")
+                    }
+                })
             }
-            PickListContract.PickType.PICK_MOVIE -> {
-                val intent = Intent(Intent.ACTION_PICK).apply {
-                    setType(MediaStore.Video.Media.CONTENT_TYPE)
-                    data = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                }
-                intent.resolveActivity(requireActivity().packageManager ?: return) ?: return
-
-                activityCaller?.call(
-                    ACPermission.Caller(
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        onGranted = {
-                            activityCaller?.call(ACTake.PickVideo { result ->
-                                if (result.success) {
-                                    val picked: Uri? = result.uris.firstOrNull()
-                                    ToastHelper.showToast(activity, "selected video: ${picked.toString()}")
-                                } else {
-                                    ToastHelper.showToast(activity, "cancel video selection")
-                                }
-                            })
-                        }
-                    ))
+            PickListContract.PickType.PICK_VIDEO -> {
+                activityCaller?.call(ACPick.PickVideoOnly { result ->
+                    if (result.success) {
+                        val picked: Uri? = result.uris.firstOrNull()
+                        Trace.d("selected video counts: ${result.uris.size}")
+                        ToastHelper.showToast(activity, "selected video: ${picked.toString()}")
+                    } else {
+                        ToastHelper.showToast(activity, "cancel video selection")
+                    }
+                })
             }
-            PickListContract.PickType.TAKE_PHOTO,
-            PickListContract.PickType.TAKE_MOVIE -> {
-                activityCaller?.call(
-                    ACPermission.Caller(
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        onGranted = {
-                            val tempFile = try {
-                                presenter?.getToTakeTempFile(type)
-                            } catch (ex: IOException) {
-                                null
-                            } ?: return@Caller
+            PickListContract.PickType.PICK_PHOTO_AND_VIDEO -> {
+                activityCaller?.call(ACPick.PickVisualMedia { result ->
+                    if (result.success) {
+                        val picked: Uri? = result.uris.firstOrNull()
+                        Trace.d("selected photo and video counts: ${result.uris.size}")
+                        ToastHelper.showToast(activity, "selected photo and video: ${picked.toString()}")
+                    } else {
+                        ToastHelper.showToast(activity, "cancel photo and video selection")
+                    }
+                })
+            }
+            PickListContract.PickType.TAKE_PHOTO -> {
+                val onTake: () -> Unit = {
+                    val tempFile = try {
+                        presenter?.getToTakeTempFile(type)
+                    } catch (ex: IOException) {
+                        null
+                    }
 
-                            // Create the File where the photo should go
-                            val saveFileURI: Uri = presenter?.getUriForFileProvider(tempFile) ?: return@Caller
+                    // Create the File where the photo should go
+                    val saveFileURI: Uri? = presenter?.getUriForFileProvider(tempFile)
+                    if (tempFile != null && saveFileURI != null) {
+                        activityCaller?.call(ACTake.TakeImage(saveFileURI) { result ->
+                            presenter?.picked(tempFile = tempFile, picked = result.uri, type = type, result.success)
+                        })
+                    }
+                }
 
-                            if (type == PickListContract.PickType.TAKE_PHOTO) {
-                                activityCaller?.call(ACTake.TakePicture(saveFileURI) { result ->
-                                    val activity = result.callActivity
-                                    activity.launchWhenResumed {
-                                        presenter?.picked(tempFile = tempFile, picked = result.uris.firstOrNull(), type = type, result.success)
-                                    }
-                                })
-                            } else {
-                                activityCaller?.call(ACTake.TakeVideo(saveFileURI) { result ->
-                                    val activity = result.callActivity
-                                    Trace.d("call return: Activity.${activity.lifecycle.currentState}")
-                                    Trace.d("call return: View.${lifecycle.currentState}")
-                                    activity.launchWhenResumed {
-                                        presenter?.picked(tempFile = tempFile, picked = result.uris.firstOrNull(), type = type, result.success)
-                                    }
-                                })
+                val permissionType = PermissionHelper.Type.CAMERA
+                if (!PermissionHelper.hasPermission(context, permissionType)) {
+                    activityCaller?.call(
+                        ACPermission.Caller(
+                            permissionType.permissions.toTypedArray(),
+                            onGranted = {
+                                onTake()
                             }
-                        }
-                    ))
+                        ))
+                } else {
+                    onTake()
+                }
+            }
+
+            PickListContract.PickType.TAKE_VIDEO -> {
+                val onTake: () -> Unit = {
+                    val tempFile = try {
+                        presenter?.getToTakeTempFile(type)
+                    } catch (ex: IOException) {
+                        null
+                    }
+
+                    // Create the File where the video should go
+                    val saveFileURI: Uri? = presenter?.getUriForFileProvider(tempFile)
+                    if (tempFile != null && saveFileURI != null) {
+                        activityCaller?.call(ACTake.TakeVideo(saveFileURI) { result ->
+                            presenter?.picked(tempFile = tempFile, picked = result.uri, type = type, result.success)
+                        })
+                    }
+                }
+
+                val permissionType = PermissionHelper.Type.CAMCORDER
+                if (!PermissionHelper.hasPermission(context, permissionType)) {
+                    activityCaller?.call(
+                        ACPermission.Caller(
+                            permissionType.permissions.toTypedArray(),
+                            onGranted = {
+                                onTake()
+                            }
+                        ))
+                } else {
+                    onTake()
+                }
             }
         }
     }
@@ -188,9 +203,10 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
         override fun onBindModel(context: Context, holder: Holder, model: PickListContract.PickType) {
             holder.title?.text = when (model) {
                 PickListContract.PickType.PICK_PHOTO -> "Pick Photo"
-                PickListContract.PickType.PICK_MOVIE -> "Pick Movie"
+                PickListContract.PickType.PICK_VIDEO -> "Pick Video"
+                PickListContract.PickType.PICK_PHOTO_AND_VIDEO -> "Pick Photo And Video"
                 PickListContract.PickType.TAKE_PHOTO -> "Take Photo"
-                PickListContract.PickType.TAKE_MOVIE -> "Take Movie"
+                PickListContract.PickType.TAKE_VIDEO -> "Take Movie"
             }
         }
 

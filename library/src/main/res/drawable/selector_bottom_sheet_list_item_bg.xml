@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--  focused  -->
+    <item android:state_focused="true"
+        android:drawable="@color/tbc_60" />
+
+    <!--  pressed  -->
+    <item android:state_enabled="true" android:state_pressed="true"
+        android:drawable="@color/tbc_60" />
+
+    <!--  selected  -->
+    <item android:state_enabled="true" android:state_pressed="false" android:state_selected="true"
+        android:drawable="@color/tbc_0" />
+
+    <item android:drawable="@android:color/transparent"/>
+
+
+</selector>

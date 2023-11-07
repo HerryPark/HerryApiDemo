@@ -25,7 +25,7 @@ interface MainContract {
         PICK,
         NESTED_FRAGMENTS,
         NESTED_BOTTOM_NAV_FRAGMENTS,
-        APP_DIALOG,
+        DIALOGS,
         LIST,
         SKELETON,
         RESIZING_UI,

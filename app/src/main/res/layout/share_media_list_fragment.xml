@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:transitionGroup="true"
+    tools:viewBindingIgnore="true"
     tools:ignore="HardcodedText,SpUsage">
 
     <include
@@ -17,13 +18,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <include
+        android:id="@+id/share_media_list_fragment_media_selection"
+        layout="@layout/media_selection_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/share_media_list_fragment_title" />
+
+    <include
         android:id="@+id/share_media_list_fragment_list"
+        layout="@layout/recyclerview_form"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/share_media_list_fragment_title"
+        app:layout_constraintTop_toBottomOf="@id/share_media_list_fragment_media_selection"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

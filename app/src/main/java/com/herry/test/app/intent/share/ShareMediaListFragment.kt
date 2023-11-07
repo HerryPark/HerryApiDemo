@@ -13,15 +13,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.herry.libs.app.activity_caller.module.ACNavigation
+import com.herry.libs.app.activity_caller.module.ACPermission
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
+import com.herry.libs.util.AppUtil
+import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewEmptyTextForm
+import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewForm
 import com.herry.test.BuildConfig
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
+import com.herry.libs.permission.PermissionHelper
 import com.herry.test.data.MediaFileInfoData
+import com.herry.test.widget.MediaAccessRequestForm
+import com.herry.test.widget.MediaSelectionForm
 import com.herry.test.widget.Popup
 import com.herry.test.widget.TitleBarForm
 import java.io.File
@@ -42,6 +49,25 @@ class ShareMediaListFragment : BaseNavView<ShareMediaListContract.View, ShareMed
 
     private var container: View? = null
 
+    private var mediaSelection = MediaSelectionForm(
+        onClickMediaType = { type ->
+            presenter?.setMediaType(type)
+        }
+    )
+
+    private var mediaListForm = object: RecyclerViewForm() {
+        override fun onBindRecyclerView(context: Context, recyclerView: RecyclerView) {
+            recyclerView.apply {
+                layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                setHasFixedSize(true)
+                if (itemAnimator is SimpleItemAnimator) {
+                    (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+                }
+                adapter = this@ShareMediaListFragment.adapter
+            }
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (null == this.container) {
             this.container = inflater.inflate(R.layout.share_media_list_fragment, container, false)
@@ -51,22 +77,21 @@ class ShareMediaListFragment : BaseNavView<ShareMediaListContract.View, ShareMed
     }
 
     private fun init(view: View?) {
-        view ?: return
+        val context = view?.context ?: return
 
         TitleBarForm(
             activity = { requireActivity() }
         ).apply {
-            bindFormHolder(view.context, view.findViewById(R.id.share_media_list_fragment_title))
-            bindFormModel(view.context, TitleBarForm.Model(title = "Share Media List", backEnable = true))
+            bindFormHolder(context, view.findViewById(R.id.share_media_list_fragment_title))
+            bindFormModel(context, TitleBarForm.Model(title = "Share Media List", backEnable = true))
         }
 
-        view.findViewById<RecyclerView>(R.id.share_media_list_fragment_list)?.apply {
-            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            setHasFixedSize(true)
-            if (itemAnimator is SimpleItemAnimator) {
-                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-            }
-            adapter = this@ShareMediaListFragment.adapter
+        view.findViewById<View?>(R.id.share_media_list_fragment_list)?.let {
+            mediaListForm.bindHolder(context, it)
+        }
+
+        view.findViewById<View?>(R.id.share_media_list_fragment_media_selection)?.let {
+            mediaSelection.bindHolder(context, it)
         }
     }
 
@@ -83,6 +108,56 @@ class ShareMediaListFragment : BaseNavView<ShareMediaListContract.View, ShareMed
                     }
                 }.show()
             })
+        }
+    }
+
+    override fun onRequestPermission(type: PermissionHelper.Type, onGranted: () -> Unit, onDenied: () -> Unit, onBlocked: () -> Unit) {
+        activityCaller?.call(ACPermission.Caller(
+            permissions = type.permissions.toTypedArray(),
+            showBlockedDefaultPopup = false,
+            onGranted = {
+                onGranted()
+            },
+            onDenied = {
+                onDenied()
+            },
+            onBlocked = {
+                onBlocked()
+            }
+        ))
+    }
+
+    override fun onUpdatedMediaPermission(model: MediaSelectionForm.Model) {
+        val context = context ?: return
+        mediaSelection.bindFormModel(context, model)
+    }
+
+    override fun onLoadedList(count: Int, permitted: PermissionHelper.Permitted) {
+        val context = this.context ?: return
+        if (count > 0) {
+            mediaListForm.setEmptyView(null)
+        } else {
+            when (permitted) {
+                PermissionHelper.Permitted.BLOCKED -> {
+                    MediaAccessRequestForm(onGotoSettings = {
+                        AppUtil.showAppInfoSettingScreen(context)
+                    }).apply {
+                        createFormHolder(context, mediaListForm.getEmptyParentView())
+                        bindFormModel(context, MediaAccessRequestForm.Model())
+                    }.also {
+                        mediaListForm.setEmptyView(it.getView())
+                    }
+                }
+                PermissionHelper.Permitted.GRANTED,
+                PermissionHelper.Permitted.DENIED -> {
+                    RecyclerViewEmptyTextForm().apply {
+                        createFormHolder(context, mediaListForm.getEmptyParentView())
+                        bindFormModel(context, "The media files are not exist or the file access permission is denied")
+                    }.also {
+                        mediaListForm.setEmptyView(it.getView())
+                    }
+                }
+            }
         }
     }
 

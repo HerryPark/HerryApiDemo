@@ -1,14 +1,11 @@
 package com.herry.test.app.tflite.digitclassifier
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,8 +13,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
-import com.herry.libs.app.activity_caller.module.ACPermission
-import com.herry.libs.app.activity_caller.module.ACTake
+import com.herry.libs.app.activity_caller.module.ACPick
 import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.navigateTo
@@ -77,26 +73,12 @@ class DigitClassifierFragment : BaseNavView<DigitClassifierContract.View, DigitC
                                     ))
                             }
                             1 -> {
-                            val intent = Intent(Intent.ACTION_PICK).apply {
-                                this.setDataAndType(
-                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                    MediaStore.Images.Media.CONTENT_TYPE
-                                )
-                            }
-                            intent.resolveActivity(requireActivity().packageManager ?: return@setItems) ?: return@setItems
-
-                            activityCaller?.call(
-                                ACPermission.Caller(
-                                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                                    onGranted = {
-                                        activityCaller?.call(ACTake.PickPicture { result ->
-                                            if (result.success) {
-                                                val picked: Uri = result.uris.firstOrNull() ?: return@PickPicture
-                                                presenter?.loadedImage(picked)
-                                            }
-                                        })
+                                activityCaller?.call(ACPick.PickImageOnly { result ->
+                                    if (result.success) {
+                                        val picked: Uri = result.uris.firstOrNull() ?: return@PickImageOnly
+                                        presenter?.loadedImage(picked)
                                     }
-                                ))
+                                })
                             }
                         }
                         dialog.dismiss()

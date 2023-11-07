@@ -1,14 +1,11 @@
 package com.herry.test.app.main
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.herry.libs.app.activity_caller.module.ACNavigation
-import com.herry.libs.app.activity_caller.module.ACPermission
 import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.log.Trace
 import com.herry.libs.nodeview.NodeForm
@@ -94,15 +90,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                 navigateTo(destinationId = R.id.intent_list_fragment)
             }
             MainContract.TestItemType.GIF_DECODER -> {
-                activityCaller?.call(
-                    ACPermission.Caller(
-                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                        onGranted = {
-                            Handler(Looper.getMainLooper()).post {
-                                navigateTo(destinationId = R.id.gif_list_fragment)
-                            }
-                        }
-                    ))
+                navigateTo(destinationId = R.id.gif_list_fragment)
             }
             MainContract.TestItemType.CHECKER_LIST -> {
                 navigateTo(destinationId = R.id.data_checker_main_fragment)
@@ -127,8 +115,8 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
             MainContract.TestItemType.NESTED_BOTTOM_NAV_FRAGMENTS -> {
                 activityCaller?.call(ACNavigation.IntentCaller(Intent(requireActivity(), NBNFActivity::class.java)))
             }
-            MainContract.TestItemType.APP_DIALOG -> {
-                navigateTo(destinationId = R.id.app_dialog_list_fragment)
+            MainContract.TestItemType.DIALOGS -> {
+                navigateTo(destinationId = R.id.dialog_list_fragment)
             }
             MainContract.TestItemType.LIST -> {
                 navigateTo(destinationId = R.id.list_fragment)
@@ -199,7 +187,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                 MainContract.TestItemType.PICK -> "Pick"
                 MainContract.TestItemType.NESTED_FRAGMENTS -> "Nested Fragments"
                 MainContract.TestItemType.NESTED_BOTTOM_NAV_FRAGMENTS -> "Nested Bottom Navigator Fragments"
-                MainContract.TestItemType.APP_DIALOG -> "App Dialog"
+                MainContract.TestItemType.DIALOGS -> "Dialogs"
                 MainContract.TestItemType.LIST -> "List"
                 MainContract.TestItemType.SKELETON -> "Skeleton"
                 MainContract.TestItemType.RESIZING_UI -> "Resizing UI"

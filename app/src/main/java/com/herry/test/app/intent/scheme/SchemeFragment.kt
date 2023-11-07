@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -79,46 +80,7 @@ class SchemeFragment : BaseNavView<SchemeContract.View, SchemeContract.Presenter
 
     inner class Adapter: NodeRecyclerAdapter(::requireContext) {
         override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
-            list.add(SchemeItemForm())
             list.add(SchemeItem2Form())
-        }
-    }
-
-    private inner class SchemeItemForm : NodeForm<SchemeItemForm.Holder, SchemeContract.SchemeItemType>(Holder::class, SchemeContract.SchemeItemType::class) {
-        inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
-            val title: TextView? = view.findViewById(R.id.main_test_item_title)
-            init {
-                view.setOnProtectClickListener {
-                    NodeRecyclerForm.getBindModel(this@SchemeItemForm, this@Holder)?.let {
-                        presenter?.gotoScheme(it)
-                    }
-                }
-            }
-        }
-
-        override fun onCreateHolder(context: Context, view: View): Holder = Holder(context, view)
-
-        override fun onLayout(): Int = R.layout.main_test_item
-
-        override fun onBindModel(context: Context, holder: Holder, model: SchemeContract.SchemeItemType) {
-            holder.title?.text = when (model) {
-                SchemeContract.SchemeItemType.EFFECT -> "Effect"
-                SchemeContract.SchemeItemType.OVERLAY_STICKER -> "Overlay(Sticker)"
-                SchemeContract.SchemeItemType.OVERLAY_TEXT -> "Overlay(Text)"
-                SchemeContract.SchemeItemType.TEXT_ARABIC -> "Text(Arabic)"
-                SchemeContract.SchemeItemType.ASSET_DYNAMIC_LINK -> "Asset dynamic link"
-                SchemeContract.SchemeItemType.KINEMASTER_DEEP_LINK -> "KineMaster (Deep Link)"
-                SchemeContract.SchemeItemType.KINEMASTER_DINAMIC_LINK -> "KineMaster (Dynamic Link)"
-                SchemeContract.SchemeItemType.PROJECT_FEED_HOME -> "Project Feed Home (Deep Link)"
-                SchemeContract.SchemeItemType.PROJECT_FEED_HOME_DYNAMIC_LINK -> "Project Feed Home (Dynamic Link)"
-                SchemeContract.SchemeItemType.PROJECT_FEED_CATEGORY -> "Project Feed Category (Deep Link)"
-                SchemeContract.SchemeItemType.PROJECT_FEED_CATEGORY_DYNAMIC_LINK -> "Project Feed Category (Dynamic Link)"
-                SchemeContract.SchemeItemType.PROJECT_FEED_SEARCH -> "Project Feed Search (Deep Link)"
-                SchemeContract.SchemeItemType.PROJECT_FEED_SEARCH_DYNAMIC_LINK -> "Project Feed Search (Dynamic Link)"
-                SchemeContract.SchemeItemType.PROJECT_FEED_DETAIL -> "Project Feed Detail (Deep Link)"
-                SchemeContract.SchemeItemType.PROJECT_FEED_DETAIL_DYNAMIC_LINK -> "Project Feed Detail (Dynamic Link)"
-                SchemeContract.SchemeItemType.KINEMASTER_NEW_PROJECT -> "KineMaster New Project"
-            }
         }
     }
 
@@ -127,6 +89,8 @@ class SchemeFragment : BaseNavView<SchemeContract.View, SchemeContract.Presenter
             val title: TextView? = view.findViewById(R.id.scheme_item_2_title)
             val appLink: TextView? = view.findViewById(R.id.scheme_item_2_app_link)
             val dynamicLink: TextView? = view.findViewById(R.id.scheme_item_2_dynamic_link)
+            val shortLink: TextView? = view.findViewById(R.id.scheme_item_2_short_link)
+
             init {
                 appLink?.setOnProtectClickListener {
                     NodeRecyclerForm.getBindModel(this@SchemeItem2Form, this@Holder)?.let {
@@ -138,6 +102,11 @@ class SchemeFragment : BaseNavView<SchemeContract.View, SchemeContract.Presenter
                         presenter?.gotoScheme(it.dynamicLink)
                     }
                 }
+                shortLink?.setOnProtectClickListener {
+                    NodeRecyclerForm.getBindModel(this@SchemeItem2Form, this@Holder)?.let {
+                        presenter?.gotoScheme(it.shortLink)
+                    }
+                }
             }
         }
 
@@ -147,8 +116,18 @@ class SchemeFragment : BaseNavView<SchemeContract.View, SchemeContract.Presenter
 
         override fun onBindModel(context: Context, holder: Holder, model: SchemeContract.SchemaData) {
             holder.title?.text = model.title
-            holder.appLink?.text = model.appLink
-            holder.dynamicLink?.text = model.dynamicLink
+            holder.appLink?.let { view ->
+                view.text = model.appLink
+                view.isVisible = model.appLink.isNotBlank()
+            }
+            holder.dynamicLink?.let { view ->
+                view.text = model.dynamicLink
+                view.isVisible = model.dynamicLink.isNotBlank()
+            }
+            holder.shortLink?.let { view ->
+                view.text = model.shortLink
+                view.isVisible = model.shortLink.isNotBlank()
+            }
         }
     }
 }

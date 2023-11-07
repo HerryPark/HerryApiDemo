@@ -21,8 +21,9 @@ interface PickListContract {
 
     enum class PickType {
         PICK_PHOTO,
-        PICK_MOVIE,
+        PICK_VIDEO,
+        PICK_PHOTO_AND_VIDEO,
         TAKE_PHOTO,
-        TAKE_MOVIE
+        TAKE_VIDEO
     }
 }

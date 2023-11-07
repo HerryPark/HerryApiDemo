@@ -28,7 +28,7 @@ import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
-import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerForm
+import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewForm
 import com.herry.test.R
 import com.herry.test.app.base.ScreenWindowStyle
 import com.herry.test.app.base.StatusBarStyle
@@ -65,7 +65,7 @@ class SearchFeedsFragment: BaseNavView<SearchFeedsContract.View, SearchFeedsCont
 
     private val keywordsAdapter: KeywordsAdapter = KeywordsAdapter()
 
-    private val keywordsRecyclerForm = object : RecyclerForm() {
+    private val keywordsRecyclerForm = object : RecyclerViewForm() {
         override fun onBindRecyclerView(context: Context, recyclerView: RecyclerView) {
             recyclerView.apply {
                 layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
@@ -108,7 +108,7 @@ class SearchFeedsFragment: BaseNavView<SearchFeedsContract.View, SearchFeedsCont
 
     private val feedsAdapter: FeedsAdapter = FeedsAdapter()
 
-    private val feedsRecyclerForm = object : RecyclerForm() {
+    private val feedsRecyclerForm = object : RecyclerViewForm() {
         override fun onBindRecyclerView(context: Context, recyclerView: RecyclerView) {
             recyclerView.apply {
                 setHasFixedSize(true)

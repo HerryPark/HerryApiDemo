@@ -30,8 +30,10 @@
     <color name="tbc_20">#FFF2F2F2</color>
     <color name="tbc_20_a50">#7FF2F2F2</color>
     <color name="tbc_10">#FFFFFFFF</color>
+    <color name="tbc_10_a80">#CCFFFFFF</color>
     <color name="tbc_10_a50">#7FFFFFFF</color>
     <color name="tbc_10_a40">#66FFFFFF</color>
+    <color name="tbc_10_a30">#4DFFFFFF</color>
     <color name="tbc_10_a20">#33FFFFFF</color>
     <color name="tbc_10_a15">#26FFFFFF</color>
     <color name="tbc_10_a10">#1AFFFFFF</color>

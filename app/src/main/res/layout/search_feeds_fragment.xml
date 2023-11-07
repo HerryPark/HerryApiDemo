@@ -28,12 +28,12 @@
 
         <include
             android:id="@+id/search_feeds_fragment_recently"
-            layout="@layout/recycler_form"
+            layout="@layout/recyclerview_form"
             android:visibility="invisible"/>
 
         <include
             android:id="@+id/search_feeds_fragment_searched_feeds"
-            layout="@layout/recycler_form"
+            layout="@layout/recyclerview_form"
             android:visibility="invisible"/>
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

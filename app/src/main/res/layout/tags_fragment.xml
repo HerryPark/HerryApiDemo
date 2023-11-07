@@ -29,7 +29,7 @@
 
         <include
             android:id="@+id/tags_fragment_list"
-            layout="@layout/recycler_form"/>
+            layout="@layout/recyclerview_form"/>
     </com.herry.libs.widget.view.swiperefreshlayout.SwipeRefreshLayoutEx>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

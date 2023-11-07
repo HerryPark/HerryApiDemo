@@ -1,50 +1,69 @@
 package com.herry.libs.app.activity_caller.activity
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.app.activity_caller.ACBase
 import com.herry.libs.app.activity_caller.module.ACNavigation
+import com.herry.libs.app.activity_caller.result.ACActivityResultLaunchers
+import com.herry.libs.app.activity_caller.result.TakeMediaRequest
+import com.herry.libs.log.Trace
 
 abstract class ACActivity : AppCompatActivity(), AC {
 
     lateinit var activityCaller: ACBase
         private set
 
-    private lateinit var activityResultLaunchers: ActivityResultLaunchers
+    private lateinit var activityResultLaunchers: ACActivityResultLaunchers
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        activityResultLaunchers = ActivityResultLaunchers(this)
+        activityResultLaunchers = ACActivityResultLaunchers(this)
 
-        activityCaller = ACBase(object : ACBase.ACBaseListener {
-            override fun getActivity(): ComponentActivity = this@ACActivity
-
-            override fun launchActivity(intent: Intent, options: ActivityOptionsCompat?, onResult: ((result: ACNavigation.Result) -> Unit)?) {
+        activityCaller = ACBase(callActivity = this, listener = object : ACBase.ACBaseListener {
+            override fun launchIntent(intent: Intent, options: ActivityOptionsCompat?, onResult: ((result: ACNavigation.Result) -> Unit)?) {
                 activityResultLaunchers.processLaunchActivity(intent, options, onResult)
             }
 
-            override fun requestPermission(permission: Array<String>, onGranted: ((permission: Array<String>) -> Unit)?, onDenied: ((permission: Array<String>) -> Unit)?, onBlocked: ((permission: Array<String>) -> Unit)?) {
+            override fun requestPermission(
+                permission: Array<String>,
+                showBlockedDefaultPopup: Boolean,
+                onGranted: ((permission: Array<String>) -> Unit)?,
+                onDenied: ((permission: Array<String>) -> Unit)?,
+                onBlocked: ((permission: Array<String>) -> Unit)?,
+                onCanceledBlockedPopup: ((dialog: DialogInterface) -> Unit)?
+            ) {
                 activityResultLaunchers.processRequestPermission(
                     permission,
-                    onGranted = { _permission ->
-                        onGranted?.let { it(_permission) }
+                    onGranted = { permission1 ->
+                        onGranted?.invoke(permission1)
                     },
-                    onDenied = { _permission ->
-                        onDenied?.let { it(_permission) }
+                    onDenied = { permission1 ->
+                        onDenied?.invoke(permission1)
                     },
-                    onBlocked = { _permission ->
-                        if (onBlocked == null) {
-                            showBlockedPermissionPopup(_permission)
-                        } else {
-                            onBlocked(_permission)
+                    onBlocked = { permission1 ->
+                        if (showBlockedDefaultPopup) {
+                            showBlockedPermissionPopup(permission1, onCanceledBlockedPopup)
                         }
+                        onBlocked?.invoke(permission1)
                     })
+            }
+
+            override fun launchPicker(request: PickVisualMediaRequest, onResult: ((uris: List<Uri>) -> Unit)?) {
+                activityResultLaunchers.processLaunchPicker(request, onResult)
+            }
+
+            override fun launchTake(request: TakeMediaRequest, onResult: ((success: Boolean) -> Unit)?) {
+                activityResultLaunchers.processLaunchTake(request, onResult)
             }
         })
     }
@@ -61,9 +80,9 @@ abstract class ACActivity : AppCompatActivity(), AC {
     }
 
     private var blockedPermissionPopup: Dialog? = null
-    private fun showBlockedPermissionPopup(permissions: Array<String>) {
+    private fun showBlockedPermissionPopup(permissions: Array<String>, onCancel: ((dialog: DialogInterface) -> Unit)?) {
         hideBlockedPermissionPopup()
-        blockedPermissionPopup = getBlockedPermissionPopup(permissions)?.also {
+        blockedPermissionPopup = getBlockedPermissionPopup(permissions, onCancel)?.also {
             it.show()
         }
     }
@@ -72,10 +91,14 @@ abstract class ACActivity : AppCompatActivity(), AC {
         blockedPermissionPopup?.dismiss()
     }
 
-    protected open fun getBlockedPermissionPopup(permissions: Array<String>): Dialog? = null
+    protected open fun getBlockedPermissionPopup(permissions: Array<String>, onCancel: ((dialog: DialogInterface) -> Unit)?): Dialog? = null
 
     override fun onDestroy() {
         activityResultLaunchers.unregisterAll()
         super.onDestroy()
     }
+}
+
+internal class ACActivityViewModel : ViewModel() {
+    internal val activityResultLaunchers = MutableLiveData<ACActivityResultLaunchers>()
 }

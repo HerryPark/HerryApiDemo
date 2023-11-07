@@ -4,9 +4,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.herry.libs.util.tuple.Tuple1
 import io.reactivex.Observable
+import kotlinx.coroutines.Dispatchers
+import java.util.concurrent.atomic.AtomicReference
 
 class DigitClassifierPresenter : DigitClassifierContract.Presenter() {
-    private var loadedImage: Any? = null
+    private var loadedImage: AtomicReference<Any?> = AtomicReference()
     private var digitImageClassifier: DigitImageClassifier? = null
 
     override fun onDetach() {
@@ -16,19 +18,26 @@ class DigitClassifierPresenter : DigitClassifierContract.Presenter() {
     }
 
     override fun onResume(view: DigitClassifierContract.View, state: ResumeState) {
-        if (state.isLaunch()) {
-            loadedImage(loadedImage)
-        }
+        displayLoadedImage(loadedImage.get())
     }
 
-    override fun loadedImage(loadedImage: Any?) {
-        launch(LaunchWhenPresenter.LAUNCHED) {
+    override fun loadedImage(loadedImage: Any?, onLoaded: ((image: Any?) -> Unit)?) {
+        launch(Dispatchers.IO) {
             val image = if (loadedImage is ByteArray && loadedImage.size > 0) {
                 BitmapFactory.decodeByteArray(loadedImage, 0, loadedImage.size)
             } else loadedImage
 
-            this@DigitClassifierPresenter.loadedImage = image
-            view?.onLoadedImage(image)
+            this@DigitClassifierPresenter.loadedImage.set(image)
+
+            launch(Dispatchers.Main) {
+                onLoaded?.invoke(image)
+            }
+        }
+    }
+
+    private fun displayLoadedImage(loadedImage: Any?) {
+        launch(LaunchWhenPresenter.LAUNCHED) {
+            view?.onLoadedImage(loadedImage)
         }
     }
 
@@ -43,7 +52,7 @@ class DigitClassifierPresenter : DigitClassifierContract.Presenter() {
                 view?.onError()
             },
             onNext = {
-                val classified = it.t1 ?: return@subscribeObservable
+                val classified = it.t1
                 view?.onClassified(classified.number.toString(), classified.accuracy)
             },
             loadView = true
@@ -51,6 +60,8 @@ class DigitClassifierPresenter : DigitClassifierContract.Presenter() {
     }
 
     override fun clear() {
-        loadedImage(null)
+        loadedImage(null) { image ->
+            displayLoadedImage(image)
+        }
     }
 }

@@ -12,7 +12,7 @@ import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.herry.libs.log.Trace
-import com.herry.test.app.permission.PermissionHelper
+import com.herry.libs.permission.PermissionHelper
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor

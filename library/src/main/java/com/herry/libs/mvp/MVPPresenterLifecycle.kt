@@ -10,7 +10,7 @@ class MVPPresenterLifecycle {
     enum class State {
         CREATED, //
         ATTACHED, //
-        LAUNCHED, // onLaunch()
+        LAUNCHED, // onStart()
         RESUMED; // onResume()
 
         fun isAtLeast(state: State): Boolean = this.ordinal >= state.ordinal

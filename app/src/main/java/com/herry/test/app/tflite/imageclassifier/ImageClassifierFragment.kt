@@ -1,14 +1,11 @@
 package com.herry.test.app.tflite.imageclassifier
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,16 +15,16 @@ import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.herry.libs.app.activity_caller.module.ACPermission
+import com.herry.libs.app.activity_caller.module.ACPick
 import com.herry.libs.app.activity_caller.module.ACTake
-import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.log.Trace
+import com.herry.libs.permission.PermissionHelper
 import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.setImage
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.BuildConfig
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
-import com.herry.test.app.painter.PainterFragment
 import com.herry.test.widget.Popup
 import com.herry.test.widget.TitleBarForm
 import java.io.File
@@ -58,7 +55,7 @@ class ImageClassifierFragment : BaseNavView<ImageClassifierContract.View, ImageC
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.image_classifier_fragment_title))
-            bindFormModel(view.context, TitleBarForm.Model(title = "Digit Image Classifier", backEnable = true))
+            bindFormModel(view.context, TitleBarForm.Model(title = "Image Classifier", backEnable = true))
         }
 
         loadImageButton = view.findViewById<View?>(R.id.image_classifier_fragment_load_image)?.apply {
@@ -69,61 +66,50 @@ class ImageClassifierFragment : BaseNavView<ImageClassifierContract.View, ImageC
                         arrayOf("Pick photo", "Take photo")) { dialog, which ->
                         when (which) {
                             0 -> {
-                                val packageManager = activity?.packageManager ?: return@setItems
-                                val intent = Intent(Intent.ACTION_PICK).apply {
-                                    this.setDataAndType(
-                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                        MediaStore.Images.Media.CONTENT_TYPE
-                                    )
-                                }
-                                intent.resolveActivity(packageManager)
-
-                                activityCaller?.call(
-                                    ACPermission.Caller(
-                                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                                        onGranted = {
-                                            activityCaller?.call(ACTake.PickPicture { result ->
-                                                if (result.success) {
-                                                    val picked: Uri = result.uris.firstOrNull() ?: return@PickPicture
-                                                    presenter?.loadedImage(picked)
-                                                }
-                                            })
-                                        }
-                                    ))
+                                activityCaller?.call(ACPick.PickImageOnly { result ->
+                                    if (result.success) {
+                                        val picked: Uri = result.uris.firstOrNull() ?: return@PickImageOnly
+                                        presenter?.loadedImage(picked)
+                                    }
+                                })
                             }
                             1 -> {
-                                activityCaller?.call(
-                                    ACPermission.Caller(
-                                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                                        onGranted = {
-                                            val context = context ?: return@Caller
-                                            val tempFile = try {
-                                                // Create an image file name
-                                                val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
-                                                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.let { storageDir ->
-                                                    File.createTempFile(
-                                                        "PHOTO_${timeStamp}_", /* prefix */
-                                                        ".jpg", /* suffix */
-                                                        storageDir /* directory */
-                                                    )
-                                                }
-                                            } catch (ex: IOException) {
-                                                null
-                                            } ?: return@Caller
-
-                                            val saveFileURI = FileProvider.getUriForFile(
-                                                context,
-                                                BuildConfig.APPLICATION_ID + ".provider",
-                                                tempFile
+                                val onTake: () -> Unit = {
+                                    val tempFile = try {
+                                        // Create an image file name
+                                        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
+                                        context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.let { storageDir ->
+                                            File.createTempFile(
+                                                "PHOTO_${timeStamp}_", /* prefix */
+                                                ".jpg", /* suffix */
+                                                storageDir /* directory */
                                             )
-                                            activityCaller?.call(ACTake.TakePicture(saveFileURI) { result ->
-                                                if (result.success) {
-                                                    val picked: Uri = result.uris.firstOrNull() ?: return@TakePicture
-                                                    presenter?.loadedImage(picked)
-                                                }
-                                            })
                                         }
-                                    ))
+                                    } catch (ex: IOException) {
+                                        null
+                                    }
+
+                                    if (tempFile != null) {
+                                        val saveFileURI = FileProvider.getUriForFile(
+                                            context,
+                                            BuildConfig.APPLICATION_ID + ".provider",
+                                            tempFile
+                                        )
+                                        activityCaller?.call(ACTake.TakeImage(saveFileURI) { result ->
+                                            if (result.success) {
+                                                val picked: Uri = result.uri ?: return@TakeImage
+                                                presenter?.loadedImage(picked)
+                                            }
+                                        })
+                                    }
+                                }
+
+                                activityCaller?.call(ACPermission.Caller(
+                                    PermissionHelper.Type.CAMERA.permissions.toTypedArray(),
+                                    onGranted = {
+                                        onTake()
+                                    }
+                                ))
                             }
                         }
                         dialog.dismiss()
@@ -177,13 +163,5 @@ class ImageClassifierFragment : BaseNavView<ImageClassifierContract.View, ImageC
 
     override fun onError() {
         resultView?.text = String.format(Locale.ENGLISH, "Cannot classified")
-    }
-
-    override fun onNavigateUpResult(fromNavigationId: Int, result: Bundle) {
-        if (fromNavigationId == R.id.painter_fragment) {
-            if (NavBundleUtil.isNavigationResultOk(result)) {
-                presenter?.loadedImage(PainterFragment.getResult(result)?.bitmapByteArray ?: return)
-            }
-        }
     }
 }

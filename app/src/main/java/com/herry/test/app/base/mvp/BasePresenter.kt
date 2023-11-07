@@ -23,8 +23,10 @@ import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.*
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
 
     companion object {
@@ -83,9 +85,13 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         }
 
         presenterLifecycle.setState(state = MVPPresenterLifecycle.State.ATTACHED)
+        viewState.set(ViewState.CREATED)
     }
 
     override fun onDetach() {
+        viewLifecycleOwner?.lifecycle?.removeObserver(this)
+        viewState.set(ViewState.INITIALIZED)
+
         this.view = null
         this.viewLifecycleOwner = null
 
@@ -113,7 +119,29 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         fun isLaunch() = this == LAUNCH || this == RELAUNCH
     }
 
+    // refercence: https://developer.android.com/guide/fragments/lifecycle
+    private enum class ViewState {
+        INITIALIZED,
+        CREATED,
+        STARTED,
+        RESUMED,
+    }
+
+    private val viewState: AtomicReference<ViewState> = AtomicReference(ViewState.INITIALIZED)
+
+    final override fun onStart() {
+        Trace.d(TAG, "[${this::class.java.simpleName}] onStart()")
+        viewState.set(ViewState.STARTED)
+    }
+
     final override fun onResume() {
+        Trace.d(TAG, "[${this::class.java.simpleName}] onResume()")
+        if (viewState.get() == ViewState.RESUMED) {
+            return
+        }
+
+        viewState.set(ViewState.RESUMED)
+
         val action: () -> Unit = {
             this.view?.let {
                 networkConnectionChecker?.register()
@@ -151,10 +179,18 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
     protected fun getResumeState(): ResumeState? = currentResumeState
 
     final override fun onPause() {
+        Trace.d(TAG, "[${this::class.java.simpleName}] onPause()")
         networkConnectionChecker?.unregister()
         compositeDisposable.clear()
         this.view?.let {
             onPause(it)
+        }
+    }
+
+    final override fun onStop() {
+        Trace.d(TAG, "[${this::class.java.simpleName}] onStop()")
+        viewState.set(ViewState.CREATED)
+        this.view?.let {
             presenterLifecycle.setState(state = MVPPresenterLifecycle.State.ATTACHED)
         }
     }

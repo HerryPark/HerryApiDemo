@@ -63,7 +63,7 @@ class PickListPresenter : PickListContract.Presenter() {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
         val storageDir: File? = when (type) {
             PickListContract.PickType.TAKE_PHOTO -> context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            PickListContract.PickType.TAKE_MOVIE -> context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
+            PickListContract.PickType.TAKE_VIDEO -> context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
             else -> null
         }
         storageDir ?: return null
@@ -75,7 +75,7 @@ class PickListPresenter : PickListContract.Presenter() {
                     ".jpg", /* suffix */
                     storageDir /* directory */
                 )
-            PickListContract.PickType.TAKE_MOVIE ->
+            PickListContract.PickType.TAKE_VIDEO ->
                 File.createTempFile(
                     "VIDEO_${timeStamp}_", /* prefix */
                     ".mp4", /* suffix */
@@ -97,16 +97,7 @@ class PickListPresenter : PickListContract.Presenter() {
     }
 
     override fun picked(tempFile: File, picked: Uri?, type: PickListContract.PickType, success: Boolean) {
-        Trace.d("picked 1 currentState = Presenter.${getCurrentPresenterState()}")
-        launch(LaunchWhenView.RESUMED) {
-            Trace.d("do View.RESUMED : called from picked()")
-        }
-        launch(LaunchWhenPresenter.RESUMED) {
-            Trace.d("1 Presenter.RESUMED : called from picked() currentState = Presenter.${getCurrentPresenterState()} thread = ${Thread.currentThread().name}")
-        }
-        Trace.d("picked 2 currentState = Presenter.${getCurrentPresenterState()}")
         launch(LaunchWhenPresenter.LAUNCHED) {
-            Trace.d("2 Presenter.LAUNCHED : called from picked() currentState = Presenter.${getCurrentPresenterState()}")
             val context = view?.getViewContext() ?: return@launch
             if (type == PickListContract.PickType.TAKE_PHOTO) {
                 if (success) {
@@ -125,7 +116,7 @@ class PickListPresenter : PickListContract.Presenter() {
                     deleteTempFile(tempFile)
                     view?.onPicked("cancel taking")
                 }
-            } else if (type == PickListContract.PickType.TAKE_MOVIE) {
+            } else if (type == PickListContract.PickType.TAKE_VIDEO) {
                 if (success) {
                     if (picked == null) {
                         MediaScanner.newInstance(context).run {

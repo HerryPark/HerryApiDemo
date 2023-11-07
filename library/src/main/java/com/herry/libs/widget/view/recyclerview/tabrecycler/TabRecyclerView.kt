@@ -14,13 +14,13 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.nodeview.recycler.NodeRecyclerHolder
 import com.herry.libs.widget.view.viewgroup.LoadingCountView
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
-import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerForm
+import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewForm
 
 @Suppress("unused")
 open class TabRecyclerView: NodeForm<TabRecyclerView.Holder, TabRecyclerContract.Presenter>(Holder::class, TabRecyclerContract.Presenter::class), NodeRecyclerForm {
 
     interface OnTabRecyclerViewListener {
-        fun getCustomLayout(): Int = R.layout.recycler_form
+        fun getCustomLayout(): Int = R.layout.recyclerview_form
         fun getCustomRecyclerForm(container: View): View? = null
 
         fun onBindRecyclerView(context: Context, recyclerView: RecyclerView, container: View)
@@ -44,7 +44,7 @@ open class TabRecyclerView: NodeForm<TabRecyclerView.Holder, TabRecyclerContract
 
     override fun onLayout(): Int {
         val layoutResID = listener?.getCustomLayout() ?: 0
-        return if (0 != layoutResID) layoutResID else R.layout.recycler_form
+        return if (0 != layoutResID) layoutResID else R.layout.recyclerview_form
     }
 
     override fun onCreateHolder(context: Context, view: View): Holder {
@@ -87,10 +87,10 @@ open class TabRecyclerView: NodeForm<TabRecyclerView.Holder, TabRecyclerContract
         private val adapter = Adapter { context }
         private var endlessRecyclerViewScrollListener: EndlessRecyclerViewScrollListener? = null
 
-        private val recyclerForm: RecyclerForm
+        private val recyclerForm: RecyclerViewForm
 
         init {
-            recyclerForm = object: RecyclerForm() {
+            recyclerForm = object: RecyclerViewForm() {
                 override fun onBindRecyclerView(context: Context, recyclerView: RecyclerView) {
                     recyclerView.apply {
                         listener?.onBindRecyclerView(context, this, view)

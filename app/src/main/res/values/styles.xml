@@ -150,4 +150,16 @@
         <item name="sv_flingEnabled">true</item>
         <item name="sv_showEdgeText">false</item>
     </style>
+
+    <style name="AppTheme.BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="AppTheme.BottomSheetDialog.HideStatusBar" parent="AppTheme.BottomSheetDialog">
+        <item name="android:windowFullscreen">true</item>
+    </style>
 </resources>

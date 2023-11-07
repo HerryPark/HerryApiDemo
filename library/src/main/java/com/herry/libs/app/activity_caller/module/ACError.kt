@@ -1,18 +1,19 @@
 package com.herry.libs.app.activity_caller.module
 
+import android.app.Activity
 import com.herry.libs.app.activity_caller.ACModule
 import java.util.concurrent.ExecutionException
 
 class ACError(private val caller: Caller, private val listener: ACErrorListener): ACModule {
 
-    interface ACErrorListener: ACModule.OnListener<ACError>
+    interface ACErrorListener: ACModule.OnIntentListener
 
     open class Caller(
         internal val throwable: Throwable,
         internal val listener: ((throwable: Throwable) -> Unit)? = null
     )
 
-    override fun call() {
+    override fun call(activity: Activity) {
         when(caller.throwable) {
             is ExecutionException -> {
                 caller.throwable.cause?.let {

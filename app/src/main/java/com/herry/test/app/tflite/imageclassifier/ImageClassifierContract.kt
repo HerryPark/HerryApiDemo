@@ -13,7 +13,7 @@ interface ImageClassifierContract {
     }
 
     abstract class Presenter : BasePresenter<View>() {
-        abstract fun loadedImage(loadedImage: Any?)
+        abstract fun loadedImage(loadedImage: Any?, onLoaded: ((image: Any?) -> Unit)? = null)
         abstract fun classify(image: Bitmap)
         abstract fun clear()
     }

@@ -30,6 +30,12 @@ abstract class BaseView<V: MVPView<P>, P: MVPPresenter<V>>: BaseFragment(), MVPV
         presenter?.onDetach()
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        presenter?.onStart()
+    }
+
     override fun onResume() {
         super.onResume()
 
@@ -40,6 +46,12 @@ abstract class BaseView<V: MVPView<P>, P: MVPPresenter<V>>: BaseFragment(), MVPV
         presenter?.onPause()
 
         super.onPause()
+    }
+
+    override fun onStop() {
+        presenter?.onStop()
+
+        super.onStop()
     }
 
     override fun error(throwable: Throwable) {

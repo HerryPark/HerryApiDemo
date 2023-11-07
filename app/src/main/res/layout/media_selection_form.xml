@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:transitionGroup="true"
+    tools:ignore="HardcodedText,SpUsage">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/media_selection_form_permission_title"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:gravity="start|center_vertical"
+        android:textStyle="normal"
+        android:textSize="14dp"
+        android:textColor="@color/tbc_100"
+        android:text="Storage Access"
+        app:layout_constraintEnd_toStartOf="@id/media_selection_form_permission"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/media_selection_form_permission"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="16dp"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="\?"
+        android:textSize="14dp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/media_selection_form_permission_title"
+        app:layout_constraintBottom_toBottomOf="@id/media_selection_form_permission_title"/>
+
+    <View
+        android:id="@+id/media_selection_form_permission_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/tbc_100"
+        app:layout_constraintTop_toBottomOf="@id/media_selection_form_permission_title" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/media_selection_form_media_selection_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:gravity="start|center_vertical"
+        android:text="Add files to the selection"
+        android:textSize="14dp"
+        android:textStyle="normal"
+        android:textColor="@color/tbc_100"
+        app:layout_constraintTop_toBottomOf="@id/media_selection_form_permission_divider"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/media_selection_form_selections"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@id/media_selection_form_media_selection_title" >
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/media_selection_form_images"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Images"
+            android:textSize="12dp"
+            android:textStyle="normal"
+            android:textColor="@color/selector_text2"
+            android:background="@drawable/shape_r04_bg_tbc10_st_01dp_tbc100"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/media_selection_form_videos"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/media_selection_form_videos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Videos"
+            android:textSize="12dp"
+            android:textStyle="normal"
+            android:textColor="@color/selector_text2"
+            android:background="@drawable/shape_r04_bg_tbc10_st_01dp_tbc100"
+            app:layout_constraintStart_toEndOf="@id/media_selection_form_images"
+            app:layout_constraintEnd_toStartOf="@id/media_selection_form_visual_all"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/media_selection_form_visual_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Visual All"
+            android:textSize="12dp"
+            android:textStyle="normal"
+            android:textColor="@color/selector_text2"
+            android:background="@drawable/shape_r04_bg_tbc10_st_01dp_tbc100"
+            app:layout_constraintStart_toEndOf="@id/media_selection_form_videos"
+            app:layout_constraintEnd_toStartOf="@id/media_selection_form_audios"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/media_selection_form_audios"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Audios"
+            android:textSize="12dp"
+            android:textStyle="normal"
+            android:textColor="@color/selector_text2"
+            android:background="@drawable/shape_r04_bg_tbc10_st_01dp_tbc100"
+            app:layout_constraintStart_toEndOf="@id/media_selection_form_visual_all"
+            app:layout_constraintEnd_toStartOf="@id/media_selection_form_all"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/media_selection_form_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Media All"
+            android:textSize="12dp"
+            android:textStyle="normal"
+            android:textColor="@color/selector_text2"
+            android:background="@drawable/shape_r04_bg_tbc10_st_01dp_tbc100"
+            app:layout_constraintStart_toEndOf="@id/media_selection_form_audios"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/media_selection_form_selections_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/tbc_100"
+        app:layout_constraintTop_toBottomOf="@id/media_selection_form_selections" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,137 +1,68 @@
 package com.herry.libs.app.activity_caller.module
 
+import android.Manifest
 import android.app.Activity
-import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
-import android.provider.MediaStore
-import androidx.activity.ComponentActivity
+import androidx.core.content.ContextCompat
 import com.herry.libs.app.activity_caller.ACModule
-import com.herry.libs.app.activity_caller.activity.ACActivity
+import com.herry.libs.app.activity_caller.result.ACActivityResultContracts
+import com.herry.libs.app.activity_caller.result.TakeMediaRequest
+import com.herry.libs.log.Trace
 import java.io.Serializable
 
-class ACTake(private val caller: Caller, private val listener: ACTakeListener) : ACModule {
+class ACTake(private val caller: Caller, private val listener: OnListener) : ACModule {
 
     data class Result(
-        val callActivity: ComponentActivity,
-        val uris: MutableList<Uri> = mutableListOf(),
+        val callActivity: Activity,
+        val uri: Uri?,
         val success: Boolean
     ) : Serializable
 
     open class Caller(
-        internal val isMultiple: Boolean = false,
-        internal val uri: Uri?,
+        internal val uri: Uri,
         internal val onResult: ((result: Result) -> Unit)? = null
     )
 
-    class PickPicture(
-        isMultiple: Boolean = false,
-        onResult: ((result: Result) -> Unit)? = null
-    ) : Caller(isMultiple, null, onResult)
-
-    class PickVideo(
-        isMultiple: Boolean = false,
-        onResult: ((result: Result) -> Unit)? = null
-    ) : Caller(isMultiple, null, onResult)
-
-    class TakePicture(
+    class TakeImage(
         uri: Uri,
         onResult: ((result: Result) -> Unit)? = null
-    ) : Caller(false, uri, onResult)
+    ) : Caller(uri, onResult)
 
     class TakeVideo(
         uri: Uri,
         onResult: ((result: Result) -> Unit)? = null
-    ) : Caller(false, uri, onResult)
+    ) : Caller(uri, onResult)
 
-    interface ACTakeListener: ACModule.OnListener<ACTake>
+    interface OnListener: ACModule.OnTakeListener
 
-    override fun call() {
-        val activity = listener.getActivity() as ACActivity
+    override fun call(activity: Activity) {
         when(caller) {
-            is PickPicture -> {
-                val intent = Intent(Intent.ACTION_PICK).apply {
-                    type = MediaStore.Images.Media.CONTENT_TYPE
-                    data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-
-                    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, caller.isMultiple)
+            is TakeImage -> {
+                if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    throw IllegalStateException("This device is need [${Manifest.permission.CAMERA}] permissions")
                 }
-                intent.resolveActivity(activity.packageManager ?: return) ?: return
-
-                activity.activityCaller.call(ACNavigation.IntentCaller(intent, onResult = { result ->
-                    val uris = mutableListOf<Uri>()
-
-                    val picked: Uri? = result.intent?.data
-                    if (picked != null) {
-                        uris.add(picked)
-                    }
-
-                    caller.onResult?.invoke(Result(result.callActivity, uris, result.resultCode == Activity.RESULT_OK))
-                }))
-            }
-
-            is PickVideo -> {
-                val intent = Intent(Intent.ACTION_PICK).apply {
-                    type = MediaStore.Video.Media.CONTENT_TYPE
-                    data = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-
-                    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, caller.isMultiple)
+                listener.launchTake(TakeMediaRequest.Builder()
+                    .setMediaType(ACActivityResultContracts.TakeImage)
+                    .setInputUri(caller.uri)
+                    .build()) { success ->
+                   caller.onResult?.invoke(Result(activity, if (success) caller.uri else null, success))
                 }
-                intent.resolveActivity(activity.packageManager ?: return) ?: return
-
-                activity.activityCaller.call(ACNavigation.IntentCaller(intent, onResult = { result ->
-                    val uris = mutableListOf<Uri>()
-
-                    val picked: Uri? = result.intent?.data
-                    if (picked != null) {
-                        uris.add(picked)
-                    }
-
-                    caller.onResult?.invoke(Result(result.callActivity, uris, result.resultCode == Activity.RESULT_OK))
-                }))
-            }
-
-            is TakePicture -> {
-                val uri = caller.uri
-                if (uri == null) {
-                    caller.onResult?.invoke(Result(activity, mutableListOf(), false))
-                    return
-                }
-
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                // Ensure that there's a camera activity to handle the intent
-                intent.resolveActivity(activity.packageManager ?: return) ?: return
-
-                // adds permission to other app
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-
-                activity.activityCaller.call(ACNavigation.IntentCaller(intent, onResult = { result ->
-                    caller.onResult?.invoke(Result(result.callActivity, mutableListOf(uri), result.resultCode == Activity.RESULT_OK))
-                }))
             }
 
             is TakeVideo -> {
-                val uri = caller.uri
-                if (uri == null) {
-                    caller.onResult?.invoke(Result(activity, mutableListOf(), false))
-                    return
+                if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    throw IllegalStateException("This device is need [${Manifest.permission.CAMERA}] permissions")
                 }
-
-                val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
-                // Ensure that there's a camera activity to handle the intent
-                intent.resolveActivity(activity.packageManager ?: return) ?: return
-
-                // adds permission to other app
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-
-                activity.activityCaller.call(ACNavigation.IntentCaller(intent, onResult = { result ->
-                    caller.onResult?.invoke(Result(result.callActivity, mutableListOf(uri), result.resultCode == Activity.RESULT_OK))
-                }))
+                if (ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                    throw IllegalStateException("This device is need [${Manifest.permission.RECORD_AUDIO}] permissions")
+                }
+                listener.launchTake(TakeMediaRequest.Builder()
+                    .setMediaType(ACActivityResultContracts.TakeVideo)
+                    .setInputUri(caller.uri)
+                    .build()) { success ->
+                    caller.onResult?.invoke(Result(activity, if (success) caller.uri else null, success))
+                }
             }
         }
     }

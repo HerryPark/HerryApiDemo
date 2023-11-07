@@ -33,6 +33,12 @@ abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment()
         presenter?.onDetach()
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        presenter?.onStart()
+    }
+
     override fun onResume() {
         super.onResume()
 
@@ -43,6 +49,12 @@ abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment()
         presenter?.onPause()
 
         super.onPause()
+    }
+
+    override fun onStop() {
+        presenter?.onStop()
+
+        super.onStop()
     }
 
     override fun error(throwable: Throwable) {

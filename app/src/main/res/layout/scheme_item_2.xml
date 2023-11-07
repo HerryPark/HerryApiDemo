@@ -46,4 +46,15 @@
         android:textSize="@dimen/size14"
         android:textColor="@color/tbc_100"
         />
+
+    <TextView
+        android:id="@+id/scheme_item_2_short_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginVertical="4dp"
+        android:gravity="start|center_vertical"
+        android:textSize="@dimen/size14"
+        android:textColor="@color/tbc_100"
+        />
 </LinearLayout>

@@ -18,7 +18,7 @@ import com.herry.libs.util.BundleUtil
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
-import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerForm
+import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewForm
 import com.herry.libs.widget.view.swiperefreshlayout.SwipeRefreshLayoutEx
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
@@ -57,7 +57,7 @@ class TagsFragment : BaseNavView<TagsContract.View, TagsContract.Presenter>(), T
         onClickBack = { AppUtil.pressBackKey(requireActivity(), container) }
     )
 
-    private var recyclerForm = object: RecyclerForm() {
+    private var recyclerForm = object: RecyclerViewForm() {
         override fun onBindRecyclerView(context: Context, recyclerView: RecyclerView) {
             recyclerView.apply {
                 setHasFixedSize(true)

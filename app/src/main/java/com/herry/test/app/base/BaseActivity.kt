@@ -2,6 +2,7 @@ package com.herry.test.app.base
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -13,7 +14,7 @@ import com.herry.libs.helper.ApiHelper
 import com.herry.libs.util.AppActivityManager
 import com.herry.libs.util.AppUtil
 import com.herry.libs.util.FragmentAddingOption
-import com.herry.test.app.permission.PermissionHelper
+import com.herry.libs.permission.PermissionHelper
 
 @Suppress("PrivatePropertyName")
 abstract class BaseActivity : ACActivity() {
@@ -76,8 +77,8 @@ abstract class BaseActivity : ACActivity() {
         }
     }
 
-    override fun getBlockedPermissionPopup(permissions: Array<String>): Dialog? {
-        return PermissionHelper.createPermissionSettingScreenPopup(this)?.getDialog()
+    override fun getBlockedPermissionPopup(permissions: Array<String>, onCancel: ((dialog: DialogInterface) -> Unit)?): Dialog? {
+        return PermissionHelper.createPermissionSettingScreenPopup(this, onCancel)?.getDialog()
     }
 
     protected fun finish(withoutAnimation: Boolean) {

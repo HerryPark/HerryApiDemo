@@ -502,37 +502,19 @@ object ViewUtil {
     }
 
     fun setViewGroupEnabled(view: View?, enabled: Boolean) {
-        if (null != view) {
-            view.isEnabled = enabled
-            if (view is ViewGroup) {
-                for (i in 0 until view.childCount) {
-                    val child = view.getChildAt(i)
-                    if (null != child) {
-                        if (child is ViewGroup) {
-                            setViewGroupEnabled(child, enabled)
-                        } else {
-                            child.isEnabled = enabled
-                        }
-                    }
-                }
+        view?.isEnabled = enabled
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                setViewGroupEnabled(view.getChildAt(i), enabled) // Recursive call
             }
         }
     }
 
     fun setViewGroupSelected(view: View?, selected: Boolean) {
-        if (null != view) {
-            view.isSelected = selected
-            if (view is ViewGroup) {
-                for (i in 0 until view.childCount) {
-                    val child = view.getChildAt(i)
-                    if (null != child) {
-                        if (child is ViewGroup) {
-                            setViewGroupSelected(child, selected)
-                        } else {
-                            child.isSelected = selected
-                        }
-                    }
-                }
+        view?.isSelected = selected
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                setViewGroupSelected(view.getChildAt(i), selected) // Recursive call
             }
         }
     }

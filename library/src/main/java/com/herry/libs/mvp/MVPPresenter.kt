@@ -14,10 +14,16 @@ abstract class MVPPresenter<in V>: ViewModel() {
     abstract fun onDetach()
 
     @MainThread
+    open fun onStart() {}
+
+    @MainThread
     abstract fun onResume()
 
     @MainThread
     abstract fun onPause()
+
+    @MainThread
+    open fun onStop() {}
 
     abstract fun relaunched(recreated: Boolean)
 }

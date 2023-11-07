@@ -9,7 +9,7 @@ class GifMediaFileInfoData (
     mimeType: String,
     path: String,
     name: String,
-    size: Int = 0,
+    size: Long = 0L,
     val width: Int = 0,
     val height: Int = 0,
     date: Long = 0
