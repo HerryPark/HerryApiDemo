@@ -20,25 +20,35 @@ object ApiHelper {
 
     fun hasOSv9(): Boolean = hasPie()
 
-    fun hasOSv10(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q // 29
+    const val API29: Int = Build.VERSION_CODES.Q // 29
+
+    fun hasOSv10(): Boolean = Build.VERSION.SDK_INT >= API29
 
     fun hasAPI29(): Boolean = hasOSv10()
 
-    fun hasOSv11(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R // 30
+    const val API30: Int = Build.VERSION_CODES.R // 30
+
+    fun hasOSv11(): Boolean = Build.VERSION.SDK_INT >= API30
 
     fun hasAPI30(): Boolean = hasOSv11()
 
-    fun hasOSv12(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S // 31
+    const val API31: Int = Build.VERSION_CODES.S // 31
+
+    fun hasOSv12(): Boolean = Build.VERSION.SDK_INT >= API31
 
     fun hasAPI31(): Boolean = hasOSv12()
 
-    fun hasOSv12L(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S_V2 // 32
+    const val API32: Int = Build.VERSION_CODES.S_V2 // 32
 
-    fun hasOSv13(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU // 33
+    const val API33: Int = Build.VERSION_CODES.TIRAMISU // 33
+
+    fun hasOSv13(): Boolean = Build.VERSION.SDK_INT >= API33
 
     fun hasAPI33(): Boolean = hasOSv13()
 
-    fun hasOSv14(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE // 34
+    const val API34: Int = Build.VERSION_CODES.UPSIDE_DOWN_CAKE // 34
+
+    fun hasOSv14(): Boolean = Build.VERSION.SDK_INT >= API34
 
     fun hasAPI34(): Boolean = hasOSv14()
 

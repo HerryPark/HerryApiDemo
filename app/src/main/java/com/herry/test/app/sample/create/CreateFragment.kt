@@ -1,15 +1,24 @@
 package com.herry.test.app.sample.create
 
+import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.configure.SystemUIAppearance
+import com.herry.libs.widget.configure.SystemUIAppearanceColorStyle
+import com.herry.libs.widget.configure.SystemUIAppearances
 import com.herry.libs.widget.extension.*
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
 
 class CreateFragment: BaseNavFragment() {
+
+    override fun getSystemUIAppearances(context: Context): SystemUIAppearances = SystemUIAppearances(
+        statusBar = SystemUIAppearance(backgroundColor = Color.BLACK)
+    )
 
     private var container: View? = null
 

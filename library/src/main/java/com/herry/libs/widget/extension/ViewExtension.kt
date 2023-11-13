@@ -194,8 +194,8 @@ fun View.getViewMargins(): Rect {
     return margins
 }
 
-fun View.setViewPadding(left: Int, top: Int, right: Int, bottom: Int) {
-    this.setPadding(left, top, right, bottom)
+fun View.setViewPadding(start: Int = this.paddingStart, top: Int = this.paddingTop, end: Int = this.paddingEnd, bottom: Int = this.paddingBottom) {
+    this.setPadding(start, top, end, bottom)
 }
 
 fun View.setViewPadding(paddings: Rect) {

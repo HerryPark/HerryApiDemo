@@ -1,9 +1,11 @@
 package com.herry.test.app.base
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.herry.test.R
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.configure.SystemUIAppearance
 import kotlin.reflect.full.createInstance
 
 open class SingleActivity: BaseActivity() {
@@ -28,9 +30,10 @@ open class SingleActivity: BaseActivity() {
 //                window.statusBarColor = statusBarColor
 //            }
 
-            if (it.getBooleanExtra(FRAGMENT_TRANSPARENT_STATUS_BAR, false)) {
-                ViewUtil.makeFullScreen(this)
-            }
+            val transparentStatusBar = it.getBooleanExtra(FRAGMENT_TRANSPARENT_STATUS_BAR, false)
+            ViewUtil.setStatusBar(this,
+                SystemUIAppearance(backgroundColor = if (transparentStatusBar) Color.TRANSPARENT else null))
+            ViewUtil.setSystemUiVisibility(this, transparentStatusBar)
         }
 
         setContentView(R.layout.activity_base)

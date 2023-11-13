@@ -8,9 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.annotation.OptIn
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,19 +30,19 @@ import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.anim.ViewAnimCreator
 import com.herry.libs.widget.anim.ViewAnimListener
 import com.herry.libs.widget.anim.ViewAnimPlayer
+import com.herry.libs.widget.configure.SystemUIAppearance
+import com.herry.libs.widget.configure.SystemUIAppearances
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setViewMarginTop
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapExHelper
 import com.herry.test.R
-import com.herry.test.app.base.ScreenWindowStyle
-import com.herry.test.app.base.StatusBarStyle
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.sample.forms.FeedForm
 import com.herry.test.app.sample.repository.database.feed.Feed
 import com.herry.test.app.sample.tags.TagsFragment
 import com.herry.test.widget.TitleBarForm
-import java.util.*
+import java.util.Locale
 
 class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContract.Presenter>(), FeedDetailContract.View {
 
@@ -73,8 +75,11 @@ class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContrac
         }
     }
 
-    override fun onScreenWindowStyle(context: Context): ScreenWindowStyle = ScreenWindowStyle(true, StatusBarStyle.DARK)
+    override fun getSystemUIAppearances(context: Context): SystemUIAppearances = SystemUIAppearances(
+        isFullScreen = true,
+        statusBar = SystemUIAppearance(backgroundColor = Color.TRANSPARENT))
 
+    @OptIn(UnstableApi::class)
     override fun onCreatePresenter(): FeedDetailContract.Presenter? {
         val callData = getCallData(arguments) ?: return null
         this.callData = callData
@@ -130,7 +135,7 @@ class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContrac
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
                 bindFormHolder(view.context, view.findViewById<View?>(R.id.feed_detail_fragment_title)?.apply {
-                    this.setViewMarginTop(if (ViewUtil.isPortraitOrientation(context)) ViewUtil.getStatusBarHeight(context) else 0)
+                    this.setViewMarginTop(ViewUtil.getStatusBarHeight(context))
                 })
                 bindFormModel(view.context, TitleBarForm.Model(backEnable = true, backgroundColor = Color.TRANSPARENT))
         }

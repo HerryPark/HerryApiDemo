@@ -10,7 +10,7 @@ import com.herry.libs.util.AppActivityManager
 import com.herry.libs.util.preferences.PreferenceHelper
 import java.util.concurrent.atomic.AtomicBoolean
 
-class BaseApplication: Application() {
+class BaseApplication: Application(), AppActivityManager.OnGetAppActivityManager {
     private var isBackground = true
 
     internal val appActivityManager = AppActivityManager()
@@ -128,4 +128,6 @@ class BaseApplication: Application() {
             this.loggedIn.set(loggedIn)
         }
     }
+
+    override fun getAppActivityManager(): AppActivityManager = appActivityManager
 }

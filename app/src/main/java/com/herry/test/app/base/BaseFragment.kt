@@ -1,11 +1,9 @@
 package com.herry.test.app.base
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -17,6 +15,8 @@ import androidx.fragment.app.DialogFragment
 import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.helper.TransitionHelper
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.configure.SystemUIAppearances
+import com.herry.libs.widget.configure.SystemUIVisibility
 import com.herry.libs.widget.view.viewgroup.LoadingCountView
 import java.lang.ref.WeakReference
 
@@ -30,7 +30,10 @@ open class BaseFragment : DialogFragment() {
         private const val TAG = "ARG_TAG"
     }
 
-    protected open fun onScreenWindowStyle(context: Context): ScreenWindowStyle? = null
+    /**
+     * @return null is does not applies system ui styles (status bar, navigation bar)
+     */
+    protected open fun getSystemUIAppearances(context: Context): SystemUIAppearances? = SystemUIAppearances() // default
 
     private fun createTag(): String = "${this::class.java.simpleName}#${System.currentTimeMillis()}"
 
@@ -75,26 +78,17 @@ open class BaseFragment : DialogFragment() {
         super.onResume()
 
         val context = this.context ?: return
-        val defaultScreenWindowStyle = ScreenWindowStyle(isFullScreen = ViewUtil.isSystemFullScreen(context))
-        val screenStyle = if (ViewUtil.isPortraitOrientation(context)) {
-            onScreenWindowStyle(context) ?: defaultScreenWindowStyle
-        } else {
-            defaultScreenWindowStyle
-        }
-
-        screenStyle.let { windowStyle ->
-            ViewUtil.makeFullScreen(activity, windowStyle.isFullScreen)
-            when (windowStyle.statusBarStyle) {
-                StatusBarStyle.LIGHT -> ViewUtil.setStatusBarTransparent(activity, mode = ViewUtil.StatusBarMode.LIGHT)
-                StatusBarStyle.DARK -> ViewUtil.setStatusBarTransparent(activity, mode = ViewUtil.StatusBarMode.DARK)
-                null -> {
-                    val typedValue = TypedValue()
-                    val attrs: TypedArray = context.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.statusBarColor))
-                    val color = attrs.getColor(0, 0)
-                    ViewUtil.setStatusBarColor(activity, color)
-                    attrs.recycle()
-                }
-            }
+        val systemUIStyle = getSystemUIAppearances(context)
+        systemUIStyle?.let { style ->
+            ViewUtil.setSystemUiVisibility(
+                activity = activity,
+                isFull = style.isFullScreen,
+                showBehavior = style.showBehavior,
+                statusBarVisibility = style.statusBar.visibility,
+                navigationBarVisibility = style.navigationBar.visibility
+            )
+            ViewUtil.setStatusBar(activity = activity, appearance = style.statusBar)
+            ViewUtil.setNavigationBar(activity = activity, appearance = style.navigationBar)
         }
     }
 

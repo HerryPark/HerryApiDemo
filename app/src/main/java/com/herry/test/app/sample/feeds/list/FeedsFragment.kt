@@ -1,6 +1,7 @@
 package com.herry.test.app.sample.feeds.list
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,13 +13,15 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.configure.SystemUIAppearance
+import com.herry.libs.widget.configure.SystemUIAppearances
+import com.herry.libs.widget.configure.SystemUIShowBehavior
+import com.herry.libs.widget.configure.SystemUIVisibility
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapExHelper
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapWithTabLayoutHelper
 import com.herry.test.R
-import com.herry.test.app.base.ScreenWindowStyle
-import com.herry.test.app.base.StatusBarStyle
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.sample.feeds.detail.FeedDetailFragment
 import com.herry.test.widget.TabLayoutForm
@@ -26,7 +29,10 @@ import com.herry.test.widget.TabLayoutForm
 
 class FeedsFragment: BaseNavView<FeedsContract.View, FeedsContract.Presenter>(), FeedsContract.View {
 
-    override fun onScreenWindowStyle(context: Context): ScreenWindowStyle = ScreenWindowStyle(false, StatusBarStyle.LIGHT)
+    override fun getSystemUIAppearances(context: Context): SystemUIAppearances = SystemUIAppearances(
+        showBehavior = SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE,
+        statusBar = SystemUIAppearance(backgroundColor = Color.WHITE, visibility = SystemUIVisibility.SHOW)
+    )
 
     override fun onCreatePresenter(): FeedsContract.Presenter = FeedsPresenter()
 

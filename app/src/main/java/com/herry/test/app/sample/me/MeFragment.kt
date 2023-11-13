@@ -6,13 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.configure.SystemUIAppearance
+import com.herry.libs.widget.configure.SystemUIAppearanceColorStyle
+import com.herry.libs.widget.configure.SystemUIAppearances
+import com.herry.libs.widget.configure.SystemUIShowBehavior
+import com.herry.libs.widget.configure.SystemUIVisibility
 import com.herry.test.R
-import com.herry.test.app.base.ScreenWindowStyle
 import com.herry.test.app.base.nav.BaseNavFragment
 
 class MeFragment: BaseNavFragment() {
 
-    override fun onScreenWindowStyle(context: Context): ScreenWindowStyle = ScreenWindowStyle(isFullScreen = true)
+    override fun getSystemUIAppearances(context: Context): SystemUIAppearances = SystemUIAppearances(
+        showBehavior = SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE,
+        statusBar = SystemUIAppearance(appearanceColorStyle = SystemUIAppearanceColorStyle.DARK, visibility = SystemUIVisibility.HIDE),
+        navigationBar = SystemUIAppearance(appearanceColorStyle = SystemUIAppearanceColorStyle.DARK, visibility = SystemUIVisibility.HIDE)
+    )
 
     private var container: View? = null
 

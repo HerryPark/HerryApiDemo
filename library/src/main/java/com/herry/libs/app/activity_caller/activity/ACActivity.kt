@@ -8,16 +8,14 @@ import android.os.Bundle
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.app.activity_caller.ACBase
 import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.activity_caller.result.ACActivityResultLaunchers
 import com.herry.libs.app.activity_caller.result.TakeMediaRequest
-import com.herry.libs.log.Trace
+import com.herry.libs.util.AppActivityManager
 
-abstract class ACActivity : AppCompatActivity(), AC {
+abstract class ACActivity : AppCompatActivity(), AC, AppActivityManager.OnGetAppActivityManager {
 
     lateinit var activityCaller: ACBase
         private set
@@ -97,8 +95,8 @@ abstract class ACActivity : AppCompatActivity(), AC {
         activityResultLaunchers.unregisterAll()
         super.onDestroy()
     }
-}
 
-internal class ACActivityViewModel : ViewModel() {
-    internal val activityResultLaunchers = MutableLiveData<ACActivityResultLaunchers>()
+    override fun getAppActivityManager(): AppActivityManager? {
+        return (application as? AppActivityManager.OnGetAppActivityManager)?.getAppActivityManager()
+    }
 }

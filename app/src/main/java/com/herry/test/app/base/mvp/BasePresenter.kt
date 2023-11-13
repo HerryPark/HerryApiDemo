@@ -3,6 +3,7 @@ package com.herry.test.app.base.mvp
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -49,10 +50,12 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
 
     private var networkConnectionChecker: NetworkConnectionChecker? = null
 
+    // view lifecycle owner
     protected var viewLifecycleOwner: LifecycleOwner? = null
         private set
 
     override fun onAttach(view: V) {
+        Trace.d(TAG, "[${this::class.java.simpleName}] onAttach()")
         if (view is LifecycleOwner) {
             viewLifecycleOwner = view
             viewLifecycleOwner?.lifecycle?.addObserver(this)
@@ -89,6 +92,7 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
     }
 
     override fun onDetach() {
+        Trace.d(TAG, "[${this::class.java.simpleName}] onDetach()")
         viewLifecycleOwner?.lifecycle?.removeObserver(this)
         viewState.set(ViewState.INITIALIZED)
 
@@ -136,28 +140,28 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
 
     final override fun onResume() {
         Trace.d(TAG, "[${this::class.java.simpleName}] onResume()")
-        if (viewState.get() == ViewState.RESUMED) {
-            return
-        }
-
-        viewState.set(ViewState.RESUMED)
-
         val action: () -> Unit = {
             this.view?.let {
+                if (viewState.get() == ViewState.RESUMED) {
+                    return@let
+                }
+
+                viewState.set(ViewState.RESUMED)
                 networkConnectionChecker?.register()
+
                 val viewLifecycleScope = viewLifecycleOwner?.lifecycleScope
                 if (!launched) {
                     launched = true
-                    Trace.d(TAG, "onResume (LAUNCH) [${this::class.java.simpleName}] ")
+                    Trace.d(TAG, "[${this::class.java.simpleName}] onResume (LAUNCH)")
                     setResumeState(it, ResumeState.LAUNCH)
                     presenterLifecycle.setState(viewLifecycleScope = viewLifecycleScope, state = MVPPresenterLifecycle.State.LAUNCHED)
                 } else if (relaunched) {
                     relaunched = false
-                    Trace.d(TAG, "onResume (RELAUNCH) [${this::class.java.simpleName}] ")
+                    Trace.d(TAG, "[${this::class.java.simpleName}] onResume (RELAUNCH)")
                     setResumeState(it, ResumeState.RELAUNCH)
                     presenterLifecycle.setState(viewLifecycleScope = viewLifecycleScope, state = MVPPresenterLifecycle.State.LAUNCHED)
                 } else {
-                    Trace.d(TAG, "onResume (RESUME) [${this::class.java.simpleName}] ")
+                    Trace.d(TAG, "[${this::class.java.simpleName}] onResume (RESUME)")
                     setResumeState(it, ResumeState.RESUME)
                     presenterLifecycle.setState(viewLifecycleScope = viewLifecycleScope, state = MVPPresenterLifecycle.State.RESUMED)
                 }
@@ -180,25 +184,25 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
 
     final override fun onPause() {
         Trace.d(TAG, "[${this::class.java.simpleName}] onPause()")
-        networkConnectionChecker?.unregister()
-        compositeDisposable.clear()
-        this.view?.let {
-            onPause(it)
-        }
     }
 
     final override fun onStop() {
         Trace.d(TAG, "[${this::class.java.simpleName}] onStop()")
         viewState.set(ViewState.CREATED)
+        networkConnectionChecker?.unregister()
+        compositeDisposable.clear()
         this.view?.let {
+            onPause(it)
             presenterLifecycle.setState(state = MVPPresenterLifecycle.State.ATTACHED)
         }
     }
 
     fun isLaunched(): Boolean = launched && !relaunched
 
+    @MainThread
     protected abstract fun onResume(view: V, state: ResumeState)
 
+    @MainThread
     protected open fun onPause(view: V) {}
 
     protected open fun launch(
@@ -246,10 +250,6 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         }
     }
 
-    protected fun clearPendingLaunch() {
-        presenterLifecycle.clearPendingStateBlocks()
-    }
-
     private val postOnUIThreadHandler = Handler(Looper.getMainLooper())
 
     protected fun postOnUIThread(delayMs: Long = 0L, function: () -> Unit) {
@@ -262,6 +262,10 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
 
     protected fun cancelOnUIThreadPosting() {
         postOnUIThreadHandler.removeCallbacksAndMessages(null)
+    }
+
+    protected fun clearPendingLaunch() {
+        presenterLifecycle.clearPendingStateBlocks()
     }
 
     private var launchWhenAfterTransition: ConcurrentLinkedQueue<suspend CoroutineScope.() -> Unit>? = null
@@ -285,18 +289,6 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         }
     }
 
-    protected fun runOnUIThread(function: () -> Unit) {
-        if (view != null) {
-            if (Looper.myLooper() == Looper.getMainLooper()) {
-                function.invoke()
-            } else {
-                Handler(Looper.getMainLooper()).post {
-                    function.invoke()
-                }
-            }
-        }
-    }
-
     protected interface OnLoadingListener {
         fun onStarted()
         fun onStopped()
@@ -307,7 +299,7 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         observable: Observable<T>,
         subscribeOn: Scheduler = RxSchedulerProvider.io(),
         observerOn: Scheduler = RxSchedulerProvider.ui(),
-        loadView: Boolean = false,
+        loadView: Boolean = true,
         onLoading: OnLoadingListener? = null
     ): Observable<T> {
 
@@ -348,7 +340,7 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         onComplete: (() -> Unit)? = null,
         subscribeOn: Scheduler = RxSchedulerProvider.io(),
         observerOn: Scheduler = RxSchedulerProvider.ui(),
-        loadView: Boolean = false,
+        loadView: Boolean = true,
         onLoading: OnLoadingListener? = null
     ) {
         compositeDisposable.add(
@@ -373,7 +365,7 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         observable: Observable<T>,
         subscribeOn: Scheduler = RxSchedulerProvider.io(),
         observerOn: Scheduler = RxSchedulerProvider.ui(),
-        loadView: Boolean = false,
+        loadView: Boolean = true,
         onLoading: OnLoadingListener? = null
     ) {
         lastOnObservables.add(lastOneObservable)
@@ -395,8 +387,9 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
 
     @Suppress("SameParameterValue")
     protected fun createPerformBlocks(
+        tag: String = "",
         launchWhen: LaunchWhenPresenter = LaunchWhenPresenter.LAUNCHED
-    ): PerformBlocks = object : PerformBlocks() {
+    ): PerformBlocks = object : PerformBlocks(tag = tag) {
         override fun performActionsJob(block: suspend CoroutineScope.() -> Unit): Job? {
             return launch(launchWhen) { block() }
         }
@@ -405,7 +398,6 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
             return launch(launchWhen) { block() }
         }
     }
-
 
     private fun changeNetworkTo(on: Boolean) {
         val view = this.view ?: return

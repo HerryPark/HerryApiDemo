@@ -23,58 +23,121 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import com.herry.libs.helper.ApiHelper
+import com.herry.libs.widget.configure.SystemUIAppearance
+import com.herry.libs.widget.configure.SystemUIAppearanceColorStyle
+import com.herry.libs.widget.configure.SystemUIShowBehavior
+import com.herry.libs.widget.configure.SystemUIVisibility
 
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 object ViewUtil {
-    enum class StatusBarMode {
-        LIGHT,
-        DARK
+    fun isSystemNightMode(context: Context?): Boolean {
+        return ((context?.resources?.configuration?.uiMode ?: 0) and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }
 
-    fun makeFullScreen(activity: Activity?, isFull: Boolean = true) {
-        activity?.window?.let { window ->
-//            if (ApiHelper.hasOSv11()) {
-//                window.setDecorFitsSystemWindows(!isFull)
-//            } else {
-//            }
-            window.decorView.systemUiVisibility = if (isFull) View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN else View.SYSTEM_UI_FLAG_VISIBLE
+    fun setViewToFitSystemWindows(view: View?, isFit: Boolean) {
+        view ?: return
+        if (view.fitsSystemWindows != isFit) {
+            view.fitsSystemWindows = isFit
         }
     }
 
-    fun setStatusBarColor(activity: Activity?, @ColorInt color: Int) {
-        activity?.window?.let { window ->
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = color
-        }
+    fun setDecorViewToFitSystemWindows(activity: Activity?, fit: Boolean) {
+        val window = activity?.window ?: return
+
+        WindowCompat.setDecorFitsSystemWindows(window, fit)
     }
 
-    fun setStatusBarTransparent(activity: Activity?, mode: StatusBarMode = StatusBarMode.DARK) {
-        activity?.window?.let { window ->
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.decorView.systemUiVisibility = when (mode) {
-                StatusBarMode.LIGHT -> window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                StatusBarMode.DARK -> window.decorView.systemUiVisibility and (View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR).inv()
-            }
-            window.statusBarColor = Color.TRANSPARENT
-        }
+    /**
+     * Gets the status bar background color form the applied theme @see style.xml
+     */
+    fun getSystemStatusBarBackgroundColor(context: Context): Int {
+        val typedValue = TypedValue()
+        val attrs: TypedArray = context.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.statusBarColor))
+        val color = attrs.getColor(0, 0)
+        attrs.recycle()
+
+        return color
     }
 
+    fun setStatusBar(activity: Activity?, appearance: SystemUIAppearance) {
+        setStatusBar(
+            activity = activity,
+            backgroundColor = appearance.backgroundColor,
+            appearanceColorStyle = appearance.appearanceColorStyle
+        )
+    }
+
+    fun setStatusBar(
+        activity: Activity?,
+        @ColorInt backgroundColor: Int?,
+        appearanceColorStyle: SystemUIAppearanceColorStyle? = null
+    ) {
+        val window = activity?.window ?: return
+
+        val statusBarBackgroundColor = backgroundColor ?: getSystemStatusBarBackgroundColor(activity)
+        val statusBarAppearanceColorStyle = appearanceColorStyle ?: kotlin.run {
+            // automatically check if the desired status bar is dark or light
+            if (ColorUtils.calculateLuminance(statusBarBackgroundColor) > 0.5) SystemUIAppearanceColorStyle.LIGHT
+            else SystemUIAppearanceColorStyle.DARK
+        }
+
+        // sets the status bar appearance color (LIGHT or DARK)
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = statusBarAppearanceColorStyle == SystemUIAppearanceColorStyle.LIGHT
+        // sets the status bar background color
+        window.statusBarColor = statusBarBackgroundColor
+    }
+
+    fun getSystemNavigationBarBackgroundColor(context: Context): Int {
+        val typedValue = TypedValue()
+        val attrs: TypedArray = context.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.navigationBarColor))
+        val color = attrs.getColor(0, 0)
+        attrs.recycle()
+
+        return color
+    }
+
+    fun setNavigationBar(activity: Activity?, appearance: SystemUIAppearance) {
+        setNavigationBar(
+            activity = activity,
+            backgroundColor = appearance.backgroundColor,
+            appearanceColorStyle = appearance.appearanceColorStyle
+        )
+    }
+
+    fun setNavigationBar(activity: Activity?, @ColorInt backgroundColor: Int?, appearanceColorStyle: SystemUIAppearanceColorStyle? = null) {
+        val window = activity?.window ?: return
+
+        val navigationBarBackgroundColor = backgroundColor ?: getSystemNavigationBarBackgroundColor(activity)
+        val navigationBarAppearanceColorStyle = appearanceColorStyle ?: kotlin.run {
+            // automatically check if the desired status bar is dark or light
+            if (ColorUtils.calculateLuminance(navigationBarBackgroundColor) > 0.5) SystemUIAppearanceColorStyle.LIGHT
+            else SystemUIAppearanceColorStyle.DARK
+        }
+
+        // sets the navigation bar appearance color (LIGHT or DARK)
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars = navigationBarAppearanceColorStyle == SystemUIAppearanceColorStyle.LIGHT
+        // sets the navigation bar background color
+        window.navigationBarColor = navigationBarBackgroundColor
+    }
+
+    @SuppressLint("InternalInsetResource", "DiscouragedApi")
     fun getStatusBarHeight(context: Context?): Int {
-        var result = 0
-        if (null != context) {
-            val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
-            if (resourceId > 0) {
-                result = context.resources.getDimensionPixelSize(resourceId)
-            }
-        }
-        return result
+        return context?.resources?.getIdentifier("status_bar_height", "dimen", "android")?.let { resourceId ->
+            context.resources.getDimensionPixelSize(resourceId)
+        } ?: 0
     }
 
-    fun setNavigationBarColor(activity: Activity?, @ColorInt color: Int) {
-        activity?.window?.navigationBarColor = color
+    @SuppressLint("InternalInsetResource", "DiscouragedApi")
+    fun getNavigationBarHeight(context: Context?): Int {
+        return context?.resources?.getIdentifier("navigation_bar_height", "dimen", "android")?.let { resourceId ->
+            context.resources.getDimensionPixelSize(resourceId)
+        } ?: 0
     }
 
     fun isSystemFullScreen(context: Context?): Boolean {
@@ -86,6 +149,88 @@ object ViewUtil {
             attrs.recycle()
         }
         return isFullScreen
+    }
+
+    fun setSystemUiVisibility(
+        activity: Activity?,
+        isFull: Boolean,
+        showBehavior: SystemUIShowBehavior? = null,
+        statusBarVisibility: SystemUIVisibility? = null,
+        navigationBarVisibility: SystemUIVisibility? = null
+    ) {
+        activity ?: return
+
+        val window = activity.window ?: return
+        val decorView = activity.window?.decorView ?: return
+
+        if (ApiHelper.hasAPI30()) {
+            decorView.systemUiVisibility = if (isFull) {
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            } else {
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            }
+
+            val statusBarsType = WindowInsetsCompat.Type.statusBars()
+            val navigationBarsType = WindowInsetsCompat.Type.navigationBars()
+
+            var showTypes = 0
+            var hideTypes = 0
+
+            when (statusBarVisibility) {
+                null -> {}
+                SystemUIVisibility.SHOW -> showTypes = showTypes or statusBarsType
+                SystemUIVisibility.HIDE -> hideTypes = hideTypes or statusBarsType
+            }
+
+            when (navigationBarVisibility) {
+                null -> {}
+                SystemUIVisibility.SHOW -> showTypes = showTypes or navigationBarsType
+                SystemUIVisibility.HIDE -> hideTypes = hideTypes or navigationBarsType
+            }
+
+            // WindowInsetsController can hide or show specified system bars.
+            val insetsController = WindowCompat.getInsetsController(window, decorView)
+            if (statusBarVisibility != null) {
+                insetsController.systemBarsBehavior = when (showBehavior) {
+                    SystemUIShowBehavior.DEFAULT -> WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_SWIPE
+                    SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE -> WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    null -> insetsController.systemBarsBehavior
+                }
+            }
+
+            if (showTypes != 0 || hideTypes !=0 ) {
+                decorView.setOnApplyWindowInsetsListener { view, windowInsets ->
+                    if (showTypes != 0) {
+                        insetsController.show(showTypes)
+                    }
+                    if (hideTypes != 0) {
+                        insetsController.hide(hideTypes)
+                    }
+
+                    view.onApplyWindowInsets(windowInsets)
+                }
+            }
+        } else { // under api 30
+            var decorFitsFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+
+            decorFitsFlags = if (isFull) {
+                decorFitsFlags or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            } else {
+                decorFitsFlags
+            }
+            if (statusBarVisibility == SystemUIVisibility.HIDE) {
+                decorFitsFlags = decorFitsFlags or View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+
+                if (showBehavior == SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE) {
+                    decorFitsFlags = decorFitsFlags or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                }
+            }
+            if (navigationBarVisibility == SystemUIVisibility.HIDE) {
+                decorFitsFlags = decorFitsFlags or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            }
+
+            decorView.systemUiVisibility = decorFitsFlags
+        }
     }
 
     fun inflate(@LayoutRes layout: Int, root: ViewGroup): View {

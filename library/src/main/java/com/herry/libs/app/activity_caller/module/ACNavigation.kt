@@ -9,20 +9,26 @@ import androidx.core.app.ActivityOptionsCompat
 import com.herry.libs.app.activity_caller.ACModule
 import com.herry.libs.app.activity_caller.activity.ACActivity
 import com.herry.libs.app.nav.NavMovement
+import com.herry.libs.util.AppActivityManager
 import java.io.Serializable
 
 open class ACNavigation(private val caller: Caller, private val listener: ACModule.OnIntentListener): ACModule {
+    enum class Error {
+        EXIST_ACTIVITY
+    }
 
     data class Result(
         val callActivity: Activity,
         val resultCode: Int,
         val intent: Intent?,
-        val data: Bundle?
+        val data: Bundle?,
+        val error: Error? = null
     ) : Serializable
 
     open class Caller(
         internal val transitionSharedElements: Array<Transition>? = null,
-        internal val onResult: ((result: Result) -> Unit)? = null
+        internal val onResult: ((result: Result) -> Unit)? = null,
+        internal val allowDuplicated: Boolean = true
     )
 
     class Transition(
@@ -34,18 +40,20 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
     class IntentCaller (
         internal val intent: Intent,
         internal val bundle: Bundle? = null,
+        allowDuplicated: Boolean = true,
         transitions: Array<Transition>? = null,
         onResult: ((result: Result) -> Unit)? = null
-    ) : Caller(transitions, onResult)
+    ) : Caller(transitions, onResult, allowDuplicated)
 
     class NavCaller (
         internal val cls: Class<out ACActivity>,
         internal val bundle: Bundle? = null,
         internal val startDestination: Int = 0,
         internal val clearTop: Boolean = false,
+        allowDuplicated: Boolean = true,
         transitions: Array<Transition>? = null,
         onResult: ((result: Result) -> Unit)? = null
-    ) : Caller(transitions, onResult)
+    ) : Caller(transitions, onResult, allowDuplicated)
 
     protected open fun getCallerIntent(activity: Activity): Intent? {
         return when(caller) {
@@ -78,6 +86,23 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
 
         val onResult = caller.onResult
 
+        if (!caller.allowDuplicated && activity is AppActivityManager.OnGetAppActivityManager) {
+            val targetClass = try {
+                Class.forName(intent.component?.className ?: throw ClassNotFoundException()) ?: return
+            } catch (_: Exception) {
+                return
+            }
+            if (activity.getAppActivityManager()?.getActivity(targetClass) != null) {
+                onResult?.invoke(Result(
+                    callActivity = activity,
+                    resultCode = Activity.RESULT_CANCELED,
+                    intent = null,
+                    data = null,
+                    error = Error.EXIST_ACTIVITY
+                ))
+                return
+            }
+        }
         if (caller.transitionSharedElements != null) {
             var options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity)
             if (caller.transitionSharedElements.isNotEmpty()) {

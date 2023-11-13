@@ -1,6 +1,7 @@
 package com.herry.test.app.sample.feeds.search
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,21 +26,23 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.AppUtil
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.configure.SystemUIAppearance
+import com.herry.libs.widget.configure.SystemUIAppearanceColorStyle
+import com.herry.libs.widget.configure.SystemUIAppearances
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
 import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewForm
 import com.herry.test.R
-import com.herry.test.app.base.ScreenWindowStyle
-import com.herry.test.app.base.StatusBarStyle
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.sample.feeds.detail.FeedDetailFragment
 import com.herry.test.app.sample.repository.database.searchlog.RecentlySearchKeyword
-import java.util.*
+import java.util.Locale
 
 class SearchFeedsFragment: BaseNavView<SearchFeedsContract.View, SearchFeedsContract.Presenter>(), SearchFeedsContract.View {
 
-    override fun onScreenWindowStyle(context: Context): ScreenWindowStyle = ScreenWindowStyle(false, StatusBarStyle.LIGHT)
+    override fun getSystemUIAppearances(context: Context): SystemUIAppearances = SystemUIAppearances(
+        statusBar = SystemUIAppearance(appearanceColorStyle = SystemUIAppearanceColorStyle.LIGHT))
 
     override fun onCreatePresenter(): SearchFeedsContract.Presenter = SearchFeedsPresenter()
 

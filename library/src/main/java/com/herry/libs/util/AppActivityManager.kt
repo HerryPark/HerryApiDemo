@@ -5,6 +5,10 @@ import java.util.*
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class AppActivityManager {
+    interface OnGetAppActivityManager {
+        fun getAppActivityManager(): AppActivityManager?
+    }
+
     private val activityStack: LinkedList<Activity> = LinkedList()
 
     fun addActivity(activity: Activity?) {
