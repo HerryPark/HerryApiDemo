@@ -124,5 +124,4 @@ dependencies {
     implementation composeBom
     androidTestImplementation composeBom
 */
-
 }

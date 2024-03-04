@@ -27,7 +27,7 @@ class WidgetsPresenter : WidgetsContract.Presenter() {
         this.nodes.beginTransition()
 
         val nodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
-        WidgetsContract.Widget.values().forEach {
+        WidgetsContract.Widget.entries.forEach {
             NodeHelper.addModel(nodes, it)
         }
         NodeHelper.upsert(this.nodes, nodes)

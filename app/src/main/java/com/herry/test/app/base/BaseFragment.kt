@@ -15,8 +15,9 @@ import androidx.fragment.app.DialogFragment
 import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.helper.TransitionHelper
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.configure.SystemUI
 import com.herry.libs.widget.configure.SystemUIAppearances
-import com.herry.libs.widget.configure.SystemUIVisibility
+import com.herry.libs.widget.extension.findParentNavHostFragment
 import com.herry.libs.widget.view.viewgroup.LoadingCountView
 import java.lang.ref.WeakReference
 
@@ -31,9 +32,17 @@ open class BaseFragment : DialogFragment() {
     }
 
     /**
-     * @return null is does not applies system ui styles (status bar, navigation bar)
+     * @return null is keeps the current applied system ui styles (status bar, navigation bar)
      */
-    protected open fun getSystemUIAppearances(context: Context): SystemUIAppearances? = SystemUIAppearances() // default
+    protected open fun getSystemUIAppearances(context: Context): SystemUIAppearances? {
+        // a nested navigation fragment is not applies the system UI setting
+        val parentFragment = findParentNavHostFragment()
+        val isNestedChildFragment = parentFragment != null && parentFragment.findParentNavHostFragment() != null
+        if (isNestedChildFragment) return null
+
+        // creates system programmatically UI from the activity theme setting
+        return SystemUIAppearances.getDefaultSystemUIAppearances(context) // default system ui appearances
+    }
 
     private fun createTag(): String = "${this::class.java.simpleName}#${System.currentTimeMillis()}"
 
@@ -78,17 +87,20 @@ open class BaseFragment : DialogFragment() {
         super.onResume()
 
         val context = this.context ?: return
-        val systemUIStyle = getSystemUIAppearances(context)
-        systemUIStyle?.let { style ->
-            ViewUtil.setSystemUiVisibility(
+        getSystemUIAppearances(context)?.let { style ->
+            SystemUI.setSystemUiVisibility(
                 activity = activity,
                 isFull = style.isFullScreen,
                 showBehavior = style.showBehavior,
-                statusBarVisibility = style.statusBar.visibility,
-                navigationBarVisibility = style.navigationBar.visibility
+                statusBarVisibility = style.statusBar?.visibility,
+                navigationBarVisibility = style.navigationBar?.visibility
             )
-            ViewUtil.setStatusBar(activity = activity, appearance = style.statusBar)
-            ViewUtil.setNavigationBar(activity = activity, appearance = style.navigationBar)
+            style.statusBar?.let { statusBar ->
+                SystemUI.setStatusBar(activity = activity, appearance = statusBar)
+            }
+            style.navigationBar?.let { navigationBar ->
+                SystemUI.setNavigationBar(activity = activity, appearance = navigationBar)
+            }
         }
     }
 

@@ -32,6 +32,7 @@ import com.herry.libs.widget.anim.ViewAnimListener
 import com.herry.libs.widget.anim.ViewAnimPlayer
 import com.herry.libs.widget.configure.SystemUIAppearance
 import com.herry.libs.widget.configure.SystemUIAppearances
+import com.herry.libs.widget.configure.SystemUIVisibility
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setViewMarginTop
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
@@ -75,9 +76,12 @@ class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContrac
         }
     }
 
-    override fun getSystemUIAppearances(context: Context): SystemUIAppearances = SystemUIAppearances(
-        isFullScreen = true,
-        statusBar = SystemUIAppearance(backgroundColor = Color.TRANSPARENT))
+    override fun getSystemUIAppearances(context: Context): SystemUIAppearances =
+        SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
+            isFullScreen = true
+            statusBar?.backgroundColor = Color.TRANSPARENT
+            statusBar?.visibility = SystemUIVisibility.SHOW
+        }
 
     @OptIn(UnstableApi::class)
     override fun onCreatePresenter(): FeedDetailContract.Presenter? {

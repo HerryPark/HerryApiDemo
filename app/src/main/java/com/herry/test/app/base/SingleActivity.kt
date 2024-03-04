@@ -3,9 +3,9 @@ package com.herry.test.app.base
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.herry.test.R
-import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.configure.SystemUI
 import com.herry.libs.widget.configure.SystemUIAppearance
+import com.herry.test.R
 import kotlin.reflect.full.createInstance
 
 open class SingleActivity: BaseActivity() {
@@ -31,9 +31,13 @@ open class SingleActivity: BaseActivity() {
 //            }
 
             val transparentStatusBar = it.getBooleanExtra(FRAGMENT_TRANSPARENT_STATUS_BAR, false)
-            ViewUtil.setStatusBar(this,
-                SystemUIAppearance(backgroundColor = if (transparentStatusBar) Color.TRANSPARENT else null))
-            ViewUtil.setSystemUiVisibility(this, transparentStatusBar)
+            SystemUI.setStatusBar(
+                this,
+                SystemUIAppearance.getDefaultStatusBarSystemUIAppearance(this).apply {
+                    backgroundColor = if (transparentStatusBar) Color.TRANSPARENT else null
+                }
+            )
+            SystemUI.setSystemUiVisibility(activity = this, isFull = transparentStatusBar)
         }
 
         setContentView(R.layout.activity_base)

@@ -28,7 +28,11 @@ class SchemePresenter : SchemeContract.Presenter() {
     private fun load() {
         val testSchemes: MutableList<SchemeContract.SchemaData> = mutableListOf(
             SchemeContract.SchemaData(
-                title = "App Update",
+                title = "App Update (old)",
+                appLink = "appupdate://kinemaster.com"
+            ),
+            SchemeContract.SchemaData(
+                title = "App Update (new)",
                 appLink = "kinemaster://kinemaster/update",
                 shortLink = "https://kine.to/update"
             ),

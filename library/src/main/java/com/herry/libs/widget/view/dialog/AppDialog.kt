@@ -20,6 +20,7 @@ import android.util.TypedValue
 import android.view.*
 import android.widget.*
 import androidx.annotation.*
+import androidx.appcompat.app.AppCompatDialog
 import androidx.core.view.isVisible
 import com.herry.libs.R
 import com.herry.libs.widget.extension.*
@@ -28,7 +29,12 @@ import kotlin.math.roundToInt
 
 @SuppressLint("InflateParams")
 @Suppress("unused", "MemberVisibilityCanBePrivate", "LocalVariableName")
-open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes dialogThemeResId: Int = 0) : DialogInterface {
+/**
+ * @param activity calling activity
+ * @param styleResId AppDialog UI attributes style resource id
+ * @param dialogThemeResId Dialog window theme resource id
+ */
+open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes dialogThemeResId: Int = 0) : DialogInterface {
 
     interface OnClicksListener : DialogInterface.OnClickListener {
         fun onLongClick(dialog: DialogInterface, which: Int) : Boolean
@@ -38,8 +44,8 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         fun onBackPressed(): Boolean
     }
 
-    private val context: ContextThemeWrapper? = if (context != null) ContextThemeWrapper(context, themeResId) else null
-    private var dialog: Dialog? = null
+    private val context: ContextThemeWrapper? = if (context != null) ContextThemeWrapper(context, styleResId) else null
+    private var dialog: AppCompatDialog? = null
 
     private var container: FrameLayoutEx? = null
     private var topContainer: FrameLayout? = null
@@ -78,6 +84,10 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     private val nullOnClickListener = DialogInterface.OnClickListener { dialog, _ -> dialog.dismiss() }
     private var onCancelListener: DialogInterface.OnCancelListener? = null
     private var onDismissListener: DialogInterface.OnDismissListener? = null
+    private val onInternalDismissListener = DialogInterface.OnDismissListener {
+        onDismissed()
+        onDismissListener?.onDismiss(this@AppDialog)
+    }
     private var onShowListener: DialogInterface.OnShowListener? = null
 
     private var onBackPressedListener: OnBackPressedListener? = null
@@ -326,20 +336,8 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             bottomDividerHeight = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_bottomDividerHeight, 0)
 
             // sets buttons
-            val buttonHeightDimension = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_buttonHeight, 0)
-            buttonHeight = if (ViewGroup.LayoutParams.WRAP_CONTENT == buttonHeightDimension
-                || ViewGroup.LayoutParams.MATCH_PARENT == buttonHeightDimension) {
-                buttonHeightDimension
-            } else {
-                buttonHeightDimension.toFloat().roundToInt()
-            }
-            val buttonWidthDimension = attrs.getLayoutDimension(R.styleable.AppDialog_ad_buttonWidth, 0)
-            buttonWidth = if (ViewGroup.LayoutParams.WRAP_CONTENT == buttonWidthDimension
-                || ViewGroup.LayoutParams.MATCH_PARENT == buttonWidthDimension) {
-                buttonWidthDimension
-            } else {
-                buttonWidthDimension.toFloat().roundToInt()
-            }
+            buttonHeight = attrs.getLayoutDimension(R.styleable.AppDialog_ad_buttonHeight, 0)
+            buttonWidth = attrs.getLayoutDimension(R.styleable.AppDialog_ad_buttonWidth, 0)
             buttonWeight = attrs.getFloat(R.styleable.AppDialog_ad_buttonWeight, 0f)
             buttonMinHeight = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_buttonMinHeight, 0)
             buttonMinWidth = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_buttonMinWidth, 0)
@@ -1121,7 +1119,6 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
 
     fun setOnDismissListener(onDismissListener: DialogInterface.OnDismissListener?) {
         this.onDismissListener = onDismissListener
-        dialog?.setOnDismissListener(this.onDismissListener)
     }
 
     fun setOnShowListener(onShowListener: DialogInterface.OnShowListener?) {
@@ -1516,6 +1513,10 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         }
     }
 
+    fun setDialogWindowAnimations(@StyleRes styleResId: Int) {
+        dialog?.window?.attributes?.windowAnimations = styleResId
+    }
+
     fun setDialogSize(width: Int, height: Int) {
         val window = this.dialog?.window ?: return
         if (window.attributes != null) {
@@ -1675,18 +1676,18 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             val inflater = _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
             container = inflater?.inflate(R.layout.app_dialog, null, false) as FrameLayoutEx?
             container?.let { container ->
-                retrieveAttributes(themeResId)
+                retrieveAttributes(styleResId)
                 initViews()
 
                 container.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
                     if (updateCurrentOrientation()) {
-                        retrieveAttributes(themeResId)
+                        retrieveAttributes(styleResId)
                         updateDialogWidowSize()
                     }
                 }
             }
 
-            this.dialog = object : Dialog(_context, dialogThemeResId) {
+            this.dialog = object : AppCompatDialog(_context, dialogThemeResId) {
 
                 override fun onBackPressed() {
                     if (onBackPressedListener?.onBackPressed() == true) {
@@ -1731,6 +1732,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
                 val window = this.window
                 window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 setCancelable(true)
+                setOnDismissListener(onInternalDismissListener)
 
                 container?.let { container ->
                     setContentView(container)
@@ -1780,6 +1782,8 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     }
 
     fun getContext(): ContextThemeWrapper? = this.context
+
+    protected open fun onDismissed() { }
 }
 
 data class TextLinkAttribute(val target: String, val url: String?)

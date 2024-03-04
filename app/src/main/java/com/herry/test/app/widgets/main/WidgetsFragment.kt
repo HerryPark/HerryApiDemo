@@ -62,6 +62,7 @@ class WidgetsFragment: BaseNavView<WidgetsContract.View, WidgetsContract.Present
             list.add(WidgetItemForm { item ->
                 navigateTo(destinationId = when (item) {
                     WidgetsContract.Widget.SPINNERS -> R.id.spinners_fragment
+                    WidgetsContract.Widget.STYLEABLE_BUTTONS -> R.id.styleable_buttons_fragment
                 })
             })
         }
@@ -84,9 +85,7 @@ class WidgetsFragment: BaseNavView<WidgetsContract.View, WidgetsContract.Present
         override fun onCreateHolder(context: Context, view: View): Holder = Holder(context, view)
 
         override fun onBindModel(context: Context, holder: Holder, model: WidgetsContract.Widget) {
-            holder.title?.text = when (model) {
-                WidgetsContract.Widget.SPINNERS -> "Spinners"
-            }
+            holder.title?.text = model.name
         }
     }
 }

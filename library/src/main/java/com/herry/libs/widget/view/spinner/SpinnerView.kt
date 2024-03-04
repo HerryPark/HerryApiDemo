@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.Rect
 import android.graphics.Shader
 import android.graphics.Typeface
 import android.util.AttributeSet
@@ -24,7 +25,7 @@ import java.util.Locale
 import kotlin.math.pow
 import kotlin.math.roundToLong
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class SpinnerView : View {
     // drawing attributes
     private var textColor: ColorStateList
@@ -63,6 +64,9 @@ class SpinnerView : View {
     private var overlayGradientLeft: LinearGradient? = null
     private var overlayGradientRight: LinearGradient? = null
     private var overlayGradientCacheWidth = 0
+
+    // control view focus
+    private var isStopScrollingOnLostViewFocus = false
 
     constructor(context: Context): this(context, null)
 
@@ -295,6 +299,10 @@ class SpinnerView : View {
     private val gestureDetector: GestureDetector
     private val onGestureDetectorListener = object : GestureDetector.OnGestureListener {
         override fun onDown(e: MotionEvent): Boolean {
+            if (isStopScrollingOnLostViewFocus) {
+                requestFocus()
+            }
+
             scrolling = false
             fling = false
 
@@ -336,6 +344,9 @@ class SpinnerView : View {
     }
 
     private fun singleTapUp() {
+        scrolling = false
+        fling = false
+
         val snapX: Float = getSnapX(scrollX)
         scroller.forceFinished(true)
         scroller.startScroll(snapX.toInt(), 0, 0, 0)
@@ -431,7 +442,8 @@ class SpinnerView : View {
                 val finalSnapX = getSnapX(scroller.finalX.toFloat())
                 if (currentSnapX == finalSnapX) {
                     fling = false
-                    scroller.forceFinished(true)
+                    // the scroller is finished already that it is set by the scroller.computeScrollOffset()
+//                    scroller.forceFinished(true)
                     scroller.startScroll(currentSnapX.toInt(), 0, 0, 0)
                     if (!awakenScrollBars()) {
                         // Keep on drawing until the animation has finished.
@@ -473,7 +485,7 @@ class SpinnerView : View {
         super.onDraw(canvas)
 
         drawBackground(canvas)
-        drawSteps(canvas)
+        drawScale(canvas)
         drawOverlay(canvas)
     }
 
@@ -485,7 +497,7 @@ class SpinnerView : View {
         }
     }
 
-    private fun drawSteps(canvas: Canvas) {
+    private fun drawScale(canvas: Canvas) {
         val viewWidth = width.toFloat() - (paddingStart + paddingEnd)
         val centerOfWidth = viewWidth / 2f
 
@@ -683,11 +695,36 @@ class SpinnerView : View {
         computeScroll(notify)
     }
 
-    override fun onDetachedFromWindow() {
-        if (scrolling || fling) {
-            // stop scrolling or fling and than setting it
-            singleTapUp()
+    /**
+     * To stop the scrolling when the view focus is lost.
+     * The default action is that keeping the scrolling although the view focus is lost.
+     */
+    fun setStopScrollingOnLostViewFocus(stop: Boolean) {
+        isStopScrollingOnLostViewFocus = stop
+        if (stop) {
+            isFocusable = true
+            isFocusableInTouchMode = true
+        } else {
+            isFocusable = false
+            isFocusableInTouchMode = false
         }
-        super.onDetachedFromWindow()
+    }
+
+    override fun onFocusChanged(gainFocus: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
+        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect)
+
+        if (isStopScrollingOnLostViewFocus && !gainFocus && (scrolling || fling)) {
+            // stop scrolling or fling and than setting it
+            stop(true)
+        }
+    }
+
+    override fun onWindowFocusChanged(hasWindowFocus: Boolean) {
+        super.onWindowFocusChanged(hasWindowFocus)
+
+        if (isStopScrollingOnLostViewFocus && !hasWindowFocus && (scrolling || fling)) {
+            // stop scrolling or fling and than setting it
+            stop(true)
+        }
     }
 }

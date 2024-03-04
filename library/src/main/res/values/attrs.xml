@@ -618,4 +618,239 @@
         <attr name="sv_flingEnabled" format="boolean" />
         <attr name="sv_showEdgeText" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="StyleableButton">
+        <attr name="sbWidth" format="dimension">
+            <enum name="match_parent" value="-1" />
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <attr name="sbHeight" format="dimension">
+            <enum name="match_parent" value="-1" />
+            <enum name="wrap_content" value="-2" />
+        </attr>
+<!--        <attr name="sbMinWidth" format="dimension" />-->
+<!--        <attr name="sbMinHeight" format="dimension" />-->
+        <attr name="sbCornerRadius" format="dimension"/>
+        <attr name="sbLayoutGravity" >
+            <!-- Push object to the top of its container, not changing its size. -->
+            <flag name="top" value="0x01" />
+            <!-- Push object to the bottom of its container, not changing its size. -->
+            <flag name="bottom" value="0x02" />
+            <!-- Push object to the left of its container, not changing its size. -->
+            <flag name="start" value="0x04" />
+            <!-- Push object to the right of its container, not changing its size. -->
+            <flag name="end" value="0x08" />
+            <!-- Place object in the vertical center of its container, not changing its size. -->
+            <flag name="center_vertical" value="0x10" />
+            <!-- Place object in the horizontal center of its container, not changing its size. -->
+            <flag name="center_horizontal" value="0x20" />
+            <!-- Place the object in the center of its container in both the vertical and horizontal axis, not changing its size. -->
+            <flag name="center" value="0x30" />
+        </attr>
+        <attr name="sbMarginTop" format="dimension" />
+        <attr name="sbMarginBottom" format="dimension" />
+        <attr name="sbMarginStart" format="dimension" />
+        <attr name="sbMarginEnd" format="dimension" />
+        <attr name="sbMarginHorizontal" format="dimension" />
+        <attr name="sbMarginVertical" format="dimension" />
+        <attr name="sbMargin" format="dimension" />
+        <attr name="sbPaddingTop" format="dimension" />
+        <attr name="sbPaddingBottom" format="dimension" />
+        <attr name="sbPaddingStart" format="dimension" />
+        <attr name="sbPaddingEnd" format="dimension" />
+        <attr name="sbPaddingHorizontal" format="dimension" />
+        <attr name="sbPaddingVertical" format="dimension" />
+        <attr name="sbPadding" format="dimension" />
+        <attr name="sbBackground" format="reference|color"/>
+        <!-- Tint to apply to the button graphic. -->
+        <attr name="sbBackgroundTint" format="color" />
+        <!-- Blending mode used to apply the button graphic tint. -->
+        <attr name="sbBackgroundTintMode">
+            <!-- The tint is drawn on top of the drawable.
+                 [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] -->
+            <enum name="src_over" value="3" />
+            <!-- The tint is masked by the alpha channel of the drawable. The drawable’s
+                 color channels are thrown out. [Sa * Da, Sc * Da] -->
+            <enum name="src_in" value="5" />
+            <!-- The tint is drawn above the drawable, but with the drawable’s alpha
+                 channel masking the result. [Da, Sc * Da + (1 - Sa) * Dc] -->
+            <enum name="src_atop" value="9" />
+            <!-- Multiplies the color and alpha channels of the drawable with those of
+                 the tint. [Sa * Da, Sc * Dc] -->
+            <enum name="multiply" value="14" />
+            <!-- [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] -->
+            <enum name="screen" value="15" />
+            <!-- Combines the tint and drawable color and alpha channels, clamping the
+                 result to valid color values. Saturate(S + D) -->
+            <enum name="add" value="16" />
+        </attr>
+        <attr name="sbForeground" format="reference|color"/>
+        <attr name="sbForegroundTint" format="color" />
+        <!-- Blending mode used to apply the foreground tint. -->
+        <attr name="sbForegroundTintMode">
+            <!-- The tint is drawn on top of the drawable.
+                 [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] -->
+            <enum name="src_over" value="3" />
+            <!-- The tint is masked by the alpha channel of the drawable. The drawable’s
+                 color channels are thrown out. [Sa * Da, Sc * Da] -->
+            <enum name="src_in" value="5" />
+            <!-- The tint is drawn above the drawable, but with the drawable’s alpha
+                 channel masking the result. [Da, Sc * Da + (1 - Sa) * Dc] -->
+            <enum name="src_atop" value="9" />
+            <!-- Multiplies the color and alpha channels of the drawable with those of
+                 the tint. [Sa * Da, Sc * Dc] -->
+            <enum name="multiply" value="14" />
+            <!-- [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] -->
+            <enum name="screen" value="15" />
+            <!-- Combines the tint and drawable color and alpha channels, clamping the
+                 result to valid color values. Saturate(S + D) -->
+            <enum name="add" value="16" />
+        </attr>
+
+        <attr name="sbIconWidth" format="dimension">
+            <enum name="match_parent" value="-1" />
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <attr name="sbIconHeight" format="dimension">
+            <enum name="match_parent" value="-1" />
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <!-- Set this to true if you want the ImageView to adjust its bounds
+            to preserve the aspect ratio of its drawable. -->
+        <attr name="sbIconAdjustViewBounds" format="boolean" />
+        <attr name="sbIconScaleType">
+            <!-- Controls how the image should be resized or moved to match the size
+             of this ImageView.  See {@link android.widget.ImageView.ScaleType} -->
+            <enum name="matrix" value="0" />
+            <!-- Scale the image using {@link android.graphics.Matrix.ScaleToFit#FILL}. -->
+            <enum name="fitXY" value="1" />
+            <!-- Scale the image using {@link android.graphics.Matrix.ScaleToFit#START}. -->
+            <enum name="fitStart" value="2" />
+            <!-- Scale the image using {@link android.graphics.Matrix.ScaleToFit#CENTER}. -->
+            <enum name="fitCenter" value="3" />
+            <!-- Scale the image using {@link android.graphics.Matrix.ScaleToFit#END}. -->
+            <enum name="fitEnd" value="4" />
+            <!-- Center the image in the view, but perform no scaling. -->
+            <enum name="center" value="5" />
+            <!-- Scale the image uniformly (maintain the image's aspect ratio) so both dimensions
+                 (width and height) of the image will be equal to or larger than the corresponding
+                 dimension of the view (minus padding). The image is then centered in the view. -->
+            <enum name="centerCrop" value="6" />
+            <!-- Scale the image uniformly (maintain the image's aspect ratio) so that both
+                 dimensions (width and height) of the image will be equal to or less than the
+                 corresponding dimension of the view (minus padding). The image is then centered in
+                 the view. -->
+            <enum name="centerInside" value="7" />
+        </attr>
+        <attr name="sbIconMarginTop" format="dimension" />
+        <attr name="sbIconMarginBottom" format="dimension" />
+        <attr name="sbIconMarginStart" format="dimension" />
+        <attr name="sbIconMarginEnd" format="dimension" />
+        <attr name="sbIconMarginHorizontal" format="dimension" />
+        <attr name="sbIconMarginVertical" format="dimension" />
+        <attr name="sbIconMargin" format="dimension" />
+        <attr name="sbIconBackground" format="reference|color"/>
+        <attr name="sbIconBackgroundTint" format="color"/>
+        <!-- Blending mode used to apply the icon background graphic tint. -->
+        <attr name="sbIconBackgroundTintMode">
+            <!-- The tint is drawn on top of the drawable.
+                 [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] -->
+            <enum name="src_over" value="3" />
+            <!-- The tint is masked by the alpha channel of the drawable. The drawable’s
+                 color channels are thrown out. [Sa * Da, Sc * Da] -->
+            <enum name="src_in" value="5" />
+            <!-- The tint is drawn above the drawable, but with the drawable’s alpha
+                 channel masking the result. [Da, Sc * Da + (1 - Sa) * Dc] -->
+            <enum name="src_atop" value="9" />
+            <!-- Multiplies the color and alpha channels of the drawable with those of
+                 the tint. [Sa * Da, Sc * Dc] -->
+            <enum name="multiply" value="14" />
+            <!-- [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] -->
+            <enum name="screen" value="15" />
+            <!-- Combines the tint and drawable color and alpha channels, clamping the
+                 result to valid color values. Saturate(S + D) -->
+            <enum name="add" value="16" />
+        </attr>
+        <attr name="sbIconSrc" format="reference"/>
+        <attr name="sbIconSrcTint" format="color"/>
+        <!-- Blending mode used to apply the icon graphic tint. -->
+        <attr name="sbIconSrcTintMode">
+            <!-- The tint is drawn on top of the drawable.
+                 [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] -->
+            <enum name="src_over" value="3" />
+            <!-- The tint is masked by the alpha channel of the drawable. The drawable’s
+                 color channels are thrown out. [Sa * Da, Sc * Da] -->
+            <enum name="src_in" value="5" />
+            <!-- The tint is drawn above the drawable, but with the drawable’s alpha
+                 channel masking the result. [Da, Sc * Da + (1 - Sa) * Dc] -->
+            <enum name="src_atop" value="9" />
+            <!-- Multiplies the color and alpha channels of the drawable with those of
+                 the tint. [Sa * Da, Sc * Dc] -->
+            <enum name="multiply" value="14" />
+            <!-- [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] -->
+            <enum name="screen" value="15" />
+            <!-- Combines the tint and drawable color and alpha channels, clamping the
+                 result to valid color values. Saturate(S + D) -->
+            <enum name="add" value="16" />
+        </attr>
+        <attr name="sbIconRelativeOfText">
+            <enum name="top" value="1" />
+            <enum name="bottom" value="2" />
+            <enum name="start" value="3" />
+            <enum name="end" value="4" />
+        </attr>
+        <attr name="sbIconTextRelativeMargin" format="dimension" />
+
+        <attr name="sbTextWidth" format="dimension">
+            <enum name="match_parent" value="-1" />
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <attr name="sbTextHeight" format="dimension">
+            <enum name="match_parent" value="-1" />
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <attr name="sbText" format="string" localization="suggested" />
+        <!-- Color of text (usually same as colorForeground). -->
+        <attr name="sbTextColor" format="reference|color" />
+        <attr name="sbTextSize" format="dimension" />
+        <!-- Default text typeface style. -->
+        <attr name="sbTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <!-- Where to ellipsize text. -->
+        <attr name="sbTextEllipsize">
+            <enum name="none" value="0" />
+            <enum name="start" value="1" />
+            <enum name="middle" value="2" />
+            <enum name="end" value="3" />
+            <enum name="marquee" value="4" />
+        </attr>
+        <attr name="sbTextLines" format="integer" min="0" />
+        <attr name="sbTextMaxLines" format="integer" min="0" />
+        <attr name="sbTextGravity" >
+            <!-- Push object to the top of its container, not changing its size. -->
+            <flag name="top" value="0x01" />
+            <!-- Push object to the bottom of its container, not changing its size. -->
+            <flag name="bottom" value="0x02" />
+            <!-- Push object to the left of its container, not changing its size. -->
+            <flag name="start" value="0x04" />
+            <!-- Push object to the right of its container, not changing its size. -->
+            <flag name="end" value="0x08" />
+            <!-- Place object in the vertical center of its container, not changing its size. -->
+            <flag name="center_vertical" value="0x10" />
+            <!-- Place object in the horizontal center of its container, not changing its size. -->
+            <flag name="center_horizontal" value="0x20" />
+            <!-- Place the object in the center of its container in both the vertical and horizontal axis, not changing its size. -->
+            <flag name="center" value="0x30" />
+        </attr>
+        <attr name="sbTextMarginTop" format="dimension" />
+        <attr name="sbTextMarginBottom" format="dimension" />
+        <attr name="sbTextMarginStart" format="dimension" />
+        <attr name="sbTextMarginEnd" format="dimension" />
+        <attr name="sbTextMarginHorizontal" format="dimension" />
+        <attr name="sbTextMarginVertical" format="dimension" />
+        <attr name="sbTextMargin" format="dimension" />
+    </declare-styleable>
 </resources>

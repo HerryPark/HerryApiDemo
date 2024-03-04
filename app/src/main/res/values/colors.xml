@@ -1,6 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF4EBBB8</color>
+    <color name="colorPrimary">#FFFCFCFC</color>
     <color name="colorPrimaryDark">#FF01625F</color>
-    <color name="colorAccent">#FFF0666F</color>
+
+    <color name="colorAccent">#FF6B71FF</color>
+
+    <color name="transparent">@android:color/transparent</color>
+
+    <color name="primary">#FFFCFCFC</color>
+    <color name="on_primary">#FF323035</color>
+    <color name="on_primary_80">#CC323035</color>
+    <color name="on_primary_70">#B3323035</color>
+    <color name="on_primary_60">#99323035</color>
+    <color name="on_primary_40">#66323035</color>
+    <color name="on_primary_30">#4D323035</color>
+    <color name="on_primary_15">#26323035</color>
+    <color name="on_primary_10">#1A323035</color>
+
+    <color name="secondary">#FFF6F6F6</color>
+    <color name="on_secondary">#FF5A595D</color>
+
+    <color name="tertiary">#FFECECEC</color>
+    <color name="on_tertiary">#FF838285</color>
+
+    <color name="bk_fix">#FF000000</color>
+    <color name="bk_fix_80">#CC000000</color>
+    <color name="bk_fix_70">#B3000000</color>
+    <color name="bk_fix_60">#99000000</color>
+    <color name="bk_fix_40">#66000000</color>
+    <color name="bk_fix_30">#4D000000</color>
+    <color name="bk_fix_15">#26000000</color>
+    <color name="bk_fix_10">#1A000000</color>
+
+    <color name="wt_fix">#FFFFFFFF</color>
+    <color name="wt_fix_80">#CCFFFFFF</color>
+    <color name="wt_fix_70">#B3FFFFFF</color>
+    <color name="wt_fix_60">#99FFFFFF</color>
+    <color name="wt_fix_40">#66FFFFFF</color>
+    <color name="wt_fix_30">#4DFFFFFF</color>
+    <color name="wt_fix_15">#26FFFFFF</color>
+    <color name="wt_fix_10">#1AFFFFFF</color>
+
+    <color name="solid_rd">#FFFF3B30</color>
+    <color name="solid_pk">#FFFF2D55</color>
+    <color name="solid_or">#FFFF9500</color>
+    <color name="solid_yl">#FFFFCC00</color>
+    <color name="solid_gn">#FF34C759</color>
+    <color name="solid_mt">#FF00C7BE</color>
+    <color name="solid_bl">#FF007AFF</color>
+    <color name="solid_bl_50">#80323035</color>
+    <color name="solid_in">#FF5856D6</color>
+    <color name="solid_pu">#FFAF52DE</color>
+    <color name="solid_gy">#FFA9B2BC</color>
+
+    <color name="accent">#FF6B71FF</color>
+    <color name="accent_75">#BF6B71FF</color>
+    <color name="accent_50">#806B71FF</color>
+    <color name="accent_25">#406B71FF</color>
+    <color name="accent_10">#1A6B71FF</color>
+    <color name="accent_txt">#FF464DFA</color>
+    <color name="accent_txt_75">#BF464DFA</color>
+    <color name="accent_txt_50">#80464DFA</color>
+    <color name="accent_txt_25">#40464DFA</color>
+    <color name="accent_txt_10">#1A464DFA</color>
+    <!-- "gradient" Start: gradient_start, End: gradient_end -->
+    <color name="gradient_start">#FF9797FB</color>
+    <color name="gradient_end">#FF97D7FF</color>
+    <color name="gradient_75_start">#BF9797FB</color>
+    <color name="gradient_75_end">#BF97D7FF</color>
 </resources>

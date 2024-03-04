@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:transitionGroup="true"
+    tools:viewBindingIgnore="false"
+    tools:ignore="HardcodedText,MissingDefaultResource,SpUsage">
+
+    <include
+        android:id="@+id/styleable_buttons_fragment_title"
+        layout="@layout/title_bar_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/styleable_buttons_fragment_title"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/styleable_buttons_fragment_title"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_marginVertical="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textSize="12dp"
+                android:textColor="@color/on_primary"
+                android:background="@color/on_primary_30"
+                android:text="AppButton.Subscribe"/>
+
+            <LinearLayout
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="12dp"
+                    android:textColor="@color/on_primary"
+                    android:text="normal"/>
+
+                <com.herry.libs.widget.view.StyleableButton
+                    android:id="@+id/styleable_buttons_fragment_button_1"
+                    style="@style/AppButton.Subscribe"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    app:sbIconSrc="@drawable/ic_premium"/>
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_marginVertical="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textSize="12dp"
+                android:textColor="@color/on_primary"
+                android:background="@color/on_primary_30"
+                android:text="AppButton.Icon"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="normal"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_icon_normal"
+                        style="@style/AppButton.Icon"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        app:sbIconSrc="@drawable/ic_settings" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="selected"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_icon_selected"
+                        style="@style/AppButton.Icon"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        app:sbIconSrc="@drawable/ic_settings" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="disabled"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_icon_disabled"
+                        style="@style/AppButton.Icon"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        app:sbIconSrc="@drawable/ic_settings" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_marginVertical="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textSize="12dp"
+                android:textColor="@color/on_primary"
+                android:background="@color/on_primary_30"
+                android:text="AppButton.Standard"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="normal"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_standard"
+                        style="@style/AppButton.Standard.Outline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="disabled"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_standard_disabled"
+                        style="@style/AppButton.Standard.Outline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label"
+                        app:sbIconSrc="@drawable/ic_add_dt"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_marginVertical="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textSize="12dp"
+                android:textColor="@color/on_primary"
+                android:background="@color/on_primary_30"
+                android:text="AppButton.Standard.Fill.Sold"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="normal"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_standard_fill_sold"
+                        style="@style/AppButton.Standard.Fill.Solid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="disabled"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_standard_fill_sold_disabled"
+                        style="@style/AppButton.Standard.Fill.Solid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label"
+                        app:sbIconSrc="@drawable/ic_add_dt"
+                        app:sbTextWidth="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_marginVertical="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textSize="12dp"
+                android:textColor="@color/on_primary"
+                android:background="@color/on_primary_30"
+                android:text="AppButton.Standard.Fill.Accent"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="normal"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_standard_fill_accent"
+                        style="@style/AppButton.Standard.Fill.Accent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="disabled"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_standard_fill_accent_disabled"
+                        style="@style/AppButton.Standard.Fill.Accent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label"
+                        app:sbIconSrc="@drawable/ic_add_dt"
+                        app:sbTextWidth="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_marginVertical="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textSize="12dp"
+                android:textColor="@color/on_primary"
+                android:background="@color/on_primary_30"
+                android:text="AppButton.Standard.Fill.AccentGradient"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="normal"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_standard_fill_gradient_accent"
+                        style="@style/AppButton.Standard.Fill.AccentGradient"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="disabled"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_standard_fill_gradient_accent_disabled"
+                        style="@style/AppButton.Standard.Fill.AccentGradient"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label"
+                        app:sbIconSrc="@drawable/ic_add_dt"
+                        app:sbTextWidth="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_marginVertical="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textSize="12dp"
+                android:textColor="@color/on_primary"
+                android:background="@color/on_primary_30"
+                android:text="AppButton.TextOnly"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="normal"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_text_only"
+                        style="@style/AppButton.TextOnly"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="disabled"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_text_only_disabled"
+                        style="@style/AppButton.TextOnly"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_marginVertical="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textSize="12dp"
+                android:textColor="@color/on_primary"
+                android:background="@color/on_primary_30"
+                android:text="AppButton.Small.Outline"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="normal"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_small"
+                        style="@style/AppButton.Small.Outline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="disabled"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_small_disabled"
+                        style="@style/AppButton.Small.Outline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_marginVertical="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textSize="12dp"
+                android:textColor="@color/on_primary"
+                android:background="@color/on_primary_30"
+                android:text="AppButton.Small.Fill.Accent"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="normal"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_small_fill_accent"
+                        style="@style/AppButton.Small.Fill.Accent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="disabled"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_small_fill_accent_disabled"
+                        style="@style/AppButton.Small.Fill.Accent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        app:sbText="Label"/>
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_marginVertical="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textSize="12dp"
+                android:textColor="@color/on_primary"
+                android:background="@color/on_primary_30"
+                android:text="AppButton.Large.Outline"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="normal"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_large"
+                        style="@style/AppButton.Large.Outline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
+                        app:sbText="Label"
+                        tools:ignore="TooManyViews" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="disabled"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_large_disabled"
+                        style="@style/AppButton.Large.Outline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
+                        app:sbIconSrc="@drawable/ic_add_dt"
+                        app:sbText="Label"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_marginVertical="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textSize="12dp"
+                android:textColor="@color/on_primary"
+                android:background="@color/on_primary_30"
+                android:text="AppButton.Small.Fill.Solid"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="normal"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_large_fill_solid"
+                        style="@style/AppButton.Large.Fill.Solid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
+                        app:sbText="Label"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12dp"
+                        android:textColor="@color/on_primary"
+                        android:text="disabled"/>
+
+                    <com.herry.libs.widget.view.StyleableButton
+                        android:id="@+id/styleable_buttons_fragment_button_large_fill_solid_disabled"
+                        style="@style/AppButton.Large.Fill.Solid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
+                        app:sbText="Label"
+                        app:sbIconSrc="@drawable/ic_add_dt" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

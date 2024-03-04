@@ -13,7 +13,6 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.configure.SystemUIAppearance
 import com.herry.libs.widget.configure.SystemUIAppearances
 import com.herry.libs.widget.configure.SystemUIShowBehavior
 import com.herry.libs.widget.configure.SystemUIVisibility
@@ -29,10 +28,12 @@ import com.herry.test.widget.TabLayoutForm
 
 class FeedsFragment: BaseNavView<FeedsContract.View, FeedsContract.Presenter>(), FeedsContract.View {
 
-    override fun getSystemUIAppearances(context: Context): SystemUIAppearances = SystemUIAppearances(
-        showBehavior = SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE,
-        statusBar = SystemUIAppearance(backgroundColor = Color.WHITE, visibility = SystemUIVisibility.SHOW)
-    )
+    override fun getSystemUIAppearances(context: Context): SystemUIAppearances =
+        SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
+            showBehavior = SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE
+            statusBar?.backgroundColor = Color.WHITE
+            statusBar?.visibility = SystemUIVisibility.SHOW
+        }
 
     override fun onCreatePresenter(): FeedsContract.Presenter = FeedsPresenter()
 

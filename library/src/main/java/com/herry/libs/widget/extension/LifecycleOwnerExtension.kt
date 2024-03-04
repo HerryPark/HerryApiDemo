@@ -16,14 +16,7 @@ inline fun LifecycleOwner?.launchWhen(
     state: Lifecycle.State,
     repeat: Boolean = false,
     crossinline block: suspend CoroutineScope.() -> Unit): Job? {
-    val lifecycleOwner = when (this) {
-        is Activity -> this
-        is DialogFragment ->
-            if (this.dialog != null && this.dialog?.isShowing == true) this /*for the dialog fragment */
-            else this.viewLifecycleOwnerLiveData.value /*for the flat fragment */
-        is Fragment -> this.viewLifecycleOwnerLiveData.value /*for the flat fragment */
-        else -> null
-    } ?: return null
+    val lifecycleOwner = this ?: return null
 
     return lifecycleOwner.lifecycleScope.launch {
         val coroutineScope = this@launch
@@ -52,4 +45,38 @@ inline fun LifecycleOwner?.launchWhenResumed(
     repeat: Boolean = false,
     crossinline block: suspend CoroutineScope.() -> Unit): Job? {
     return launchWhen(state = Lifecycle.State.RESUMED, repeat = repeat, block = block)
+}
+
+inline fun LifecycleOwner?.launchWhenView(
+    state: Lifecycle.State,
+    repeat: Boolean = false,
+    crossinline block: suspend CoroutineScope.() -> Unit): Job? {
+    val lifecycleOwner = when (this) {
+        is Activity -> this
+        is DialogFragment ->
+            if (this.dialog != null && this.dialog?.isShowing == true) this /*for the dialog fragment */
+            else this.viewLifecycleOwnerLiveData.value /*for the flat fragment */
+        is Fragment -> this.viewLifecycleOwnerLiveData.value /*for the flat fragment */
+        else -> null
+    }
+
+    return lifecycleOwner?.launchWhen(state, repeat, block)
+}
+
+inline fun LifecycleOwner?.launchWhenViewCreated(
+    repeat: Boolean = false,
+    crossinline block: suspend CoroutineScope.() -> Unit): Job? {
+    return launchWhenView(state = Lifecycle.State.CREATED, repeat = repeat, block = block)
+}
+
+inline fun LifecycleOwner?.launchWhenViewStarted(
+    repeat: Boolean = false,
+    crossinline block: suspend CoroutineScope.() -> Unit): Job? {
+    return launchWhenView(state = Lifecycle.State.STARTED, repeat = repeat, block = block)
+}
+
+inline fun LifecycleOwner?.launchWhenViewResumed(
+    repeat: Boolean = false,
+    crossinline block: suspend CoroutineScope.() -> Unit): Job? {
+    return launchWhenView(state = Lifecycle.State.RESUMED, repeat = repeat, block = block)
 }

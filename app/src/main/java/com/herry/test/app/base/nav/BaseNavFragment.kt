@@ -12,7 +12,7 @@ import com.herry.libs.app.nav.NavMovement
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.extension.getNavCurrentDestinationID
-import com.herry.libs.widget.extension.launchWhenResumed
+import com.herry.libs.widget.extension.launchWhenViewResumed
 import com.herry.libs.widget.extension.setFragmentResult
 import com.herry.libs.widget.extension.setFragmentResultListener
 import com.herry.test.app.base.BaseActivity
@@ -90,7 +90,7 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
         }
 
         if (currentNavDestination is DialogFragmentNavigator.Destination) {
-            launchWhenResumed {
+            launchWhenViewResumed {
                 navigateUpDialogFragment(result)
             }
             return
@@ -180,9 +180,7 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
     protected fun finishFragment(bundle: Bundle?) {
         val activity = this.activity
         if (activity is BaseNavActivity) {
-            activity.window?.let {
-                ViewUtil.hideSoftKeyboard(context, activity.window.decorView.rootView)
-            }
+            ViewUtil.hideSoftKeyboard(this)
             navigateUp(bundle, force = true)
         } else if (activity is BaseActivity) {
             finishActivity(NavBundleUtil.isNavigationResultOk(bundle), bundle)
@@ -198,9 +196,7 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
      */
     protected open fun finishActivity(resultOK: Boolean, bundle: Bundle? = null) {
         activity?.let { activity ->
-            activity.window?.let {
-                ViewUtil.hideSoftKeyboard(context, activity.window.decorView.rootView)
-            }
+            ViewUtil.hideSoftKeyboard(activity)
 
             val activityResult = if (resultOK) Activity.RESULT_OK else Activity.RESULT_CANCELED
             val resultBundle = if (null != bundle) {

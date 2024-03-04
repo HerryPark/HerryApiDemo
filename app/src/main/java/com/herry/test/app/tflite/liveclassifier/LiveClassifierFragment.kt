@@ -10,7 +10,7 @@ import com.herry.libs.helper.ToastHelper
 import com.herry.libs.log.Trace
 import com.herry.libs.util.AppUtil
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.extension.launchWhenResumed
+import com.herry.libs.widget.extension.launchWhenViewResumed
 import com.herry.libs.widget.view.dialog.AppDialog
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
@@ -70,7 +70,7 @@ class LiveClassifierFragment : BaseNavView<LiveClassifierContract.View, LiveClas
                         })?.apply {
                             this.setOnDismissListener { blockedPermissionPopup = null }
                         }
-                        launchWhenResumed {
+                        launchWhenViewResumed {
                             blockedPermissionPopup?.show()
                         }
                     })

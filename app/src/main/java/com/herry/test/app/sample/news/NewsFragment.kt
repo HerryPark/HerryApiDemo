@@ -16,9 +16,7 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.configure.SystemUIAppearance
 import com.herry.libs.widget.configure.SystemUIAppearances
-import com.herry.libs.widget.configure.SystemUIShowBehavior
 import com.herry.libs.widget.configure.SystemUIVisibility
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
@@ -30,11 +28,13 @@ import com.herry.test.app.sample.tags.TagsFragment
 
 class NewsFragment: BaseNavView<NewsContract.View, NewsContract.Presenter>(), NewsContract.View {
 
-    override fun getSystemUIAppearances(context: Context): SystemUIAppearances = SystemUIAppearances(
-        isFullScreen = true,
-        statusBar = SystemUIAppearance(backgroundColor = Color.TRANSPARENT, visibility = SystemUIVisibility.SHOW),
-        navigationBar = SystemUIAppearance(backgroundColor = Color.YELLOW, visibility = SystemUIVisibility.SHOW)
-    )
+    override fun getSystemUIAppearances(context: Context): SystemUIAppearances =
+        SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
+            isFullScreen = true
+            statusBar?.backgroundColor = Color.TRANSPARENT
+            statusBar?.visibility = SystemUIVisibility.SHOW
+            navigationBar?.backgroundColor = Color.YELLOW
+        }
 
     @UnstableApi override fun onCreatePresenter(): NewsContract.Presenter = NewsPresenter()
 

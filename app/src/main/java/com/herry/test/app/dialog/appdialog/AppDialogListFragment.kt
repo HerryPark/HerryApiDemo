@@ -104,6 +104,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
             }
             AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_2 -> {
                 Popup(requireActivity()).apply {
+                    setKeepOnPause(this@AppDialogListFragment, false)
                     setTitle("title")
                     setMessage("message1234567890\n12345678901234567890123456789012345678901234567890123456789012345678901234567890\n" +
                             "1234567890\n" +

@@ -148,6 +148,11 @@
         tools:layout="@layout/spinners_fragment" />
 
     <fragment
+        android:id="@+id/styleable_buttons_fragment"
+        android:name="com.herry.test.app.widgets.styleablebutton.StyleableButtonFragment"
+        tools:layout="@layout/styleable_buttons_fragment" />
+
+    <fragment
         android:id="@+id/timeline_fragment"
         android:name="com.herry.test.app.timeline.TimelineFragment"
         tools:layout="@layout/timeline_fragment" />

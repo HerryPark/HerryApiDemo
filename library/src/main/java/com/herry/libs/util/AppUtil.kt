@@ -32,33 +32,13 @@ import java.io.IOException
  */
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 object AppUtil {
-    fun pressBackKey(activity: Activity?): Boolean {
+    fun pressBackKey(activity: Activity?, rootView: View? = null): Boolean {
         if (null == activity) {
             return false
         }
-        activity.runOnUiThread(
-            Runnable { // pressed back
-                activity.dispatchKeyEvent(
-                    KeyEvent(
-                        KeyEvent.ACTION_DOWN,
-                        KeyEvent.KEYCODE_BACK
-                    )
-                )
-                activity.dispatchKeyEvent(
-                    KeyEvent(
-                        KeyEvent.ACTION_UP,
-                        KeyEvent.KEYCODE_BACK
-                    )
-                )
-            })
-        return true
-    }
 
-    fun pressBackKey(activity: Activity?, rootView: View?): Boolean {
-        if (null == activity) {
-            return false
-        }
-        ViewUtil.hideSoftKeyboard(activity, rootView)
+        ViewUtil.hideSoftKeyboard(rootView?.findFocus() ?: activity.currentFocus)
+
         activity.runOnUiThread(
             Runnable { // pressed back
                 activity.dispatchKeyEvent(

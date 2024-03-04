@@ -1,12 +1,12 @@
 package com.herry.test.app.sample.me
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.configure.SystemUIAppearance
 import com.herry.libs.widget.configure.SystemUIAppearanceColorStyle
 import com.herry.libs.widget.configure.SystemUIAppearances
 import com.herry.libs.widget.configure.SystemUIShowBehavior
@@ -16,11 +16,12 @@ import com.herry.test.app.base.nav.BaseNavFragment
 
 class MeFragment: BaseNavFragment() {
 
-    override fun getSystemUIAppearances(context: Context): SystemUIAppearances = SystemUIAppearances(
-        showBehavior = SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE,
-        statusBar = SystemUIAppearance(appearanceColorStyle = SystemUIAppearanceColorStyle.DARK, visibility = SystemUIVisibility.HIDE),
-        navigationBar = SystemUIAppearance(appearanceColorStyle = SystemUIAppearanceColorStyle.DARK, visibility = SystemUIVisibility.HIDE)
-    )
+    override fun getSystemUIAppearances(context: Context): SystemUIAppearances =
+        SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
+            isFullScreen = true
+            showBehavior = SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE
+            statusBar?.visibility = SystemUIVisibility.HIDE
+        }
 
     private var container: View? = null
 

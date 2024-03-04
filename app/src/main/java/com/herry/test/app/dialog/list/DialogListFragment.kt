@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.widget.ViewUtils
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -17,8 +16,7 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
-import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.extension.launchWhenResumed
+import com.herry.libs.widget.extension.launchWhenViewResumed
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.libs.widget.view.dialog.BottomSheetListDialog
@@ -140,7 +138,7 @@ class DialogListFragment : BaseNavView<DialogListContract.View, DialogListContra
     override fun onNavigateUpResult(fromNavigationId: Int, result: Bundle) {
         if (fromNavigationId == R.id.full_screen_dialog_fragment
             || fromNavigationId == R.id.bottom_sheet_dialog_fragment) {
-            launchWhenResumed {
+            launchWhenViewResumed {
                 if (NavBundleUtil.isNavigationResultOk(result)) {
                     ToastHelper.showToast(activity, "with OK")
                 } else {

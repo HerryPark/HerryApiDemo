@@ -14,9 +14,9 @@ import com.herry.libs.mvp.MVPView
 import com.herry.libs.util.network.NetworkConnectionChecker
 import com.herry.libs.util.network.OnNetworkConnectionChanged
 import com.herry.libs.util.perform.PerformBlocks
-import com.herry.libs.widget.extension.launchWhenCreated
-import com.herry.libs.widget.extension.launchWhenResumed
-import com.herry.libs.widget.extension.launchWhenStarted
+import com.herry.libs.widget.extension.launchWhenViewCreated
+import com.herry.libs.widget.extension.launchWhenViewResumed
+import com.herry.libs.widget.extension.launchWhenViewStarted
 import com.herry.test.rx.LastOneObservable
 import com.herry.test.rx.RxSchedulerProvider
 import io.reactivex.Observable
@@ -224,9 +224,9 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         block: suspend CoroutineScope.() -> Unit): Job? {
         return viewLifecycleOwner?.run {
             when (launchWhen) {
-                LaunchWhenView.CREATED -> this.launchWhenCreated(block = block)
-                LaunchWhenView.STARTED -> this.launchWhenStarted(block = block)
-                LaunchWhenView.RESUMED -> this.launchWhenResumed(block = block)
+                LaunchWhenView.CREATED -> this.launchWhenViewCreated(block = block)
+                LaunchWhenView.STARTED -> this.launchWhenViewStarted(block = block)
+                LaunchWhenView.RESUMED -> this.launchWhenViewResumed(block = block)
             }
         }
     }

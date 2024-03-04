@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.content.res.TypedArray
 import android.graphics.*
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -17,114 +16,17 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.DisplayMetrics
 import android.util.Size
-import android.util.TypedValue
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.ColorUtils
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
-import com.herry.libs.helper.ApiHelper
-import com.herry.libs.widget.configure.SystemUIAppearance
-import com.herry.libs.widget.configure.SystemUIAppearanceColorStyle
-import com.herry.libs.widget.configure.SystemUIShowBehavior
-import com.herry.libs.widget.configure.SystemUIVisibility
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 object ViewUtil {
-    fun isSystemNightMode(context: Context?): Boolean {
-        return ((context?.resources?.configuration?.uiMode ?: 0) and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-    }
-
-    fun setViewToFitSystemWindows(view: View?, isFit: Boolean) {
-        view ?: return
-        if (view.fitsSystemWindows != isFit) {
-            view.fitsSystemWindows = isFit
-        }
-    }
-
-    fun setDecorViewToFitSystemWindows(activity: Activity?, fit: Boolean) {
-        val window = activity?.window ?: return
-
-        WindowCompat.setDecorFitsSystemWindows(window, fit)
-    }
-
-    /**
-     * Gets the status bar background color form the applied theme @see style.xml
-     */
-    fun getSystemStatusBarBackgroundColor(context: Context): Int {
-        val typedValue = TypedValue()
-        val attrs: TypedArray = context.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.statusBarColor))
-        val color = attrs.getColor(0, 0)
-        attrs.recycle()
-
-        return color
-    }
-
-    fun setStatusBar(activity: Activity?, appearance: SystemUIAppearance) {
-        setStatusBar(
-            activity = activity,
-            backgroundColor = appearance.backgroundColor,
-            appearanceColorStyle = appearance.appearanceColorStyle
-        )
-    }
-
-    fun setStatusBar(
-        activity: Activity?,
-        @ColorInt backgroundColor: Int?,
-        appearanceColorStyle: SystemUIAppearanceColorStyle? = null
-    ) {
-        val window = activity?.window ?: return
-
-        val statusBarBackgroundColor = backgroundColor ?: getSystemStatusBarBackgroundColor(activity)
-        val statusBarAppearanceColorStyle = appearanceColorStyle ?: kotlin.run {
-            // automatically check if the desired status bar is dark or light
-            if (ColorUtils.calculateLuminance(statusBarBackgroundColor) > 0.5) SystemUIAppearanceColorStyle.LIGHT
-            else SystemUIAppearanceColorStyle.DARK
-        }
-
-        // sets the status bar appearance color (LIGHT or DARK)
-        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = statusBarAppearanceColorStyle == SystemUIAppearanceColorStyle.LIGHT
-        // sets the status bar background color
-        window.statusBarColor = statusBarBackgroundColor
-    }
-
-    fun getSystemNavigationBarBackgroundColor(context: Context): Int {
-        val typedValue = TypedValue()
-        val attrs: TypedArray = context.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.navigationBarColor))
-        val color = attrs.getColor(0, 0)
-        attrs.recycle()
-
-        return color
-    }
-
-    fun setNavigationBar(activity: Activity?, appearance: SystemUIAppearance) {
-        setNavigationBar(
-            activity = activity,
-            backgroundColor = appearance.backgroundColor,
-            appearanceColorStyle = appearance.appearanceColorStyle
-        )
-    }
-
-    fun setNavigationBar(activity: Activity?, @ColorInt backgroundColor: Int?, appearanceColorStyle: SystemUIAppearanceColorStyle? = null) {
-        val window = activity?.window ?: return
-
-        val navigationBarBackgroundColor = backgroundColor ?: getSystemNavigationBarBackgroundColor(activity)
-        val navigationBarAppearanceColorStyle = appearanceColorStyle ?: kotlin.run {
-            // automatically check if the desired status bar is dark or light
-            if (ColorUtils.calculateLuminance(navigationBarBackgroundColor) > 0.5) SystemUIAppearanceColorStyle.LIGHT
-            else SystemUIAppearanceColorStyle.DARK
-        }
-
-        // sets the navigation bar appearance color (LIGHT or DARK)
-        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars = navigationBarAppearanceColorStyle == SystemUIAppearanceColorStyle.LIGHT
-        // sets the navigation bar background color
-        window.navigationBarColor = navigationBarBackgroundColor
-    }
 
     @SuppressLint("InternalInsetResource", "DiscouragedApi")
     fun getStatusBarHeight(context: Context?): Int {
@@ -138,99 +40,6 @@ object ViewUtil {
         return context?.resources?.getIdentifier("navigation_bar_height", "dimen", "android")?.let { resourceId ->
             context.resources.getDimensionPixelSize(resourceId)
         } ?: 0
-    }
-
-    fun isSystemFullScreen(context: Context?): Boolean {
-        var isFullScreen = false
-        val typedValue = TypedValue()
-        val attrs: TypedArray? = context?.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.windowFullscreen))
-        if (attrs != null) {
-            isFullScreen = attrs.getBoolean(0, false)
-            attrs.recycle()
-        }
-        return isFullScreen
-    }
-
-    fun setSystemUiVisibility(
-        activity: Activity?,
-        isFull: Boolean,
-        showBehavior: SystemUIShowBehavior? = null,
-        statusBarVisibility: SystemUIVisibility? = null,
-        navigationBarVisibility: SystemUIVisibility? = null
-    ) {
-        activity ?: return
-
-        val window = activity.window ?: return
-        val decorView = activity.window?.decorView ?: return
-
-        if (ApiHelper.hasAPI30()) {
-            decorView.systemUiVisibility = if (isFull) {
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            } else {
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            }
-
-            val statusBarsType = WindowInsetsCompat.Type.statusBars()
-            val navigationBarsType = WindowInsetsCompat.Type.navigationBars()
-
-            var showTypes = 0
-            var hideTypes = 0
-
-            when (statusBarVisibility) {
-                null -> {}
-                SystemUIVisibility.SHOW -> showTypes = showTypes or statusBarsType
-                SystemUIVisibility.HIDE -> hideTypes = hideTypes or statusBarsType
-            }
-
-            when (navigationBarVisibility) {
-                null -> {}
-                SystemUIVisibility.SHOW -> showTypes = showTypes or navigationBarsType
-                SystemUIVisibility.HIDE -> hideTypes = hideTypes or navigationBarsType
-            }
-
-            // WindowInsetsController can hide or show specified system bars.
-            val insetsController = WindowCompat.getInsetsController(window, decorView)
-            if (statusBarVisibility != null) {
-                insetsController.systemBarsBehavior = when (showBehavior) {
-                    SystemUIShowBehavior.DEFAULT -> WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_SWIPE
-                    SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE -> WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                    null -> insetsController.systemBarsBehavior
-                }
-            }
-
-            if (showTypes != 0 || hideTypes !=0 ) {
-                decorView.setOnApplyWindowInsetsListener { view, windowInsets ->
-                    if (showTypes != 0) {
-                        insetsController.show(showTypes)
-                    }
-                    if (hideTypes != 0) {
-                        insetsController.hide(hideTypes)
-                    }
-
-                    view.onApplyWindowInsets(windowInsets)
-                }
-            }
-        } else { // under api 30
-            var decorFitsFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-
-            decorFitsFlags = if (isFull) {
-                decorFitsFlags or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            } else {
-                decorFitsFlags
-            }
-            if (statusBarVisibility == SystemUIVisibility.HIDE) {
-                decorFitsFlags = decorFitsFlags or View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-
-                if (showBehavior == SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE) {
-                    decorFitsFlags = decorFitsFlags or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                }
-            }
-            if (navigationBarVisibility == SystemUIVisibility.HIDE) {
-                decorFitsFlags = decorFitsFlags or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            }
-
-            decorView.systemUiVisibility = decorFitsFlags
-        }
     }
 
     fun inflate(@LayoutRes layout: Int, root: ViewGroup): View {
@@ -340,47 +149,34 @@ object ViewUtil {
         return ColorDrawable(color)
     }
 
-    fun hideSoftKeyboard(context: Context?, rootView: View?) {
-        if (isSoftKeyboardShown(rootView) && context != null) {
-            val inputMethodManager = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
-            inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
-        }
+    fun hideSoftKeyboard(activity: Activity?, flag: Int = 0, resultReceiver: ResultReceiver? = null) {
+        hideSoftKeyboard(focusedView = activity?.currentFocus, flag = flag, resultReceiver = resultReceiver)
     }
 
-    fun hideSoftKeyboard(view: View?, activity: Activity?): Boolean {
-        return hideSoftKeyboard(view, activity, 0, null)
+    fun hideSoftKeyboard(fragment: Fragment?, flag: Int = 0, resultReceiver: ResultReceiver? = null) {
+        val focusedView = fragment?.view?.findFocus()
+            ?: (fragment as? DialogFragment)?.dialog?.window?.decorView
+            ?: fragment?.activity?.currentFocus
+
+        hideSoftKeyboard(focusedView = focusedView, flag = flag, resultReceiver = resultReceiver)
     }
 
-    fun hideSoftKeyboard(view: View?, activity: Activity?, flag: Int): Boolean {
-        return hideSoftKeyboard(view, activity, flag, null)
+    fun hideSoftKeyboard(focusedView: View?, flag: Int = 0, resultReceiver: ResultReceiver? = null) {
+        val context = focusedView?.context ?: return
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(focusedView.windowToken, flag, resultReceiver)
     }
 
-    fun hideSoftKeyboard(view: View?, activity: Activity?, resultReceiver: ResultReceiver?): Boolean {
-        return hideSoftKeyboard(view, activity, 0, resultReceiver)
-    }
+    fun showSoftKeyboard(view: View?, flag: Int = 0, resultReceiver: ResultReceiver? = null) {
+        val context = view?.context ?: return
 
-    fun hideSoftKeyboard(view: View?, activity: Activity?, flag: Int, resultReceiver: ResultReceiver?): Boolean {
-        if (null == activity || null == view) {
-            return false
-        }
-        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        return null != imm && imm.hideSoftInputFromWindow(view.applicationWindowToken, flag, resultReceiver)
-    }
-
-    fun showSoftKeyboard(view: View?, activity: Activity?, flag: Int): Boolean {
-        return showSoftKeyboard(view, activity, flag, null)
-    }
-
-    fun showSoftKeyboard(view: View?, activity: Activity?, resultReceiver: ResultReceiver?): Boolean {
-        return showSoftKeyboard(view, activity, 0, resultReceiver)
-    }
-
-    fun showSoftKeyboard(view: View?, activity: Activity?, flag: Int, resultReceiver: ResultReceiver?): Boolean {
-        if (null == activity || null == view) {
-            return false
-        }
-        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        return null != imm && imm.showSoftInput(view, flag, resultReceiver)
+        view.postDelayed({
+            view.isFocusable = true
+            view.isFocusableInTouchMode = true
+            view.requestFocus()
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.showSoftInput(view, flag, resultReceiver)
+        }, context.resources.getInteger(android.R.integer.config_shortAnimTime).toLong())
     }
 
     fun isSoftKeyboardShown(rootView: View?): Boolean {

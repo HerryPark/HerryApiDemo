@@ -2,9 +2,15 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/on_primary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.FullScreen" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
+<!--        <item name="android:windowTranslucentStatus">true</item>-->
+<!--        <item name="android:windowTranslucentNavigation">true</item>-->
     </style>
 
     <style name="PopupTheme">
@@ -74,14 +80,14 @@
         <item name="ad_buttonBackground">@color/tbc_70</item>
         <item name="ad_buttonSelectableBackground">?android:attr/selectableItemBackground</item>
 <!--        <item name="ad_leftButtonTextSize">@dimen/size17</item>-->
-<!--        <item name="ad_leftButtonTextColor">@color/colorPrimary</item>-->
+<!--        <item name="ad_leftButtonTextColor">@color/on_primary</item>-->
 <!--        <item name="ad_leftButtonBackground">@null</item>-->
         <item name="ad_leftButtonSelectableBackground">?android:attr/selectableItemBackground</item>
 <!--        <item name="ad_centerButtonBackground">@null</item>-->
         <item name="ad_centerButtonSelectableBackground">?android:attr/selectableItemBackground</item>
 <!--        <item name="ad_rightButtonBackground">@null</item>-->
 <!--        <item name="ad_rightButtonTextSize">@dimen/size17</item>-->
-<!--        <item name="ad_rightButtonTextColor">@color/colorPrimary</item>-->
+<!--        <item name="ad_rightButtonTextColor">@color/on_primary</item>-->
         <item name="ad_rightButtonSelectableBackground">?android:attr/selectableItemBackground</item>
         <item name="ad_listItemLayout">@layout/app_dialog_list_item</item>
         <item name="ad_listSingleChoiceItemLayout">@layout/app_dialog_single_choice</item>
@@ -98,7 +104,7 @@
         <item name="android:minHeight">?attr/actionBarSize</item>
         <item name="mainTitleTextColor">@color/tbc_10</item>
         <item name="mainTitleTextGravity">center</item>
-        <item name="titleBarBackground">@color/colorPrimary</item>
+        <item name="titleBarBackground">@color/on_primary</item>
         <item name="mainTitleTextStyle">bold</item>
         <item name="mainTitleTextSize">20dp</item>
         <item name="showShadow">hide</item>
@@ -162,4 +168,5 @@
     <style name="AppTheme.BottomSheetDialog.HideStatusBar" parent="AppTheme.BottomSheetDialog">
         <item name="android:windowFullscreen">true</item>
     </style>
+
 </resources>
