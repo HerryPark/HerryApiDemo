@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.res.ColorStateList
+import android.content.res.TypedArray
 import android.graphics.Color
 import android.graphics.Point
 import android.graphics.Typeface
@@ -22,15 +23,16 @@ import android.widget.*
 import androidx.annotation.*
 import androidx.appcompat.app.AppCompatDialog
 import androidx.core.view.isVisible
+import androidx.core.view.setMargins
 import com.herry.libs.R
 import com.herry.libs.widget.extension.*
 import com.herry.libs.widget.view.viewgroup.FrameLayoutEx
 import kotlin.math.roundToInt
 
 @SuppressLint("InflateParams")
-@Suppress("unused", "MemberVisibilityCanBePrivate", "LocalVariableName")
+@Suppress("unused", "MemberVisibilityCanBePrivate", "LocalVariableName", "KotlinConstantConditions")
 /**
- * @param activity calling activity
+ * @param context calling activity
  * @param styleResId AppDialog UI attributes style resource id
  * @param dialogThemeResId Dialog window theme resource id
  */
@@ -94,14 +96,19 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
 
     // view information
     private var dialogWidth = 0
-    private var dialogMinWidth = 0
     private var dialogMaxWidth = 0
+    private var dialogMinWidth = 0
+    private var dialogMinHeight = 0
+    private var dialogMaxHeight = 0
     private var dialogHeightMargin = 0
     private var dialogBackground: Drawable? = null
+    private var dialogGravity = Gravity.CENTER
     private var dialogPaddingStart = 0
     private var dialogPaddingTop = 0
     private var dialogPaddingEnd = 0
     private var dialogPaddingBottom = 0
+    private var dialogMarginVertical = 0
+    private var dialogMarginHorizontal = 0
     private var topBackground: Drawable? = null
     private var topMinHeight = 0
     private var topPaddingStart = 0
@@ -126,7 +133,6 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
     private var contentsPaddingEnd = 0
     private var contentsPaddingBottom = 0
     private var contentsMinHeight = 0
-    private var contentsMaxHeight = 0
     private var messageTextColor: ColorStateList? = null
     private var messageTextSize = 0
     private var messageTextLineSpacingExtra = 0.0f
@@ -234,52 +240,67 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
         return Point(width, height)
     }
 
-    private fun retrieveAttributes(@StyleRes themeResId: Int) {
-        val attrs = this.context?.theme?.obtainStyledAttributes(themeResId, R.styleable.AppDialog)
+    private fun retrieveAttributes(@StyleRes styleResId: Int) {
+        val displayWidth = getDisplaySize()?.x ?: return
+        val displayHeight = getDisplaySize()?.y ?: return
+
+        val attrs = this.context?.theme?.obtainStyledAttributes(styleResId, R.styleable.AppDialog)
         if (attrs != null) {
             // sets dialog attributes
 
-            val dialogWidthStyleIndex = R.styleable.AppDialog_ad_width
-            val dialogWidthTypedValue = attrs.peekValue(dialogWidthStyleIndex)
-            when (dialogWidthTypedValue?.type) {
-                TypedValue.TYPE_FRACTION -> {
-                    val fraction = attrs.getFraction(dialogWidthStyleIndex, 1, 1, 0f)
-                    dialogWidth = ((getDisplaySize()?.x ?: 0) * ((fraction * 100f).roundToInt()) / 100f).toInt()
-                }
-                TypedValue.TYPE_DIMENSION -> {
-                    dialogWidth = attrs.getDimensionPixelSize(dialogWidthStyleIndex, 0)
-                }
-            }
-
-            val dialogMinWidthStyleIndex = R.styleable.AppDialog_ad_minWidth
-            val dialogMinWidthTypedValue = attrs.peekValue(dialogMinWidthStyleIndex)
-            when (dialogMinWidthTypedValue?.type) {
-                TypedValue.TYPE_FRACTION -> {
-                    val fraction = attrs.getFraction(dialogMinWidthStyleIndex, 1, 1, 0f)
-                    dialogMinWidth = ((getDisplaySize()?.x ?: 0) * ((fraction * 100f).roundToInt()) / 100f).toInt()
-                }
-                TypedValue.TYPE_DIMENSION -> {
-                    dialogMinWidth = attrs.getDimensionPixelSize(dialogMinWidthStyleIndex, 0)
-                }
-            }
-
-            val dialogMaxWidthStyleIndex = R.styleable.AppDialog_ad_maxWidth
-            val dialogMaxWidthTypedValue = attrs.peekValue(dialogMaxWidthStyleIndex)
-            when (dialogMaxWidthTypedValue?.type) {
-                TypedValue.TYPE_FRACTION -> {
-                    val fraction = attrs.getFraction(dialogMaxWidthStyleIndex, 1, 1, 0f)
-                    dialogMaxWidth = ((getDisplaySize()?.x ?: 0) * ((fraction * 100f).roundToInt()) / 100f).toInt()
-                }
-                TypedValue.TYPE_DIMENSION -> {
-                    dialogMaxWidth = attrs.getDimensionPixelSize(dialogMaxWidthStyleIndex, 0)
-                }
-            }
-
             dialogBackground = attrs.getDrawable(R.styleable.AppDialog_ad_background)
+            dialogGravity = when (attrs.getInt(R.styleable.AppDialog_ad_gravity, dialogGravity)) {
+                0x01 -> Gravity.TOP
+                0x02 -> Gravity.BOTTOM
+                else -> Gravity.CENTER
+            }
             dialogPaddingTop = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_paddingTop, 0)
             dialogPaddingBottom = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_paddingBottom, 0)
             dialogPaddingStart = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_paddingStart, 0)
             dialogPaddingEnd = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_paddingEnd, 0)
+
+            dialogMarginVertical = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_marginVertical, 0)
+            dialogMarginHorizontal = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_marginHorizontal, 0)
+
+            dialogMaxWidth = parseFractionOrDimension(R.styleable.AppDialog_ad_maxWidth, attrs, displayWidth).let { size ->
+                if (size > displayWidth - (dialogMarginHorizontal * 2)) {
+                    displayWidth - (dialogMarginHorizontal * 2)
+                } else {
+                    size
+                }
+            }
+
+            dialogWidth = parseFractionOrDimension(R.styleable.AppDialog_ad_width, attrs, displayWidth).let { size ->
+                val width = if (size > displayWidth - (dialogMarginHorizontal * 2)) {
+                    displayWidth - (dialogMarginHorizontal * 2)
+                } else {
+                    size
+                }
+
+                if (width > dialogMaxWidth) dialogMaxWidth else width
+            }
+
+            dialogMinWidth = parseFractionOrDimension(R.styleable.AppDialog_ad_minWidth, attrs, displayWidth).let { size ->
+                if (size > displayWidth - (dialogMarginHorizontal * 2)) {
+                    displayWidth - (dialogMarginHorizontal * 2)
+                } else {
+                    size
+                }
+            }
+            dialogMinHeight = parseFractionOrDimension(R.styleable.AppDialog_ad_minHeight, attrs, displayHeight).let { size ->
+                if (size > displayHeight - (dialogMarginVertical * 2)) {
+                    displayHeight - (dialogMarginVertical * 2)
+                } else {
+                    size
+                }
+            }
+            dialogMaxHeight = parseFractionOrDimension(R.styleable.AppDialog_ad_maxHeight, attrs, displayHeight).let { size ->
+                if (size > displayHeight - (dialogMarginVertical * 2)) {
+                    displayHeight - (dialogMarginVertical * 2)
+                } else {
+                    size
+                }
+            }
 
             // sets top attributes
             topBackground = attrs.getDrawable(R.styleable.AppDialog_ad_topBackground)
@@ -310,7 +331,6 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
             contentsPaddingEnd = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_contentsPaddingEnd, 0)
             contentsPaddingBottom = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_contentsPaddingBottom, 0)
             contentsMinHeight = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_contentsMinHeight, 0)
-            contentsMaxHeight = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_contentsMaxHeight, 0)
 
             // sets message attributes
             messageTextColor = attrs.getColorStateList(R.styleable.AppDialog_ad_messageTextColor)
@@ -417,6 +437,25 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
         }
     }
 
+    @Px private fun parseFractionOrDimension(@StyleableRes attributesValue: Int, styledAttributes: TypedArray, @Px fractionBase: Int): Int {
+        val value = try {
+            val typedValue = styledAttributes.peekValue(attributesValue)
+            when (typedValue?.type) {
+                TypedValue.TYPE_FRACTION -> {
+                    val fraction = styledAttributes.getFraction(attributesValue, 1, 1, 0f)
+                    (fractionBase * ((fraction * 100f).roundToInt()) / 100f).toInt()
+                }
+                TypedValue.TYPE_DIMENSION -> {
+                    styledAttributes.getDimensionPixelSize(attributesValue, 0)
+                }
+                else  -> 0
+            }
+        } catch (_: Exception) {
+            0
+        }
+        return value
+    }
+
     private fun initViews() {
         val container = this.container ?: return
 
@@ -424,6 +463,12 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
         dialogBackground?.run {
             container.background = this
         }
+
+        container.minimumWidth = dialogMinWidth
+        container.setMaximumHeight(dialogMaxHeight)
+        container.minimumHeight = dialogMinHeight
+
+        container.setViewPadding(dialogPaddingStart, dialogPaddingTop, dialogPaddingEnd, dialogPaddingBottom)
 
         topContainer = container.findViewById(R.id.app_dialog_top_container)
         topContainer?.run {
@@ -447,9 +492,6 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
 
         titleTextView = container.findViewById(R.id.app_dialog_title)
         titleTextView?.run {
-            if (0 < topMinHeight) {
-                this.setViewHeight(topMinHeight)
-            }
             if (titleTextSize > 0) {
                 this.setTextSize(TypedValue.COMPLEX_UNIT_PX, titleTextSize.toFloat())
             }
@@ -485,9 +527,6 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
         contentsContainer = container.findViewById(R.id.app_dialog_contents_container)
         contentsContainer?.run {
             this.background = contentsBackground
-            if (contentsMaxHeight > 0) {
-                this.setMaximumHeight(contentsMaxHeight)
-            }
             if (contentsMinHeight > 0) {
                 this.minimumHeight = contentsMinHeight
             }
@@ -647,14 +686,14 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
     /**
      * Set padding of dialog
      */
-    fun setPadding(padding: Int) {
-        container?.setViewPadding(padding)
+    fun setPadding(@Px padding: Int) {
+        this.setPadding(padding, padding, padding, padding)
     }
 
     /**
      * Set padding of dialog
      */
-    fun setPadding(start: Int, top: Int, end: Int, bottom: Int) {
+    fun setPadding(@Px start: Int, @Px top: Int, @Px end: Int, @Px bottom: Int) {
         container?.setPadding(start, top, end, bottom)
     }
 
@@ -662,14 +701,14 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
      * Set margins of dialog's window.
      * @param margins margin value (start, top, end, bottom)
      */
-    fun setMargins(margins: Int) {
-        container?.setViewMargin(margins)
+    fun setMargins(@Px margins: Int) {
+        this.setMargins(margins, margins, margins, margins)
     }
 
     /**
      * Set dialog margin
      */
-    fun setMargins(start: Int, top: Int, end: Int, bottom: Int) {
+    fun setMargins(@Px start: Int, @Px top: Int, @Px end: Int, @Px bottom: Int) {
         container?.setViewMargin(start, top, end, bottom)
     }
 
@@ -1168,6 +1207,7 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
             this.removeAllViews()
             val params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
             params.gravity = Gravity.CENTER
+            params.setMargins(20)
             view.layoutParams = params
             this.addView(view)
         }
@@ -1321,7 +1361,11 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
         }
     }
 
-    fun show(delayMillis: Long = 0L) {
+    fun show() {
+        show(0L)
+    }
+
+    fun show(delayMillis: Long) {
         showHandler.removeCallbacksAndMessages(null)
         try {
             if (delayMillis <= 0L) {
@@ -1524,7 +1568,7 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
         }
     }
 
-    fun setDialogSize(width: Int, height: Int, gravity: Int) {
+    fun setDialogSize(width: Int, height: Int, gravity: Int = Gravity.CENTER) {
         val window = this.dialog?.window ?: return
         val lp = WindowManager.LayoutParams()
         lp.copyFrom(window.attributes)
@@ -1688,7 +1732,7 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
             }
 
             this.dialog = object : AppCompatDialog(_context, dialogThemeResId) {
-
+                @Suppress("OVERRIDE_DEPRECATION")
                 override fun onBackPressed() {
                     if (onBackPressedListener?.onBackPressed() == true) {
                         return
@@ -1739,13 +1783,6 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
 
                     // sets container size
                     container.clipToOutline = true
-
-//                if (dialogMinWidth > 0) {
-//                    container.minimumWidth = dialogMinWidth
-//                }
-//                if (dialogMaxWidth > 0) {
-//                    container.setMaximumWidth(dialogMaxWidth)
-//                }
                 }
             }
 
@@ -1777,6 +1814,12 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
             val lp = WindowManager.LayoutParams()
             lp.copyFrom(window.attributes)
             lp.width = dialogWidth
+            getDisplaySize()?.let { displaySize ->
+                if (displaySize.y > 0) {
+                    lp.verticalMargin = dialogMarginVertical.toFloat() / displaySize.y
+                }
+            }
+            lp.gravity = dialogGravity
             window.attributes = lp
         }
     }

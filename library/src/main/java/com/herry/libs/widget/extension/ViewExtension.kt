@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.annotation.Px
 import com.herry.libs.util.ViewUtil
 import java.util.regex.Pattern
 
@@ -150,7 +151,7 @@ fun View.setViewWeight(weight: Float) {
     this.layoutParams = params
 }
 
-fun View.setViewMargin(left: Int, top: Int, right: Int, bottom: Int) {
+fun View.setViewMargin(@Px left: Int, @Px top: Int, @Px right: Int, @Px bottom: Int) {
     if (this.layoutParams is ViewGroup.MarginLayoutParams) {
         val params = this.layoutParams as ViewGroup.MarginLayoutParams
         params.setMargins(left, top, right, bottom)
@@ -162,23 +163,23 @@ fun View.setViewMargin(margins: Rect) {
     setViewMargin(margins.left, margins.top, margins.right, margins.bottom)
 }
 
-fun View.setViewMargin(margin: Int) {
+fun View.setViewMargin(@Px margin: Int) {
     setViewMargin(margin, margin, margin, margin)
 }
 
-fun View.setViewMarginTop(margin: Int) {
+fun View.setViewMarginTop(@Px margin: Int) {
     setViewMargin(Rect(getViewMargins().apply { this.top = margin }))
 }
 
-fun View.setViewMarginBottom(margin: Int) {
+fun View.setViewMarginBottom(@Px margin: Int) {
     setViewMargin(Rect(getViewMargins().apply { this.bottom = margin }))
 }
 
-fun View.setViewMarginStart(margin: Int) {
+fun View.setViewMarginStart(@Px margin: Int) {
     setViewMargin(Rect(getViewMargins().apply { this.left = margin }))
 }
 
-fun View.setViewMarginEnd(margin: Int) {
+fun View.setViewMarginEnd(@Px margin: Int) {
     setViewMargin(Rect(getViewMargins().apply { this.right = margin }))
 }
 
@@ -194,7 +195,7 @@ fun View.getViewMargins(): Rect {
     return margins
 }
 
-fun View.setViewPadding(start: Int = this.paddingStart, top: Int = this.paddingTop, end: Int = this.paddingEnd, bottom: Int = this.paddingBottom) {
+fun View.setViewPadding(@Px start: Int = this.paddingStart, @Px top: Int = this.paddingTop, @Px end: Int = this.paddingEnd, @Px bottom: Int = this.paddingBottom) {
     this.setPadding(start, top, end, bottom)
 }
 
@@ -202,23 +203,23 @@ fun View.setViewPadding(paddings: Rect) {
     setViewPadding(paddings.left, paddings.top, paddings.right, paddings.bottom)
 }
 
-fun View.setViewPadding(padding: Int) {
+fun View.setViewPadding(@Px padding: Int) {
     setViewPadding(padding, padding, padding, padding)
 }
 
-fun View.setViewPaddingTop(padding: Int) {
+fun View.setViewPaddingTop(@Px padding: Int) {
     setViewPadding(Rect(getViewPaddings().apply { this.top = padding }))
 }
 
-fun View.setViewPaddingBottom(padding: Int) {
+fun View.setViewPaddingBottom(@Px padding: Int) {
     setViewPadding(Rect(getViewPaddings().apply { this.bottom = padding }))
 }
 
-fun View.setViewPaddingStart(padding: Int) {
+fun View.setViewPaddingStart(@Px padding: Int) {
     setViewPadding(Rect(getViewPaddings().apply { this.left = padding }))
 }
 
-fun View.setViewPaddingEnd(padding: Int) {
+fun View.setViewPaddingEnd(@Px padding: Int) {
     setViewPadding(getViewPaddings().apply { this.right = padding })
 }
 

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="PopupThemeBase">
+        <item name="ad_background">@drawable/shape_ra32_bg_surfacesheetbackground</item>
+        <item name="ad_width">50%</item>
+        <item name="ad_paddingTop">16dp</item>
+        <item name="ad_paddingBottom">16dp</item>
+        <item name="ad_paddingStart">0dp</item>
+        <item name="ad_paddingEnd">0dp</item>
+        <item name="ad_topBackground">@android:color/transparent</item>
+        <item name="ad_topMinHeight">54dp</item>
+        <item name="ad_topPaddingTop">12dp</item>
+        <item name="ad_topPaddingBottom">12dp</item>
+        <item name="ad_topPaddingStart">24dp</item>
+        <item name="ad_topPaddingEnd">24dp</item>
+        <item name="ad_topDividerHeight">0dp</item>
+        <item name="ad_topDivider">@null</item>
+        <item name="ad_titleTextColor">@color/on_primary</item>
+        <item name="ad_titleTextSize">20dp</item>
+        <item name="ad_titleTextStyle">bold</item>
+        <item name="ad_titleTextGravity">start</item>
+        <item name="ad_titleTextLines">1</item>
+        <item name="ad_titleTextEllipsize">end</item>
+        <item name="ad_titlePaddingTop">0dp</item>
+        <item name="ad_titlePaddingBottom">0dp</item>
+        <item name="ad_titlePaddingStart">0dp</item>
+        <item name="ad_titlePaddingEnd">0dp</item>
+        <item name="ad_contentsBackground">@android:color/transparent</item>
+        <item name="ad_contentsPaddingStart">24dp</item>
+        <item name="ad_contentsPaddingTop">12dp</item>
+        <item name="ad_contentsPaddingEnd">24dp</item>
+        <item name="ad_contentsPaddingBottom">16dp</item>
+        <item name="ad_contentsMinHeight">0dp</item>
+<!--        <item name="ad_contentsMaxHeight">232dp</item>-->
+        <item name="ad_messageTextColor">@color/on_primary_80</item>
+        <item name="ad_messageTextGravity">start|top</item>
+        <item name="ad_messageTextSize">14dp</item>
+        <item name="ad_messageTextLineSpacingExtra">0dp</item>
+        <item name="ad_messageGapSize">0dp</item>
+        <item name="ad_subMessageTextColor">@color/on_primary_60</item>
+        <item name="ad_subMessageTextGravity">start</item>
+        <item name="ad_subMessageTextSize">12dp</item>
+        <item name="ad_subMessageTextLineSpacingExtra">0dp</item>
+        <item name="ad_bottomBackground">@android:color/transparent</item>
+        <item name="ad_bottomMinHeight">60dp</item>
+        <item name="ad_bottomPaddingStart">16dp</item>
+        <item name="ad_bottomPaddingEnd">16dp</item>
+        <item name="ad_bottomPaddingTop">16dp</item>
+        <item name="ad_bottomPaddingBottom">0dp</item>
+        <item name="ad_bottomDivider">@null</item>
+        <item name="ad_bottomDividerHeight">0dp</item>
+        <item name="ad_buttonLayoutOrientation">horizontal</item>
+        <item name="ad_buttonHeight">44dp</item>
+        <item name="ad_buttonTextSize">14dp</item>
+        <item name="ad_buttonTextColor">@color/on_primary</item>
+        <item name="ad_buttonTextStyle">bold</item>
+        <item name="ad_buttonTextGravity">center</item>
+        <item name="ad_buttonMargin">0dp</item>
+        <item name="ad_buttonMinWidth">90dp</item>
+        <item name="ad_buttonWidth">0dp</item> <!-- apply weight -->
+        <item name="ad_buttonWeight">1</item> <!-- apply weight -->
+        <item name="ad_buttonLayoutGravity">center</item>
+        <item name="ad_buttonDivider">@drawable/divider_dialog_button_v</item>
+        <item name="ad_buttonDividerSize">17dp</item>
+        <item name="ad_buttonBackground">@null</item>
+        <item name="ad_buttonSelectableBackground">@drawable/ripple_ra22_bg_wt_fix</item>
+        <item name="ad_centerButtonSelectableBackground">@drawable/ripple_ra22_bg_wt_fix</item>
+        <item name="ad_rightButtonSelectableBackground">@drawable/ripple_ra22_bg_wt_fix</item>
+        <item name="ad_leftButtonSelectableBackground">@drawable/ripple_ra22_bg_wt_fix</item>
+        <item name="ad_rightButtonTextColor">@color/accent</item>
+        <item name="ad_rightButtonBackground">@null</item>
+        <item name="ad_leftButtonBackground">@null</item>
+        <item name="ad_centerButtonBackground">@null</item>
+        <item name="ad_listItemLayout">@layout/app_dialog_list_item</item>
+        <item name="ad_listSingleChoiceItemLayout">@layout/app_dialog_single_choice</item>
+        <item name="ad_listMultiChoiceItemLayout">@layout/app_dialog_multi_choice</item>
+    </style>
+
+    <style name="PopupTheme.AppDialog" parent="PopupThemeBase">
+        <item name="ad_width">100%</item>
+        <item name="ad_maxWidth">420dp</item>
+        <item name="ad_maxHeight">85%</item>
+        <item name="ad_gravity">center</item>
+    </style>
+</resources>

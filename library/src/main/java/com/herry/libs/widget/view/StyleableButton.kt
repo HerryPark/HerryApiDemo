@@ -1,16 +1,24 @@
 package com.herry.libs.widget.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.annotation.AttrRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.cardview.widget.CardView
@@ -31,8 +39,7 @@ import com.herry.libs.widget.extension.setViewMarginTop
 import com.herry.libs.widget.extension.setViewPadding
 import com.herry.libs.widget.extension.setViewSize
 
-
-@Suppress("SameParameterValue")
+@Suppress("SameParameterValue", "unused")
 class StyleableButton: FrameLayout {
 
     companion object {
@@ -50,76 +57,118 @@ class StyleableButton: FrameLayout {
      *  1: containerView - button corner radius, button layout gravity, button margin
      *  0: baseView (this)
      */
-    private val containerView: CardView
-    private val buttonView: ConstraintLayout
-    private val iconView: AppCompatImageView
-    private val textView: AppCompatTextView
+    private var containerView: CardView? = null
+    private var buttonView: ConstraintLayout? = null
+    private var iconView: AppCompatImageView? = null
+    private var textView: AppCompatTextView? = null
+    private var iconTextRelativeMargin: Int = 0
+    private var iconTextRelativeOf: Int = 0
 
     constructor(context: Context) : this(context, null)
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, @AttrRes defStyleAttr: Int) : this(context, attrs, defStyleAttr, 0)
+
+    constructor(context: Context, attrs: AttributeSet?, @AttrRes defStyleAttr: Int, @StyleRes defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.StyleableButton)
+        retrieveAttributes(context, typedArray, attrs, defStyleAttr)
+        typedArray.recycle()
+    }
+
+    @SuppressLint("ResourceType")
+    constructor(context: Context, @StyleRes styleResId: Int, width: Int = ViewGroup.LayoutParams.WRAP_CONTENT, height: Int = ViewGroup.LayoutParams.WRAP_CONTENT) : super(context, null, 0) {
+        val sizeTypedArray = context.obtainStyledAttributes(styleResId, intArrayOf(
+            android.R.attr.layout_width,  // 0
+            android.R.attr.layout_height, // 1
+            android.R.attr.minWidth // 2
+        ))
+        val layoutWidth = sizeTypedArray.getLayoutDimension(0, width)
+        val layoutHeight = sizeTypedArray.getLayoutDimension(1, height)
+        sizeTypedArray.recycle()
+
+        setViewSize(layoutWidth, layoutHeight)
+
+        val typedArray = context.obtainStyledAttributes(styleResId, R.styleable.StyleableButton)
+        retrieveAttributes(context, typedArray)
+        typedArray.recycle()
+    }
+
+    private fun retrieveAttributes(context: Context, attr: TypedArray, attrs: AttributeSet? = null, defStyleAttr: Int = 0) {
 //        val typedArray = context.obtainStyledAttributes(attrs, intArrayOf(
 //            android.R.attr.layout_width,  // 0
 //            android.R.attr.layout_height, // 1
 //            android.R.attr.minWidth // 2
 //        ))
-//        val layoutWidth = typedArray.getLayoutDimension(0, ViewGroup.LayoutParams.MATCH_PARENT)
-//        val layoutHeight = typedArray.getLayoutDimension(1, ViewGroup.LayoutParams.MATCH_PARENT)
-//
+//        val layoutWidth = typedArray.getLayoutDimension(0, ViewGroup.LayoutParams.WRAP_CONTENT)
+//        val layoutHeight = typedArray.getLayoutDimension(1, ViewGroup.LayoutParams.WRAP_CONTENT)
 //        typedArray.recycle()
+//        setViewSize(layoutWidth, layoutHeight)
 
-        val attr = context.obtainStyledAttributes(attrs, R.styleable.StyleableButton)
+        // sets focusable
+        isFocusable = false
+        isFocusableInTouchMode = false
 
-        containerView = CardView(context, attrs, defStyleAttr).also {
-            this.addView(it, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        containerView = CardView(context, attrs, defStyleAttr).apply {
+            this.setCardBackgroundColor(Color.TRANSPARENT)
+        }.also { containerView ->
+            containerView.visibility = View.VISIBLE
+            this.addView(containerView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            setContainerAttributes(containerView, attr)
         }
-        setContainerAttributes(containerView, attr)
 
-        buttonView = ConstraintLayout(context, attrs, defStyleAttr).also {
-            containerView.addView(it, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        buttonView = ConstraintLayout(context, attrs, defStyleAttr).also { buttonView ->
+            buttonView.visibility = View.VISIBLE
+            containerView?.addView(buttonView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            setButtonAttributes(buttonView, attr)
         }
-        setButtonAttributes(buttonView, attr)
 
         iconView = AppCompatImageView(context, attrs, defStyleAttr).apply {
             id = R.id.icon
-        }.also {
-            buttonView.addView(it, ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+        }.also { iconView ->
+            buttonView?.addView(iconView, ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
                 startToStart = ConstraintSet.PARENT_ID
                 endToEnd = ConstraintSet.PARENT_ID
                 topToTop = ConstraintSet.PARENT_ID
                 bottomToBottom = ConstraintSet.PARENT_ID
             })
+            setIconAttributes(iconView, attr)
         }
-        setIconAttributes(iconView, attr)
 
         textView = AppCompatTextView(context, attrs, defStyleAttr).apply {
             id = R.id.text
-        }.also {
-            buttonView.addView(it, ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+        }.also { textView ->
+            buttonView?.addView(textView, ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
                 startToStart = ConstraintSet.PARENT_ID
                 endToEnd = ConstraintSet.PARENT_ID
                 topToTop = ConstraintSet.PARENT_ID
                 bottomToBottom = ConstraintSet.PARENT_ID
             })
+            setTextAttributes(textView, attr)
         }
-        setTextAttributes(textView, attr)
 
-        val iconTextRelativeMargin = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbIconTextRelativeMargin, 0)
+        iconTextRelativeMargin = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbIconTextRelativeMargin, 0)
+        iconTextRelativeOf = parseRelativeOf(attr.getInt(R.styleable.StyleableButton_sbIconRelativeOfText, Gravity.START), 0)
+        updateIconAndTextRelative()
+    }
+
+    private fun updateIconAndTextRelative() {
         setIconAndTextRelative(
             buttonView,
             iconView,
             textView,
-            parseRelativeOf(attr.getInt(R.styleable.StyleableButton_sbIconRelativeOfText, Gravity.START), 0),
+            iconTextRelativeOf,
             iconTextRelativeMargin
         )
-        attr.recycle()
     }
 
     private fun setContainerAttributes(view: CardView, attr: TypedArray) {
         view.clipToOutline = true
         view.elevation = 0f
+
+        // sets focusable
+        view.isFocusable = true
+        view.isFocusableInTouchMode = false
 
         // sets button size
         val buttonWidth = attr.getLayoutDimension(R.styleable.StyleableButton_sbWidth, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -185,6 +234,7 @@ class StyleableButton: FrameLayout {
     }
 
     private fun setButtonAttributes(view: ConstraintLayout, attr: TypedArray) {
+
         // sets button size
         val buttonWidth = attr.getLayoutDimension(R.styleable.StyleableButton_sbWidth, ViewGroup.LayoutParams.MATCH_PARENT)
         val buttonHeight = attr.getLayoutDimension(R.styleable.StyleableButton_sbHeight, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -376,7 +426,7 @@ class StyleableButton: FrameLayout {
             view.gravity = textGravity
         }
         // sets text ellipsize
-        view.ellipsize = parseEllipsize(attr.getInt(R.styleable.AppDialog_ad_titleTextEllipsize, -1))
+        view.ellipsize = parseEllipsize(attr.getInt(R.styleable.StyleableButton_sbTextEllipsize, -1))
         // sets text lines
         view.setLines(attr.getInt(R.styleable.StyleableButton_sbTextLines, 1))
         // sets text max lines
@@ -433,7 +483,11 @@ class StyleableButton: FrameLayout {
         view.setViewMargin(textMarginStart, textMarginTop, textMarginEnd, textMarginBottom)
     }
 
-    private fun setIconAndTextRelative(buttonView: ConstraintLayout, iconView: AppCompatImageView, textView: AppCompatTextView, relativeOf: Int, margin: Int) {
+    private fun setIconAndTextRelative(buttonView: ConstraintLayout?, iconView: AppCompatImageView?, textView: AppCompatTextView?, relativeOf: Int, margin: Int) {
+        if (buttonView == null || iconView == null || textView == null) {
+            return
+        }
+
         iconView.isVisible = iconView.drawable != null || this.background != null
         textView.isVisible = !textView.text.isNullOrEmpty()
 
@@ -660,5 +714,88 @@ class StyleableButton: FrameLayout {
             4 -> Gravity.END
             else -> default
         }
+    }
+
+    /**
+     * <!-- Visible on screen; the default value. -->
+     *  name="visible" value="0"
+     * <!-- Not displayed, but taken into account during layout (space is left for it). -->
+     * name="invisible" value="1"
+     * <!-- Completely hidden, as if the view had not been added. -->
+     *  name="gone" value="2
+     */
+    private fun parseVisibility(visibility: Int, default: Int): Int {
+        return when (visibility) {
+            0 -> View.VISIBLE
+            1 -> View.INVISIBLE
+            2 -> View.GONE
+            else -> default
+        }
+    }
+
+    override fun setOnClickListener(l: OnClickListener?) {
+        containerView?.setOnClickListener(l)
+    }
+
+    override fun setOnLongClickListener(l: OnLongClickListener?) {
+        containerView?.setOnLongClickListener(l)
+    }
+
+    fun setStyle(@StyleRes style: Int) {
+        val context = this.context ?: return
+        val containerView = this.containerView ?: return
+        val buttonView = this.buttonView ?: return
+        val iconView = this.iconView ?: return
+        val textView = this.textView ?: return
+
+        val attr = context.obtainStyledAttributes(style, R.styleable.StyleableButton)
+
+        setContainerAttributes(containerView, attr)
+        setButtonAttributes(buttonView, attr)
+        setIconAttributes(iconView, attr)
+        setTextAttributes(textView, attr)
+
+        iconTextRelativeMargin = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbIconTextRelativeMargin, 0)
+        iconTextRelativeOf = parseRelativeOf(attr.getInt(R.styleable.StyleableButton_sbIconRelativeOfText, Gravity.START), 0)
+        updateIconAndTextRelative()
+
+        attr.recycle()
+        requestLayout()
+    }
+
+    fun setIcon(@DrawableRes icon: Int?) {
+        val iconView = this.iconView ?: return
+
+        if (icon != null) {
+            iconView.setImageResource(icon)
+        } else {
+            iconView.setImageDrawable(null)
+        }
+        updateIconAndTextRelative()
+    }
+
+    fun setIcon(icon: Drawable?) {
+        val iconView = this.iconView ?: return
+
+        iconView.setImageDrawable(icon)
+        updateIconAndTextRelative()
+    }
+
+    fun setText(@StringRes text: Int?) {
+        val textView = this.textView ?: return
+
+        if (text != null) {
+            textView.setText(text)
+        } else {
+            textView.text = ""
+        }
+        updateIconAndTextRelative()
+    }
+
+    fun setText(text: String?) {
+        val textView = this.textView ?: return
+
+        textView.text = text
+        updateIconAndTextRelative()
     }
 }

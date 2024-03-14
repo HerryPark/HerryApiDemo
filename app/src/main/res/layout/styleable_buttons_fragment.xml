@@ -42,6 +42,24 @@
                 android:textSize="12dp"
                 android:textColor="@color/on_primary"
                 android:background="@color/on_primary_30"
+                android:text="AppButton Programmatically"/>
+
+            <LinearLayout
+                android:id="@+id/styleable_buttons_fragment_programmatically_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_marginVertical="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textSize="12dp"
+                android:textColor="@color/on_primary"
+                android:background="@color/on_primary_30"
                 android:text="AppButton.Subscribe"/>
 
             <LinearLayout
@@ -86,7 +104,7 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="64dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="64dp"
                     android:orientation="vertical"
                     android:gravity="center">
@@ -102,9 +120,9 @@
                     <com.herry.libs.widget.view.StyleableButton
                         android:id="@+id/styleable_buttons_fragment_button_icon_normal"
                         style="@style/AppButton.Icon"
+                        app:sbIconSrc="@drawable/ic_settings"
                         android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        app:sbIconSrc="@drawable/ic_settings" />
+                        android:layout_height="44dp"/>
 
                 </LinearLayout>
 
@@ -661,7 +679,7 @@
                         android:id="@+id/styleable_buttons_fragment_button_large"
                         style="@style/AppButton.Large.Outline"
                         android:layout_width="wrap_content"
-                        android:layout_height="60dp"
+                        android:layout_height="wrap_content"
                         app:sbText="Label"
                         tools:ignore="TooManyViews" />
 
@@ -686,7 +704,7 @@
                         android:id="@+id/styleable_buttons_fragment_button_large_disabled"
                         style="@style/AppButton.Large.Outline"
                         android:layout_width="wrap_content"
-                        android:layout_height="60dp"
+                        android:layout_height="wrap_content"
                         app:sbIconSrc="@drawable/ic_add_dt"
                         app:sbText="Label"/>
                 </LinearLayout>
@@ -730,7 +748,7 @@
                         android:id="@+id/styleable_buttons_fragment_button_large_fill_solid"
                         style="@style/AppButton.Large.Fill.Solid"
                         android:layout_width="wrap_content"
-                        android:layout_height="60dp"
+                        android:layout_height="wrap_content"
                         app:sbText="Label"/>
                 </LinearLayout>
 
@@ -753,7 +771,7 @@
                         android:id="@+id/styleable_buttons_fragment_button_large_fill_solid_disabled"
                         style="@style/AppButton.Large.Fill.Solid"
                         android:layout_width="wrap_content"
-                        android:layout_height="60dp"
+                        android:layout_height="wrap_content"
                         app:sbText="Label"
                         app:sbIconSrc="@drawable/ic_add_dt" />
                 </LinearLayout>

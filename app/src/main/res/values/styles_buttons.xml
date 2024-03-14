@@ -22,7 +22,7 @@
     </style>
 
     <style name="AppButton.Standard" parent="AppButton">
-        <item name="sbWidth">wrap_content</item>
+        <item name="sbWidth">match_parent</item>
         <item name="sbHeight">36dp</item>
         <item name="sbLayoutGravity">center</item>
         <item name="sbCornerRadius">6dp</item>
@@ -45,7 +45,7 @@
     </style>
 
     <style name="AppButton.TextOnly" parent="AppButton">
-        <item name="sbWidth">wrap_content</item>
+        <item name="sbWidth">match_parent</item>
         <item name="sbHeight">32dp</item>
         <item name="sbLayoutGravity">center</item>
         <item name="sbTextWidth">wrap_content</item>

@@ -68,4 +68,6 @@
     <color name="gradient_end">#FF97D7FF</color>
     <color name="gradient_75_start">#BF9797FB</color>
     <color name="gradient_75_end">#BF97D7FF</color>
+
+    <color name="surface_sheet_background">#FFFCFCFC</color>
 </resources>

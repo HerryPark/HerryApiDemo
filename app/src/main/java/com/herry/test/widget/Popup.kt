@@ -10,7 +10,7 @@ import com.herry.test.R
 @Suppress("unused")
 class Popup(
     context: Context?,
-    @StyleRes style: Int = R.style.PopupTheme,
+    @StyleRes style: Int = R.style.PopupTheme_AppDialog,
     @StyleRes theme: Int = 0
 ) : AppDialog(context, style, theme) {
     private var owner: LifecycleOwner? = null

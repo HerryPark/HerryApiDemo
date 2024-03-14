@@ -24,11 +24,23 @@
         <attr name="ad_width" format="dimension|fraction" />
         <attr name="ad_minWidth" format="dimension|fraction" />
         <attr name="ad_maxWidth" format="dimension|fraction" />
+        <attr name="ad_minHeight" format="dimension|fraction" />
+        <attr name="ad_maxHeight" format="dimension|fraction" />
         <attr name="ad_background" format="reference|color" />
         <attr name="ad_paddingTop" format="dimension" />
         <attr name="ad_paddingBottom" format="dimension" />
         <attr name="ad_paddingStart" format="dimension" />
         <attr name="ad_paddingEnd" format="dimension" />
+        <attr name="ad_gravity">
+            <!-- Push object to the top of its container, not changing its size. -->
+            <flag name="top" value="0x01" />
+            <!-- Push object to the bottom of its container, not changing its size. -->
+            <flag name="bottom" value="0x02" />
+            <!-- Place the object in the center of its container in both the vertical and horizontal axis, not changing its size. -->
+            <flag name="center" value="0x30" />
+        </attr>
+        <attr name="ad_marginVertical" format="dimension" />
+        <attr name="ad_marginHorizontal" format="dimension" />
 
         <attr name="ad_topBackground" format="reference|color" />
         <attr name="ad_topMinHeight" format="dimension" />
@@ -81,7 +93,6 @@
         <attr name="ad_contentsPaddingEnd" format="dimension" />
         <attr name="ad_contentsPaddingBottom" format="dimension" />
         <attr name="ad_contentsMinHeight" format="dimension" />
-        <attr name="ad_contentsMaxHeight" format="dimension" />
 
         <attr name="ad_messageTextColor" format="reference|color" />
         <attr name="ad_messageTextSize" format="dimension" />

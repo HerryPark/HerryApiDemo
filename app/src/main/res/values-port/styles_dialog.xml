@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="PopupTheme.AppDialog" parent="PopupThemeBase">
+        <item name="ad_width">100%</item>
+        <item name="ad_maxWidth">420dp</item>
+        <item name="ad_maxHeight">75%</item>
+        <item name="ad_gravity">bottom</item>
+        <item name="ad_marginVertical">32dp</item>
+        <item name="ad_marginHorizontal">8dp</item>
+    </style>
+
+</resources>
