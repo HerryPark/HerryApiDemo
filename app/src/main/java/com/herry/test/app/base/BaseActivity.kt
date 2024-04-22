@@ -1,22 +1,23 @@
 package com.herry.test.app.base
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.herry.libs.app.activity_caller.activity.ACActivity
 import com.herry.libs.helper.ApiHelper
+import com.herry.libs.permission.PermissionHelper
 import com.herry.libs.util.AppActivityManager
 import com.herry.libs.util.AppUtil
 import com.herry.libs.util.FragmentAddingOption
-import com.herry.libs.permission.PermissionHelper
+import com.herry.libs.util.OnSoftKeyboardVisibilityListener
+import com.herry.libs.util.ViewUtil
+import com.herry.libs.util.listener.ListenerRegistry
 
-@Suppress("PrivatePropertyName")
 abstract class BaseActivity : ACActivity() {
 
     @IdRes
@@ -27,12 +28,23 @@ abstract class BaseActivity : ACActivity() {
 
     open fun getStartFragment(): Fragment? = null
 
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            onBackKeyPressed()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // super.onBackPressed() is deprecated from API 33
+        this.onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         if (getContentViewID() != -1) {
             createContentView()
         }
+
+        ViewUtil.setSoftKeyboardVisibilityListener(this, onSoftKeyboardVisibilityListener)
     }
 
     private fun createContentView() {
@@ -43,23 +55,6 @@ abstract class BaseActivity : ACActivity() {
                 this,
                 FragmentAddingOption(isReplace = true, isAddToBackStack = true)
             )
-        }
-    }
-
-    @SuppressLint("SourceLockedOrientationActivity")
-    open fun onActivityOrientation() {
-        if (ApiHelper.hasOreo()) {
-            try {
-//                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
-            } catch (ex: IllegalStateException) {
-                // isTranslucentOrFloating
-//                Trace.e("Oreo", "Only fullscreen opaque activities can request orientation")
-            }
-
-        } else {
-//            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
         }
     }
 
@@ -83,18 +78,21 @@ abstract class BaseActivity : ACActivity() {
 
     protected fun finish(withoutAnimation: Boolean) {
         super.finish()
-        if (withoutAnimation) overridePendingTransition(0, 0)
-    }
-
-    open fun getActivityManager(): AppActivityManager? {
-        return if (application is BaseApplication) {
-            (application as BaseApplication).appActivityManager
-        } else {
-            null
+        if (withoutAnimation) {
+            if (ApiHelper.hasAPI34()) {
+                overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0)
+            } else {
+                @Suppress("DEPRECATION")
+                overridePendingTransition(0, 0)
+            }
         }
     }
 
-    override fun onBackPressed() {
+    open fun getActivityManager(): AppActivityManager? {
+        return (application as? BaseApplication)?.getAppActivityManager()
+    }
+
+    private fun onBackKeyPressed() {
         val backStackFragment = AppUtil.getLastBackStackFragment(supportFragmentManager)
         if (null != backStackFragment) {
             val fragment = backStackFragment.fragment as? BaseFragment
@@ -105,5 +103,39 @@ abstract class BaseActivity : ACActivity() {
         }
 
         super.onBackPressed()
+    }
+
+    private val onSoftKeyboardVisibilityListener = object: OnSoftKeyboardVisibilityListener {
+        override fun onChangedSoftKeyboardVisibility(isVisible: Boolean) {
+            softKeyboardVisibilityListeners.notifyListeners(object : ListenerRegistry.NotifyCB<OnSoftKeyboardVisibilityListener> {
+                override fun notify(listener: OnSoftKeyboardVisibilityListener) {
+                    // notify to child fragments
+                    listener.onChangedSoftKeyboardVisibility(isVisible)
+                    // notify to an inheritance activity
+                    this@BaseActivity.onChangedSoftKeyboardVisibility(isVisible)
+                }
+            })
+        }
+    }
+
+    /**
+     * Call-back for the change soft keyboard visibility
+     */
+    protected open fun onChangedSoftKeyboardVisibility(isVisible: Boolean) { }
+
+    private val softKeyboardVisibilityListeners = ListenerRegistry<OnSoftKeyboardVisibilityListener>()
+
+    /**
+     * adds the soft keyboard visibility changed listener for the Fragment, this is called from the BaseFragment's onCreate()
+     */
+    internal fun addOnSoftKeyboardVisibilityListener(listener: OnSoftKeyboardVisibilityListener) {
+        softKeyboardVisibilityListeners.register(listener)
+    }
+
+    /**
+     * removes the soft keyboard visibility changed listener for the Fragment, this is called from the BaseFragment's onDestroy()
+     */
+    internal fun removeOnSoftKeyboardVisibilityListener(listener: OnSoftKeyboardVisibilityListener) {
+        softKeyboardVisibilityListeners.unregister(listener)
     }
 }

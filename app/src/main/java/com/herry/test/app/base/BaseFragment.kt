@@ -12,17 +12,17 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import com.herry.libs.annotation.OrientationScreen
 import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.helper.TransitionHelper
+import com.herry.libs.util.OnSoftKeyboardVisibilityListener
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.configure.SystemUI
 import com.herry.libs.widget.configure.SystemUIAppearances
-import com.herry.libs.widget.extension.findParentNavHostFragment
 import com.herry.libs.widget.view.viewgroup.LoadingCountView
 import java.lang.ref.WeakReference
 
 open class BaseFragment : DialogFragment() {
-
     internal open var activityCaller: AC? = null
 
     internal val fragmentTag: String = createTag()
@@ -31,18 +31,13 @@ open class BaseFragment : DialogFragment() {
         private const val TAG = "ARG_TAG"
     }
 
+    private var defaultSystemUIAppearances: SystemUIAppearances? = null
+
     /**
+     * Sets the fragment screen's system ui style
      * @return null is keeps the current applied system ui styles (status bar, navigation bar)
      */
-    protected open fun getSystemUIAppearances(context: Context): SystemUIAppearances? {
-        // a nested navigation fragment is not applies the system UI setting
-        val parentFragment = findParentNavHostFragment()
-        val isNestedChildFragment = parentFragment != null && parentFragment.findParentNavHostFragment() != null
-        if (isNestedChildFragment) return null
-
-        // creates system programmatically UI from the activity theme setting
-        return SystemUIAppearances.getDefaultSystemUIAppearances(context) // default system ui appearances
-    }
+    protected open fun onSystemUIAppearances(context: Context): SystemUIAppearances? = null
 
     private fun createTag(): String = "${this::class.java.simpleName}#${System.currentTimeMillis()}"
 
@@ -56,14 +51,34 @@ open class BaseFragment : DialogFragment() {
         this.arguments = bundle
     }
 
+    private var isSoftKeyboardVisible = false
+
+    private val onSoftKeyboardVisibilityListener = object : OnSoftKeyboardVisibilityListener {
+        override fun onChangedSoftKeyboardVisibility(isVisible: Boolean) {
+            if (isSoftKeyboardVisible != isVisible) {
+                isSoftKeyboardVisible = isVisible
+                this@BaseFragment.onChangedSoftKeyboardVisibility(isVisible)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        transitionHelper.onCreate(activity, this)
+        (activity as? BaseActivity)?.let { activity ->
+            isSoftKeyboardVisible = ViewUtil.isSoftKeyboardShown(activity)
+            onChangedSoftKeyboardVisibility(isSoftKeyboardVisible)
+
+            activity.addOnSoftKeyboardVisibilityListener(onSoftKeyboardVisibilityListener)
+        }
     }
+
+    protected open fun onChangedSoftKeyboardVisibility(isVisible: Boolean) {}
 
     override fun onDestroy() {
         super.onDestroy()
+
+        (activity as? BaseActivity)?.removeOnSoftKeyboardVisibilityListener(onSoftKeyboardVisibilityListener)
 
         transitionHelper.onDestroy(activity)
     }
@@ -71,7 +86,7 @@ open class BaseFragment : DialogFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        activityCaller = if(context is AC) {
+        activityCaller = if (context is AC) {
             context
         } else {
             null
@@ -83,25 +98,48 @@ open class BaseFragment : DialogFragment() {
         super.onDetach()
     }
 
+    private fun applySystemUiAppearances(appearances: SystemUIAppearances) {
+        val activity = this.activity ?: return
+        SystemUI.setSystemUiVisibility(
+            activity = activity,
+            isFull = appearances.isFullScreen,
+            showBehavior = appearances.showBehavior,
+            statusBarVisibility = appearances.statusBar?.visibility,
+            navigationBarVisibility = appearances.navigationBar?.visibility
+        )
+        appearances.statusBar?.let { statusBar ->
+            SystemUI.setStatusBar(activity = activity, appearance = statusBar)
+        }
+        appearances.navigationBar?.let { navigationBar ->
+            SystemUI.setNavigationBar(activity = activity, appearance = navigationBar)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
 
         val context = this.context ?: return
-        getSystemUIAppearances(context)?.let { style ->
-            SystemUI.setSystemUiVisibility(
-                activity = activity,
-                isFull = style.isFullScreen,
-                showBehavior = style.showBehavior,
-                statusBarVisibility = style.statusBar?.visibility,
-                navigationBarVisibility = style.navigationBar?.visibility
-            )
-            style.statusBar?.let { statusBar ->
-                SystemUI.setStatusBar(activity = activity, appearance = statusBar)
-            }
-            style.navigationBar?.let { navigationBar ->
-                SystemUI.setNavigationBar(activity = activity, appearance = navigationBar)
+
+        if (defaultSystemUIAppearances == null) {
+            onSystemUIAppearances(context)?.let { instanceSystemUIAppearances ->
+                defaultSystemUIAppearances = SystemUIAppearances.getDefaultSystemUIAppearances(context) // default system ui appearances
+                applySystemUiAppearances(instanceSystemUIAppearances)
             }
         }
+    }
+
+    override fun onPause() {
+        defaultSystemUIAppearances?.let { systemUIAppearances ->
+            // removes instance system ui appearances
+            applySystemUiAppearances(systemUIAppearances)
+            defaultSystemUIAppearances = null
+        }
+
+        // hide loading view
+        loading?.hide(true)
+        super.onPause()
+
+
     }
 
     open fun onBackPressed(): Boolean = false
@@ -181,5 +219,9 @@ open class BaseFragment : DialogFragment() {
     }
 
     protected open fun onTransitionEnd() {
+    }
+
+    protected fun getOrientation(): Int {
+        return if (ViewUtil.isPortraitOrientation(context)) OrientationScreen.PORTRAIT else OrientationScreen.LANDSCAPE
     }
 }

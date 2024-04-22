@@ -2,7 +2,11 @@ package com.herry.test.app.base
 
 import android.app.Activity
 import android.app.Application
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ComponentCallbacks2
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
 import com.herry.libs.log.Trace
@@ -53,10 +57,6 @@ class BaseApplication: Application(), AppActivityManager.OnGetAppActivityManager
                     }
 
                     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                        // new activity created; force its orientation to portrait
-                        if (activity is BaseActivity) {
-                            activity.onActivityOrientation()
-                        }
                         appActivityManager.addActivity(activity)
                     }
                 })

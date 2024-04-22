@@ -2,6 +2,7 @@ package com.herry.libs.widget.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -30,6 +31,7 @@ import androidx.core.view.marginEnd
 import androidx.core.view.marginStart
 import androidx.core.view.marginTop
 import com.herry.libs.R
+import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.extension.setLayoutGravity
 import com.herry.libs.widget.extension.setViewMargin
 import com.herry.libs.widget.extension.setViewMarginBottom
@@ -40,7 +42,7 @@ import com.herry.libs.widget.extension.setViewPadding
 import com.herry.libs.widget.extension.setViewSize
 
 @Suppress("SameParameterValue", "unused")
-class StyleableButton: FrameLayout {
+class AppButton: FrameLayout {
 
     companion object {
         private const val UNDEFINED_PADDING = Int.MIN_VALUE
@@ -63,6 +65,7 @@ class StyleableButton: FrameLayout {
     private var textView: AppCompatTextView? = null
     private var iconTextRelativeMargin: Int = 0
     private var iconTextRelativeOf: Int = 0
+    private var iconTextRelativeChainStyle: Int = ConstraintSet.CHAIN_PACKED
 
     constructor(context: Context) : this(context, null)
 
@@ -71,7 +74,7 @@ class StyleableButton: FrameLayout {
     constructor(context: Context, attrs: AttributeSet?, @AttrRes defStyleAttr: Int) : this(context, attrs, defStyleAttr, 0)
 
     constructor(context: Context, attrs: AttributeSet?, @AttrRes defStyleAttr: Int, @StyleRes defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.StyleableButton)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.AppButton)
         retrieveAttributes(context, typedArray, attrs, defStyleAttr)
         typedArray.recycle()
     }
@@ -89,7 +92,7 @@ class StyleableButton: FrameLayout {
 
         setViewSize(layoutWidth, layoutHeight)
 
-        val typedArray = context.obtainStyledAttributes(styleResId, R.styleable.StyleableButton)
+        val typedArray = context.obtainStyledAttributes(styleResId, R.styleable.AppButton)
         retrieveAttributes(context, typedArray)
         typedArray.recycle()
     }
@@ -147,8 +150,9 @@ class StyleableButton: FrameLayout {
             setTextAttributes(textView, attr)
         }
 
-        iconTextRelativeMargin = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbIconTextRelativeMargin, 0)
-        iconTextRelativeOf = parseRelativeOf(attr.getInt(R.styleable.StyleableButton_sbIconRelativeOfText, Gravity.START), 0)
+        iconTextRelativeMargin = attr.getDimensionPixelSize(R.styleable.AppButton_abIconTextRelativeMargin, 0)
+        iconTextRelativeOf = parseRelativeOf(attr.getInt(R.styleable.AppButton_abIconRelativeOfText, Gravity.START), 0)
+        iconTextRelativeChainStyle = parseChainStyleOf(attr.getInt(R.styleable.AppButton_abIconTextRelativeChainStyle, iconTextRelativeChainStyle), 0)
         updateIconAndTextRelative()
     }
 
@@ -158,7 +162,8 @@ class StyleableButton: FrameLayout {
             iconView,
             textView,
             iconTextRelativeOf,
-            iconTextRelativeMargin
+            iconTextRelativeMargin,
+            iconTextRelativeChainStyle
         )
     }
 
@@ -171,22 +176,22 @@ class StyleableButton: FrameLayout {
         view.isFocusableInTouchMode = false
 
         // sets button size
-        val buttonWidth = attr.getLayoutDimension(R.styleable.StyleableButton_sbWidth, ViewGroup.LayoutParams.MATCH_PARENT)
-        val buttonHeight = attr.getLayoutDimension(R.styleable.StyleableButton_sbHeight, ViewGroup.LayoutParams.MATCH_PARENT)
+        val buttonWidth = attr.getLayoutDimension(R.styleable.AppButton_abWidth, ViewGroup.LayoutParams.MATCH_PARENT)
+        val buttonHeight = attr.getLayoutDimension(R.styleable.AppButton_abHeight, ViewGroup.LayoutParams.MATCH_PARENT)
         view.setViewSize(buttonWidth, buttonHeight)
 
         // button radius
-        view.radius = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbCornerRadius, 0).toFloat()
+        view.radius = attr.getDimensionPixelSize(R.styleable.AppButton_abCornerRadius, 0).toFloat()
 
         // sets button gravity
-        val buttonLayoutGravity = parseGravity(attr.getInt(R.styleable.StyleableButton_sbLayoutGravity, DEFAULT_BUTTON_LAYOUT_GRAVITY))
+        val buttonLayoutGravity = parseGravity(attr.getInt(R.styleable.AppButton_abLayoutGravity, DEFAULT_BUTTON_LAYOUT_GRAVITY))
         view.setLayoutGravity(buttonLayoutGravity)
 
         // sets button margins
-        val buttonMargin = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbMargin, UNDEFINED_MARGIN)
-        val buttonMarginHorizontal = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbMarginHorizontal, UNDEFINED_MARGIN)
-        val buttonMarginVertical = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbMarginVertical, UNDEFINED_MARGIN)
-        val buttonMarginStart = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbMarginStart, UNDEFINED_MARGIN).let { size ->
+        val buttonMargin = attr.getDimensionPixelSize(R.styleable.AppButton_abMargin, UNDEFINED_MARGIN)
+        val buttonMarginHorizontal = attr.getDimensionPixelSize(R.styleable.AppButton_abMarginHorizontal, UNDEFINED_MARGIN)
+        val buttonMarginVertical = attr.getDimensionPixelSize(R.styleable.AppButton_abMarginVertical, UNDEFINED_MARGIN)
+        val buttonMarginStart = attr.getDimensionPixelSize(R.styleable.AppButton_abMarginStart, UNDEFINED_MARGIN).let { size ->
             if (size != UNDEFINED_MARGIN) {
                 size
             } else if (buttonMarginHorizontal != UNDEFINED_MARGIN) {
@@ -194,10 +199,10 @@ class StyleableButton: FrameLayout {
             } else if (buttonMargin != UNDEFINED_MARGIN) {
                 buttonMargin
             } else {
-                0
+                view.marginStart
             }
         }
-        val buttonMarginEnd = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbMarginEnd, UNDEFINED_MARGIN).let { size ->
+        val buttonMarginEnd = attr.getDimensionPixelSize(R.styleable.AppButton_abMarginEnd, UNDEFINED_MARGIN).let { size ->
             if (size != UNDEFINED_MARGIN) {
                 size
             } else if (buttonMarginHorizontal != UNDEFINED_MARGIN) {
@@ -205,10 +210,10 @@ class StyleableButton: FrameLayout {
             } else if (buttonMargin != UNDEFINED_MARGIN) {
                 buttonMargin
             } else {
-                0
+                view.marginEnd
             }
         }
-        val buttonMarginTop = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbMarginTop, UNDEFINED_MARGIN).let { size ->
+        val buttonMarginTop = attr.getDimensionPixelSize(R.styleable.AppButton_abMarginTop, UNDEFINED_MARGIN).let { size ->
             if (size != UNDEFINED_MARGIN) {
                 size
             } else if (buttonMarginVertical != UNDEFINED_MARGIN) {
@@ -216,10 +221,10 @@ class StyleableButton: FrameLayout {
             } else if (buttonMargin != UNDEFINED_MARGIN) {
                 buttonMargin
             } else {
-                0
+                view.marginTop
             }
         }
-        val buttonMarginBottom = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbMarginBottom, UNDEFINED_MARGIN).let { size ->
+        val buttonMarginBottom = attr.getDimensionPixelSize(R.styleable.AppButton_abMarginBottom, UNDEFINED_MARGIN).let { size ->
             if (size != UNDEFINED_MARGIN) {
                 size
             } else if (buttonMarginVertical != UNDEFINED_MARGIN) {
@@ -227,7 +232,7 @@ class StyleableButton: FrameLayout {
             } else if (buttonMargin != UNDEFINED_MARGIN) {
                 buttonMargin
             } else {
-                0
+                view.marginBottom
             }
         }
         view.setViewMargin(buttonMarginStart, buttonMarginTop, buttonMarginEnd, buttonMarginBottom)
@@ -236,15 +241,15 @@ class StyleableButton: FrameLayout {
     private fun setButtonAttributes(view: ConstraintLayout, attr: TypedArray) {
 
         // sets button size
-        val buttonWidth = attr.getLayoutDimension(R.styleable.StyleableButton_sbWidth, ViewGroup.LayoutParams.MATCH_PARENT)
-        val buttonHeight = attr.getLayoutDimension(R.styleable.StyleableButton_sbHeight, ViewGroup.LayoutParams.MATCH_PARENT)
+        val buttonWidth = attr.getLayoutDimension(R.styleable.AppButton_abWidth, ViewGroup.LayoutParams.MATCH_PARENT)
+        val buttonHeight = attr.getLayoutDimension(R.styleable.AppButton_abHeight, ViewGroup.LayoutParams.MATCH_PARENT)
         view.setViewSize(buttonWidth, buttonHeight)
 
         // sets button paddings
-        val buttonPadding = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbPadding, UNDEFINED_PADDING)
-        val buttonPaddingHorizontal = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbPaddingHorizontal, UNDEFINED_PADDING)
-        val buttonPaddingVertical = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbPaddingVertical, UNDEFINED_PADDING)
-        val buttonPaddingStart = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbPaddingStart, UNDEFINED_PADDING).let { size ->
+        val buttonPadding = attr.getDimensionPixelSize(R.styleable.AppButton_abPadding, UNDEFINED_PADDING)
+        val buttonPaddingHorizontal = attr.getDimensionPixelSize(R.styleable.AppButton_abPaddingHorizontal, UNDEFINED_PADDING)
+        val buttonPaddingVertical = attr.getDimensionPixelSize(R.styleable.AppButton_abPaddingVertical, UNDEFINED_PADDING)
+        val buttonPaddingStart = attr.getDimensionPixelSize(R.styleable.AppButton_abPaddingStart, UNDEFINED_PADDING).let { size ->
             if (size != UNDEFINED_PADDING) {
                 size
             } else if (buttonPaddingHorizontal != UNDEFINED_PADDING) {
@@ -252,10 +257,10 @@ class StyleableButton: FrameLayout {
             } else if (buttonPadding != UNDEFINED_PADDING) {
                 buttonPadding
             } else {
-                0
+                view.paddingStart
             }
         }
-        val buttonPaddingEnd = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbPaddingEnd, UNDEFINED_PADDING).let { size ->
+        val buttonPaddingEnd = attr.getDimensionPixelSize(R.styleable.AppButton_abPaddingEnd, UNDEFINED_PADDING).let { size ->
             if (size != UNDEFINED_PADDING) {
                 size
             } else if (buttonPaddingHorizontal != UNDEFINED_PADDING) {
@@ -263,10 +268,10 @@ class StyleableButton: FrameLayout {
             } else if (buttonPadding != UNDEFINED_PADDING) {
                 buttonPadding
             } else {
-                0
+                view.paddingEnd
             }
         }
-        val buttonPaddingTop = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbPaddingTop, UNDEFINED_PADDING).let { size ->
+        val buttonPaddingTop = attr.getDimensionPixelSize(R.styleable.AppButton_abPaddingTop, UNDEFINED_PADDING).let { size ->
             if (size != UNDEFINED_PADDING) {
                 size
             } else if (buttonPaddingVertical != UNDEFINED_PADDING) {
@@ -274,10 +279,10 @@ class StyleableButton: FrameLayout {
             } else if (buttonPadding != UNDEFINED_PADDING) {
                 buttonPadding
             } else {
-                0
+                view.paddingTop
             }
         }
-        val buttonPaddingBottom = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbPaddingBottom, UNDEFINED_PADDING).let { size ->
+        val buttonPaddingBottom = attr.getDimensionPixelSize(R.styleable.AppButton_abPaddingBottom, UNDEFINED_PADDING).let { size ->
             if (size != UNDEFINED_PADDING) {
                 size
             } else if (buttonPaddingVertical != UNDEFINED_PADDING) {
@@ -285,48 +290,40 @@ class StyleableButton: FrameLayout {
             } else if (buttonPadding != UNDEFINED_PADDING) {
                 buttonPadding
             } else {
-                0
+                view.paddingBottom
             }
         }
         view.setViewPadding(buttonPaddingStart, buttonPaddingTop, buttonPaddingEnd, buttonPaddingBottom)
 
-        attr.getDrawable(R.styleable.StyleableButton_sbBackground)?.let { background ->
-            view.background = background
-        }
-        attr.getColorStateList(R.styleable.StyleableButton_sbBackgroundTint)?.let { tintList ->
-            this.backgroundTintList = tintList
-        }
-        this.backgroundTintMode = parseTintMode(attr.getInt(R.styleable.StyleableButton_sbBackgroundTintMode, DEFAULT_TINT_MODE), null)
+        view.background = attr.getDrawable(R.styleable.AppButton_abBackground)
+        this.backgroundTintList = attr.getColorStateList(R.styleable.AppButton_abBackgroundTint)
+        this.backgroundTintMode = parseTintMode(attr.getInt(R.styleable.AppButton_abBackgroundTintMode, DEFAULT_TINT_MODE), null)
 
         // sets foreground
-        attr.getDrawable(R.styleable.StyleableButton_sbForeground)?.let { foreground ->
-            view.foreground = foreground
-        }
-        attr.getColorStateList(R.styleable.StyleableButton_sbForegroundTint)?.let { tintList ->
-            view.foregroundTintList = tintList
-        }
-        view.foregroundTintMode = parseTintMode(attr.getInt(R.styleable.StyleableButton_sbForegroundTintMode, DEFAULT_TINT_MODE), null)
+        view.foreground = attr.getDrawable(R.styleable.AppButton_abForeground)
+        view.foregroundTintList  = attr.getColorStateList(R.styleable.AppButton_abForegroundTint)
+        view.foregroundTintMode = parseTintMode(attr.getInt(R.styleable.AppButton_abForegroundTintMode, DEFAULT_TINT_MODE), null)
     }
 
     private fun setIconAttributes(view: AppCompatImageView, attr: TypedArray) {
         // sets icon size
-        val iconWidth = attr.getLayoutDimension(R.styleable.StyleableButton_sbIconWidth, ViewGroup.LayoutParams.MATCH_PARENT)
-        val iconHeight = attr.getLayoutDimension(R.styleable.StyleableButton_sbIconHeight, ViewGroup.LayoutParams.MATCH_PARENT)
+        val iconWidth = attr.getLayoutDimension(R.styleable.AppButton_abIconWidth, ViewGroup.LayoutParams.MATCH_PARENT)
+        val iconHeight = attr.getLayoutDimension(R.styleable.AppButton_abIconHeight, ViewGroup.LayoutParams.MATCH_PARENT)
         view.setViewSize(iconWidth, iconHeight)
 
         // sets icon adjust view bounds
-        view.adjustViewBounds = attr.getBoolean(R.styleable.StyleableButton_sbIconAdjustViewBounds, false)
+        view.adjustViewBounds = attr.getBoolean(R.styleable.AppButton_abIconAdjustViewBounds, false)
 
         // sets icon scale type
-        parseScaleType(attr.getInt(R.styleable.StyleableButton_sbIconScaleType, -1))?.let { scaleType ->
+        parseScaleType(attr.getInt(R.styleable.AppButton_abIconScaleType, -1))?.let { scaleType ->
             view.scaleType = scaleType
         }
 
         // sets icon margins
-        val iconMargin = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbIconMargin, UNDEFINED_MARGIN)
-        val iconMarginHorizontal = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbIconMarginHorizontal, UNDEFINED_MARGIN)
-        val iconMarginVertical = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbIconMarginVertical, UNDEFINED_MARGIN)
-        val iconMarginStart = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbIconMarginStart, UNDEFINED_MARGIN).let { size ->
+        val iconMargin = attr.getDimensionPixelSize(R.styleable.AppButton_abIconMargin, UNDEFINED_MARGIN)
+        val iconMarginHorizontal = attr.getDimensionPixelSize(R.styleable.AppButton_abIconMarginHorizontal, UNDEFINED_MARGIN)
+        val iconMarginVertical = attr.getDimensionPixelSize(R.styleable.AppButton_abIconMarginVertical, UNDEFINED_MARGIN)
+        val iconMarginStart = attr.getDimensionPixelSize(R.styleable.AppButton_abIconMarginStart, UNDEFINED_MARGIN).let { size ->
             if (size != UNDEFINED_MARGIN) {
                 size
             } else if (iconMarginHorizontal != UNDEFINED_MARGIN) {
@@ -337,7 +334,7 @@ class StyleableButton: FrameLayout {
                 0
             }
         }
-        val iconMarginEnd = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbIconMarginEnd, UNDEFINED_MARGIN).let { size ->
+        val iconMarginEnd = attr.getDimensionPixelSize(R.styleable.AppButton_abIconMarginEnd, UNDEFINED_MARGIN).let { size ->
             if (size != UNDEFINED_MARGIN) {
                 size
             } else if (iconMarginHorizontal != UNDEFINED_MARGIN) {
@@ -348,7 +345,7 @@ class StyleableButton: FrameLayout {
                 0
             }
         }
-        val iconMarginTop = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbIconMarginTop, UNDEFINED_MARGIN).let { size ->
+        val iconMarginTop = attr.getDimensionPixelSize(R.styleable.AppButton_abIconMarginTop, UNDEFINED_MARGIN).let { size ->
             if (size != UNDEFINED_MARGIN) {
                 size
             } else if (iconMarginVertical != UNDEFINED_MARGIN) {
@@ -359,7 +356,7 @@ class StyleableButton: FrameLayout {
                 0
             }
         }
-        val iconMarginBottom = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbIconMarginBottom, UNDEFINED_MARGIN).let { size ->
+        val iconMarginBottom = attr.getDimensionPixelSize(R.styleable.AppButton_abIconMarginBottom, UNDEFINED_MARGIN).let { size ->
             if (size != UNDEFINED_MARGIN) {
                 size
             } else if (iconMarginVertical != UNDEFINED_MARGIN) {
@@ -373,47 +370,39 @@ class StyleableButton: FrameLayout {
         view.setViewMargin(iconMarginStart, iconMarginTop, iconMarginEnd, iconMarginBottom)
 
         // sets icon background
-        attr.getDrawable(R.styleable.StyleableButton_sbIconBackground)?.let { background ->
-            view.background = background
-        }
-        attr.getColorStateList(R.styleable.StyleableButton_sbIconBackgroundTint)?.let { tintList ->
-            view.backgroundTintList = tintList
-        }
-        view.backgroundTintMode = parseTintMode(attr.getInt(R.styleable.StyleableButton_sbIconBackgroundTintMode, DEFAULT_TINT_MODE), null)
+        view.background = attr.getDrawable(R.styleable.AppButton_abIconBackground)
+        view.backgroundTintList = attr.getColorStateList(R.styleable.AppButton_abIconBackgroundTint)
+        view.backgroundTintMode = parseTintMode(attr.getInt(R.styleable.AppButton_abIconBackgroundTintMode, DEFAULT_TINT_MODE), null)
 
         // sets icon src
-        attr.getDrawable(R.styleable.StyleableButton_sbIconSrc)?.let { drawable ->
-            view.setImageDrawable(drawable)
-        }
-        attr.getColorStateList(R.styleable.StyleableButton_sbIconSrcTint)?.let { tintList ->
-            view.imageTintList = tintList
-        }
-        view.imageTintMode = parseTintMode(attr.getInt(R.styleable.StyleableButton_sbIconSrcTintMode, DEFAULT_TINT_MODE), null)
+        view.setImageDrawable(attr.getDrawable(R.styleable.AppButton_abIconSrc))
+
+        view.imageTintList = attr.getColorStateList(R.styleable.AppButton_abIconSrcTint)
+        view.imageTintMode = parseTintMode(attr.getInt(R.styleable.AppButton_abIconSrcTintMode, DEFAULT_TINT_MODE), null)
 
         view.setLayoutGravity(Gravity.CENTER)
     }
 
     private fun setTextAttributes(view: AppCompatTextView, attr: TypedArray) {
         // sets text size
-        val textWidth = attr.getLayoutDimension(R.styleable.StyleableButton_sbTextWidth, 0)
-        val textHeight = attr.getLayoutDimension(R.styleable.StyleableButton_sbTextHeight, 0)
+        val textWidth = attr.getLayoutDimension(R.styleable.AppButton_abTextWidth, 0)
+        val textHeight = attr.getLayoutDimension(R.styleable.AppButton_abTextHeight, 0)
         view.setViewSize(textWidth, textHeight)
 
         // sets text
-        attr.getText(R.styleable.StyleableButton_sbText)?.let { text ->
-            view.text = text
-        }
+        view.text = attr.getText(R.styleable.AppButton_abText) ?: view.text ?: ""
         // sets text color
-        attr.getColorStateList(R.styleable.StyleableButton_sbTextColor)?.let { colorStateList ->
+        val textColorStateList = attr.getColorStateList(R.styleable.AppButton_abTextColor) ?: view.textColors
+        textColorStateList?.let { colorStateList ->
             view.setTextColor(colorStateList)
         }
         // sets text size
-        val textSize = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbTextSize, 0)
+        val textSize = attr.getDimensionPixelSize(R.styleable.AppButton_abTextSize, 0)
         if (textSize > 0) {
             view.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.toFloat())
         }
         // sets text style
-        val textStyle = attr.getInt(R.styleable.StyleableButton_sbTextStyle, 0)
+        val textStyle = attr.getInt(R.styleable.AppButton_abTextStyle, 0)
         if (textStyle > 0) {
             view.typeface = when (textStyle) {
                 1 -> Typeface.DEFAULT_BOLD
@@ -421,22 +410,22 @@ class StyleableButton: FrameLayout {
             }
         }
         // sets text gravity
-        val textGravity = parseGravity(attr.getInt(R.styleable.StyleableButton_sbTextGravity, DEFAULT_TEXT_GRAVITY))
+        val textGravity = parseGravity(attr.getInt(R.styleable.AppButton_abTextGravity, DEFAULT_TEXT_GRAVITY))
         if (textGravity > 0) {
             view.gravity = textGravity
         }
         // sets text ellipsize
-        view.ellipsize = parseEllipsize(attr.getInt(R.styleable.StyleableButton_sbTextEllipsize, -1))
+        view.ellipsize = parseEllipsize(attr.getInt(R.styleable.AppButton_abTextEllipsize, -1))
         // sets text lines
-        view.setLines(attr.getInt(R.styleable.StyleableButton_sbTextLines, 1))
+        view.setLines(attr.getInt(R.styleable.AppButton_abTextLines, 1))
         // sets text max lines
-        view.maxLines = attr.getInt(R.styleable.StyleableButton_sbTextMaxLines, Integer.MAX_VALUE)
+        view.maxLines = attr.getInt(R.styleable.AppButton_abTextMaxLines, Integer.MAX_VALUE)
 
         // sets text margins
-        val textMargin = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbTextMargin, UNDEFINED_MARGIN)
-        val textMarginHorizontal = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbTextMarginHorizontal, UNDEFINED_MARGIN)
-        val textMarginVertical = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbTextMarginVertical, UNDEFINED_MARGIN)
-        val textMarginStart = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbTextMarginStart, UNDEFINED_MARGIN).let { size ->
+        val textMargin = attr.getDimensionPixelSize(R.styleable.AppButton_abTextMargin, UNDEFINED_MARGIN)
+        val textMarginHorizontal = attr.getDimensionPixelSize(R.styleable.AppButton_abTextMarginHorizontal, UNDEFINED_MARGIN)
+        val textMarginVertical = attr.getDimensionPixelSize(R.styleable.AppButton_abTextMarginVertical, UNDEFINED_MARGIN)
+        val textMarginStart = attr.getDimensionPixelSize(R.styleable.AppButton_abTextMarginStart, UNDEFINED_MARGIN).let { size ->
             if (size != UNDEFINED_MARGIN) {
                 size
             } else if (textMarginHorizontal != UNDEFINED_MARGIN) {
@@ -447,7 +436,7 @@ class StyleableButton: FrameLayout {
                 0
             }
         }
-        val textMarginEnd = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbTextMarginEnd, UNDEFINED_MARGIN).let { size ->
+        val textMarginEnd = attr.getDimensionPixelSize(R.styleable.AppButton_abTextMarginEnd, UNDEFINED_MARGIN).let { size ->
             if (size != UNDEFINED_MARGIN) {
                 size
             } else if (textMarginHorizontal != UNDEFINED_MARGIN) {
@@ -458,7 +447,7 @@ class StyleableButton: FrameLayout {
                 0
             }
         }
-        val textMarginTop = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbTextMarginTop, UNDEFINED_MARGIN).let { size ->
+        val textMarginTop = attr.getDimensionPixelSize(R.styleable.AppButton_abTextMarginTop, UNDEFINED_MARGIN).let { size ->
             if (size != UNDEFINED_MARGIN) {
                 size
             } else if (textMarginVertical != UNDEFINED_MARGIN) {
@@ -469,7 +458,7 @@ class StyleableButton: FrameLayout {
                 0
             }
         }
-        val textMarginBottom = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbTextMarginBottom, UNDEFINED_MARGIN).let { size ->
+        val textMarginBottom = attr.getDimensionPixelSize(R.styleable.AppButton_abTextMarginBottom, UNDEFINED_MARGIN).let { size ->
             if (size != UNDEFINED_MARGIN) {
                 size
             } else if (textMarginVertical != UNDEFINED_MARGIN) {
@@ -483,7 +472,14 @@ class StyleableButton: FrameLayout {
         view.setViewMargin(textMarginStart, textMarginTop, textMarginEnd, textMarginBottom)
     }
 
-    private fun setIconAndTextRelative(buttonView: ConstraintLayout?, iconView: AppCompatImageView?, textView: AppCompatTextView?, relativeOf: Int, margin: Int) {
+    private fun setIconAndTextRelative(
+        buttonView: ConstraintLayout?,
+        iconView: AppCompatImageView?,
+        textView: AppCompatTextView?,
+        relativeOf: Int,
+        margin: Int,
+        chainStyle: Int
+    ) {
         if (buttonView == null || iconView == null || textView == null) {
             return
         }
@@ -498,6 +494,8 @@ class StyleableButton: FrameLayout {
         val constraintSet = ConstraintSet()
         when (relativeOf) {
             Gravity.TOP -> {
+                iconView.bringToFront()
+
                 constraintSet.clone(buttonView)
 
                 constraintSet.connect(iconView.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
@@ -511,8 +509,9 @@ class StyleableButton: FrameLayout {
                 constraintSet.connect(textView.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
 
                 constraintSet.createVerticalChain(ConstraintSet.PARENT_ID, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM,
-                    intArrayOf(iconView.id, textView.id), null, ConstraintSet.CHAIN_PACKED
+                    intArrayOf(iconView.id, textView.id), null, chainStyle
                 )
+
                 constraintSet.applyTo(buttonView)
 
                 // sets top or bottom margin after applied
@@ -535,7 +534,7 @@ class StyleableButton: FrameLayout {
                 constraintSet.connect(iconView.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
 
                 constraintSet.createVerticalChain(ConstraintSet.PARENT_ID, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM,
-                    intArrayOf(textView.id, iconView.id), null, ConstraintSet.CHAIN_PACKED
+                    intArrayOf(textView.id, iconView.id), null, chainStyle
                 )
 
                 constraintSet.applyTo(buttonView)
@@ -547,6 +546,8 @@ class StyleableButton: FrameLayout {
             Gravity.START -> {
                 // sets start or end margin before applied
                 textView.setViewMarginStart(margin + textView.marginStart)
+
+                iconView.bringToFront()
 
                 constraintSet.clone(buttonView)
 
@@ -561,7 +562,7 @@ class StyleableButton: FrameLayout {
                 constraintSet.connect(textView.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
 
                 constraintSet.createHorizontalChain(ConstraintSet.PARENT_ID, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT,
-                    intArrayOf(iconView.id, textView.id), null, ConstraintSet.CHAIN_PACKED
+                    intArrayOf(iconView.id, textView.id), null, chainStyle
                 )
 
                 constraintSet.applyTo(buttonView)
@@ -586,7 +587,7 @@ class StyleableButton: FrameLayout {
                 constraintSet.connect(iconView.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
 
                 constraintSet.createHorizontalChain(ConstraintSet.PARENT_ID, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT,
-                    intArrayOf(textView.id, iconView.id), null, ConstraintSet.CHAIN_PACKED
+                    intArrayOf(textView.id, iconView.id), null, chainStyle
                 )
 
                 constraintSet.applyTo(buttonView)
@@ -717,6 +718,20 @@ class StyleableButton: FrameLayout {
     }
 
     /**
+     * name="spread" value="0"
+     * name="spread_inside" value="1"
+     * name="packed" value="2"
+     */
+    private fun parseChainStyleOf(chain: Int, default: Int): Int {
+        return when (chain) {
+            0 -> ConstraintSet.CHAIN_SPREAD
+            1 -> ConstraintSet.CHAIN_SPREAD_INSIDE
+            2 -> ConstraintSet.CHAIN_PACKED
+            else -> default
+        }
+    }
+
+    /**
      * <!-- Visible on screen; the default value. -->
      *  name="visible" value="0"
      * <!-- Not displayed, but taken into account during layout (space is left for it). -->
@@ -748,15 +763,15 @@ class StyleableButton: FrameLayout {
         val iconView = this.iconView ?: return
         val textView = this.textView ?: return
 
-        val attr = context.obtainStyledAttributes(style, R.styleable.StyleableButton)
+        val attr = context.obtainStyledAttributes(style, R.styleable.AppButton)
 
         setContainerAttributes(containerView, attr)
         setButtonAttributes(buttonView, attr)
         setIconAttributes(iconView, attr)
         setTextAttributes(textView, attr)
 
-        iconTextRelativeMargin = attr.getDimensionPixelSize(R.styleable.StyleableButton_sbIconTextRelativeMargin, 0)
-        iconTextRelativeOf = parseRelativeOf(attr.getInt(R.styleable.StyleableButton_sbIconRelativeOfText, Gravity.START), 0)
+        iconTextRelativeMargin = attr.getDimensionPixelSize(R.styleable.AppButton_abIconTextRelativeMargin, 0)
+        iconTextRelativeOf = parseRelativeOf(attr.getInt(R.styleable.AppButton_abIconRelativeOfText, Gravity.START), 0)
         updateIconAndTextRelative()
 
         attr.recycle()
@@ -764,14 +779,9 @@ class StyleableButton: FrameLayout {
     }
 
     fun setIcon(@DrawableRes icon: Int?) {
-        val iconView = this.iconView ?: return
+        val context = this.iconView?.context ?: return
 
-        if (icon != null) {
-            iconView.setImageResource(icon)
-        } else {
-            iconView.setImageDrawable(null)
-        }
-        updateIconAndTextRelative()
+        setIcon(ViewUtil.getDrawable(context, icon ?: 0))
     }
 
     fun setIcon(icon: Drawable?) {
@@ -781,10 +791,12 @@ class StyleableButton: FrameLayout {
         updateIconAndTextRelative()
     }
 
+    fun getIcon(): Drawable? = this.iconView?.drawable
+
     fun setText(@StringRes text: Int?) {
         val textView = this.textView ?: return
 
-        if (text != null) {
+        if (text != null && text != 0) {
             textView.setText(text)
         } else {
             textView.text = ""
@@ -795,7 +807,36 @@ class StyleableButton: FrameLayout {
     fun setText(text: String?) {
         val textView = this.textView ?: return
 
-        textView.text = text
+        textView.text = text ?: ""
         updateIconAndTextRelative()
+    }
+
+    fun setTextTypeface(typeface: Typeface) {
+        val textView = this.textView ?: return
+
+        textView.typeface = typeface
+        updateIconAndTextRelative()
+    }
+
+    fun setButtonSize(width: Int, height: Int) {
+        buttonView?.setViewSize(width, height)
+        containerView?.setViewSize(width, height)
+    }
+
+    fun setButtonBackground(drawable: Drawable?) {
+        buttonView?.background = drawable
+    }
+
+    fun setIconSize(width: Int, height: Int) {
+        iconView?.setViewSize(width, height)
+    }
+
+    fun setIconTintList(colors: ColorStateList?) {
+        iconView?.imageTintList = colors
+    }
+
+    override fun setEnabled(enabled: Boolean) {
+        ViewUtil.setViewEnabledWithChildView(containerView, enabled)
+        super.setEnabled(enabled)
     }
 }

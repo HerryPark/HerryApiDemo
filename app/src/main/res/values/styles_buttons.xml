@@ -1,135 +1,135 @@
 <resources>
-    <!-- the StyleableButton's style -->
+    <!-- the AppButton's style -->
     <style name="AppButton">
-        <item name="sbForeground">?attr/selectableItemBackground</item>
+        <item name="abForeground">?attr/selectableItemBackground</item>
     </style>
 
     <style name="AppButton.Icon" parent="AppButton">
-        <item name="sbWidth">36dp</item>
-        <item name="sbHeight">36dp</item>
-        <item name="sbCornerRadius">12dp</item>
-        <item name="sbIconWidth">26dp</item>
-        <item name="sbIconHeight">wrap_content</item>
-        <item name="sbIconAdjustViewBounds">true</item>
-        <item name="sbIconScaleType">fitXY</item>
-        <item name="sbBackground">@drawable/drawables_e_transparent_fp_onprimary10_s_accent10_d_transparent</item>
-        <item name="sbIconSrcTint">@color/colors_efp_onprimary_s_accent_d_onprimary30</item>
+        <item name="abWidth">36dp</item>
+        <item name="abHeight">36dp</item>
+        <item name="abCornerRadius">12dp</item>
+        <item name="abIconWidth">26dp</item>
+        <item name="abIconHeight">wrap_content</item>
+        <item name="abIconAdjustViewBounds">true</item>
+        <item name="abIconScaleType">fitXY</item>
+        <item name="abBackground">@drawable/drawables_e_transparent_fp_onprimary10_s_accent10_d_transparent</item>
+        <item name="abIconSrcTint">@color/colors_efp_onprimary_s_accent_d_onprimary30</item>
     </style>
 
     <style name="AppButton.Subscribe" parent="AppButton.Icon">
-        <item name="sbBackground">@drawable/drawables_e_transparent_fps_accent25_d_transparent</item>
-        <item name="sbIconSrcTint">@null</item>
+        <item name="abBackground">@drawable/drawables_e_transparent_fps_accent25_d_transparent</item>
+        <item name="abIconSrcTint">@null</item>
     </style>
 
     <style name="AppButton.Standard" parent="AppButton">
-        <item name="sbWidth">match_parent</item>
-        <item name="sbHeight">36dp</item>
-        <item name="sbLayoutGravity">center</item>
-        <item name="sbCornerRadius">6dp</item>
-        <item name="sbPaddingVertical">4dp</item>
-        <item name="sbPaddingHorizontal">14dp</item>
-        <item name="sbIconWidth">24dp</item>
-        <item name="sbIconHeight">wrap_content</item>
-        <item name="sbIconAdjustViewBounds">true</item>
-        <item name="sbIconRelativeOfText">start</item>
-        <item name="sbIconTextRelativeMargin">6dp</item>
-        <item name="sbIconSrcTint">@color/colors_efp_onprimary_s_accent_d_onprimary30</item>
-        <item name="sbIconSrcTintMode">src_in</item>
-        <item name="sbTextWidth">wrap_content</item>
-        <item name="sbTextHeight">0dp</item>
-        <item name="sbTextGravity">center</item>
-        <item name="sbTextColor">@color/colors_efp_onprimary_s_accent_d_onprimary30</item>
-        <item name="sbTextSize">14dp</item>
-        <item name="sbTextStyle">normal</item>
-        <item name="sbTextMaxLines">1</item>
+        <item name="abWidth">match_parent</item>
+        <item name="abHeight">36dp</item>
+        <item name="abLayoutGravity">center</item>
+        <item name="abCornerRadius">6dp</item>
+        <item name="abPaddingVertical">4dp</item>
+        <item name="abPaddingHorizontal">14dp</item>
+        <item name="abIconWidth">24dp</item>
+        <item name="abIconHeight">wrap_content</item>
+        <item name="abIconAdjustViewBounds">true</item>
+        <item name="abIconRelativeOfText">start</item>
+        <item name="abIconTextRelativeMargin">6dp</item>
+        <item name="abIconSrcTint">@color/colors_efp_onprimary_s_accent_d_onprimary30</item>
+        <item name="abIconSrcTintMode">src_in</item>
+        <item name="abTextWidth">wrap_content</item>
+        <item name="abTextHeight">0dp</item>
+        <item name="abTextGravity">center</item>
+        <item name="abTextColor">@color/colors_efp_onprimary_s_accent_d_onprimary30</item>
+        <item name="abTextSize">14dp</item>
+        <item name="abTextStyle">normal</item>
+        <item name="abTextMaxLines">1</item>
     </style>
 
     <style name="AppButton.TextOnly" parent="AppButton">
-        <item name="sbWidth">match_parent</item>
-        <item name="sbHeight">32dp</item>
-        <item name="sbLayoutGravity">center</item>
-        <item name="sbTextWidth">wrap_content</item>
-        <item name="sbTextHeight">wrap_content</item>
-        <item name="sbTextGravity">center</item>
-        <item name="sbTextColor">@color/colors_e_onprimary_f_onprimary80_ps_onprimary70_d_onprimary30</item>
-        <item name="sbTextSize">14dp</item>
-        <item name="sbTextStyle">normal</item>
-        <item name="sbTextMaxLines">1</item>
+        <item name="abWidth">match_parent</item>
+        <item name="abHeight">32dp</item>
+        <item name="abLayoutGravity">center</item>
+        <item name="abTextWidth">wrap_content</item>
+        <item name="abTextHeight">wrap_content</item>
+        <item name="abTextGravity">center</item>
+        <item name="abTextColor">@color/colors_e_onprimary_f_onprimary80_ps_onprimary70_d_onprimary30</item>
+        <item name="abTextSize">14dp</item>
+        <item name="abTextStyle">normal</item>
+        <item name="abTextMaxLines">1</item>
     </style>
 
     <style name="AppButton.Standard.Outline" parent="AppButton.Standard">
-        <item name="sbBackground">@drawable/drawables_outline_r06_e_transparent_fp_onprimary15_d_transparent</item>
+        <item name="abBackground">@drawable/drawables_outline_r06_e_transparent_fp_onprimary15_d_transparent</item>
     </style>
 
     <style name="AppButton.Standard.Fill.Solid" parent="AppButton.Standard">
-        <item name="sbBackground">@drawable/drawables_fill_e_onprimary10_fp_onprimary15_d_onprimary10</item>
+        <item name="abBackground">@drawable/drawables_fill_e_onprimary10_fp_onprimary15_d_onprimary10</item>
     </style>
 
     <style name="AppButton.Standard.Fill.Accent" parent="AppButton.Standard">
-        <item name="sbBackground">@drawable/drawables_fill_e_accent_fp_accent75_d_onprimary10</item>
-        <item name="sbTextColor">@color/colors_efp_wtfix_d_onprimary30</item>
-        <item name="sbIconSrcTint">@color/colors_efp_wtfix_d_onprimary30</item>
+        <item name="abBackground">@drawable/drawables_fill_e_accent_fp_accent75_d_onprimary10</item>
+        <item name="abTextColor">@color/colors_efp_wtfix_d_onprimary30</item>
+        <item name="abIconSrcTint">@color/colors_efp_wtfix_d_onprimary30</item>
     </style>
 
     <style name="AppButton.Standard.Fill.AccentGradient" parent="AppButton.Standard.Fill.Accent">
-        <item name="sbBackground">@drawable/drawables_fill_gradient_e_accent_fp_accent75_d_onprimary10</item>
+        <item name="abBackground">@drawable/drawables_fill_gradient_e_accent_fp_accent75_d_onprimary10</item>
     </style>
 
     <style name="AppButton.Small" parent="AppButton">
-        <item name="sbWidth">wrap_content</item>
-        <item name="sbHeight">28dp</item>
-        <item name="sbLayoutGravity">center</item>
-        <item name="sbCornerRadius">6dp</item>
-        <item name="sbPaddingVertical">4dp</item>
-        <item name="sbPaddingHorizontal">10dp</item>
-        <item name="sbTextWidth">wrap_content</item>
-        <item name="sbTextHeight">0dp</item>
-        <item name="sbTextGravity">center</item>
-        <item name="sbTextColor">@color/colors_efp_onprimary_s_accent_d_onprimary30</item>
-        <item name="sbTextSize">12dp</item>
-        <item name="sbTextStyle">normal</item>
-        <item name="sbTextMaxLines">1</item>
+        <item name="abWidth">wrap_content</item>
+        <item name="abHeight">28dp</item>
+        <item name="abLayoutGravity">center</item>
+        <item name="abCornerRadius">6dp</item>
+        <item name="abPaddingVertical">4dp</item>
+        <item name="abPaddingHorizontal">10dp</item>
+        <item name="abTextWidth">wrap_content</item>
+        <item name="abTextHeight">0dp</item>
+        <item name="abTextGravity">center</item>
+        <item name="abTextColor">@color/colors_efp_onprimary_s_accent_d_onprimary30</item>
+        <item name="abTextSize">12dp</item>
+        <item name="abTextStyle">normal</item>
+        <item name="abTextMaxLines">1</item>
     </style>
 
     <style name="AppButton.Small.Outline" parent="AppButton.Small">
-        <item name="sbBackground">@drawable/drawables_outline_r06_e_transparent_fp_onprimary10_d_transparent</item>
+        <item name="abBackground">@drawable/drawables_outline_r06_e_transparent_fp_onprimary10_d_transparent</item>
     </style>
 
     <style name="AppButton.Small.Fill.Accent" parent="AppButton.Small">
-        <item name="sbBackground">@drawable/drawables_fill_e_accent_fp_accent75_d_onprimary10</item>
-        <item name="sbTextColor">@color/colors_efp_wtfix_d_onprimary30</item>
+        <item name="abBackground">@drawable/drawables_fill_e_accent_fp_accent75_d_onprimary10</item>
+        <item name="abTextColor">@color/colors_efp_wtfix_d_onprimary30</item>
     </style>
 
     <style name="AppButton.Large" parent="AppButton.Standard">
-        <item name="sbWidth">wrap_content</item>
-        <item name="sbHeight">60dp</item>
-        <item name="sbLayoutGravity">center</item>
-        <item name="sbCornerRadius">12dp</item>
-        <item name="sbPaddingVertical">8dp</item>
-        <item name="sbPaddingHorizontal">40dp</item>
-        <item name="sbIconWidth">24dp</item>
-        <item name="sbIconHeight">wrap_content</item>
-        <item name="sbIconAdjustViewBounds">true</item>
-        <item name="sbIconRelativeOfText">start</item>
-        <item name="sbIconTextRelativeMargin">8dp</item>
-        <item name="sbIconSrcTint">@color/colors_efp_onprimary_s_accent_d_onprimary30</item>
-        <item name="sbIconSrcTintMode">src_in</item>
-        <item name="sbTextWidth">wrap_content</item>
-        <item name="sbTextHeight">0dp</item>
-        <item name="sbTextGravity">center</item>
-        <item name="sbTextColor">@color/colors_efp_onprimary_s_accent_d_onprimary30</item>
-        <item name="sbTextSize">16dp</item>
-        <item name="sbTextStyle">normal</item>
-        <item name="sbTextMaxLines">1</item>
+        <item name="abWidth">wrap_content</item>
+        <item name="abHeight">60dp</item>
+        <item name="abLayoutGravity">center</item>
+        <item name="abCornerRadius">12dp</item>
+        <item name="abPaddingVertical">8dp</item>
+        <item name="abPaddingHorizontal">40dp</item>
+        <item name="abIconWidth">24dp</item>
+        <item name="abIconHeight">wrap_content</item>
+        <item name="abIconAdjustViewBounds">true</item>
+        <item name="abIconRelativeOfText">start</item>
+        <item name="abIconTextRelativeMargin">8dp</item>
+        <item name="abIconSrcTint">@color/colors_efp_onprimary_s_accent_d_onprimary30</item>
+        <item name="abIconSrcTintMode">src_in</item>
+        <item name="abTextWidth">wrap_content</item>
+        <item name="abTextHeight">0dp</item>
+        <item name="abTextGravity">center</item>
+        <item name="abTextColor">@color/colors_efp_onprimary_s_accent_d_onprimary30</item>
+        <item name="abTextSize">16dp</item>
+        <item name="abTextStyle">normal</item>
+        <item name="abTextMaxLines">1</item>
     </style>
 
     <style name="AppButton.Large.Outline" parent="AppButton.Large">
-        <item name="sbBackground">@drawable/drawables_outline_r12_e_transparent_fp_onprimary15_d_transparent</item>
+        <item name="abBackground">@drawable/drawables_outline_r12_e_transparent_fp_onprimary15_d_transparent</item>
     </style>
 
     <style name="AppButton.Large.Fill.Solid" parent="AppButton.Large">
-        <item name="sbBackground">@drawable/drawables_fill_e_onprimary_fp_onprimary80_d_onprimary10</item>
-        <item name="sbTextColor">@color/colors_efp_primary_s_accent_d_onprimary30</item>
-        <item name="sbIconSrcTint">@color/colors_efp_primary_s_accent_d_onprimary30</item>
+        <item name="abBackground">@drawable/drawables_fill_e_onprimary_fp_onprimary80_d_onprimary10</item>
+        <item name="abTextColor">@color/colors_efp_primary_s_accent_d_onprimary30</item>
+        <item name="abIconSrcTint">@color/colors_efp_primary_s_accent_d_onprimary30</item>
     </style>
 </resources>

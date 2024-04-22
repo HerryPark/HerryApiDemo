@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 
@@ -187,14 +188,16 @@ object ViewUtil {
         /* 128dp = 32dp * 4, minimum button height 32dp and generic 4 rows soft keyboard */
         @Suppress("LocalVariableName")
         val SOFT_KEYBOARD_HEIGHT_DP_THRESHOLD = 128
-        val r = Rect()
-        rootView.getWindowVisibleDisplayFrame(r)
-        val dm = rootView.resources.displayMetrics
+        val screenRect = Rect()
+        val screenHeight = rootView.height
 
-        /* heightDiff = rootView height - status bar height (r.top) - visible frame height (r.bottom - r.top) */
-        val heightDiff = rootView.bottom - r.bottom
+        rootView.getWindowVisibleDisplayFrame(screenRect)
+        // heightDiff = rootView height - status bar height (r.top) - visible frame height (r.bottom - r.top)
+        val heightDiff: Int = screenHeight - (screenRect.bottom - screenRect.top)
 
-        /* Threshold size: dp to pixels, multiply with display density */return heightDiff > SOFT_KEYBOARD_HEIGHT_DP_THRESHOLD * dm.density
+        /* Threshold size: dp to pixels, multiply with display density */
+        val density = rootView.resources.displayMetrics.density
+        return heightDiff > SOFT_KEYBOARD_HEIGHT_DP_THRESHOLD * density
     }
 
     @JvmStatic
@@ -203,12 +206,52 @@ object ViewUtil {
         view?.setOnTouchListener { _: View?, _: MotionEvent? -> protect }
     }
 
+    fun isSoftKeyboardShown(activity: Activity?): Boolean {
+        val contentView = activity?.findViewById<View?>(android.R.id.content) ?: return false
+        return isSoftKeyboardShown(contentView.rootView)
+    }
+
+    fun setSoftKeyboardVisibilityListener(activity: Activity?, listener: OnSoftKeyboardVisibilityListener) {
+        val contentView = activity?.findViewById<View?>(android.R.id.content) ?: return
+        contentView.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            private var wasShown: Boolean? = null
+
+            override fun onGlobalLayout() {
+                val isShown = isSoftKeyboardShown(contentView.rootView)
+                if (isShown == wasShown) {
+                    // Keyboard state hasn't changed
+                    return
+                }
+
+                wasShown = isShown
+                listener.onChangedSoftKeyboardVisibility(isShown)
+            }
+        })
+    }
+
+    fun isConnectedHardwareKeyboard(rootView: View?): Boolean {
+        val context = rootView?.context ?: return false
+        val configuration = context.resources.configuration
+        return configuration.navigation == Configuration.NAVIGATION_DPAD
+                || configuration.navigation == Configuration.NAVIGATION_TRACKBALL
+                || configuration.navigation == Configuration.NAVIGATION_WHEEL
+    }
+
     fun removeViewFormParent(view: View?) {
         view ?: return
 
         if (view.parent is ViewGroup) {
             val parent = view.parent as ViewGroup
             parent.removeView(view)
+        }
+    }
+
+    fun setViewEnabledWithChildView(view: View?, enabled: Boolean) {
+        view?.isEnabled = enabled
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                setViewEnabledWithChildView(view.getChildAt(i), enabled) // Recursive call
+            }
         }
     }
 
@@ -582,4 +625,26 @@ object ViewUtil {
         return drawable
     }
 
+    fun getChildHeight(parentView: View?): Int {
+        if (parentView !is ViewGroup) return 0
+
+        val measureSpecW = View.MeasureSpec.makeMeasureSpec(parentView.width, View.MeasureSpec.EXACTLY)
+        val measureSpecH = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        var totalHeight = 0
+
+        parentView.children.forEach { childView ->
+            val layoutParams = childView.layoutParams
+            val height = layoutParams.height
+            val childHeightSpec = if (height > 0) {
+                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
+            } else {
+                measureSpecH
+            }
+
+            childView.measure(measureSpecW, childHeightSpec)
+            totalHeight += childView.measuredHeight
+        }
+
+        return totalHeight
+    }
 }

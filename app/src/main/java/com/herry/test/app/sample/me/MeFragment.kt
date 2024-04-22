@@ -16,7 +16,7 @@ import com.herry.test.app.base.nav.BaseNavFragment
 
 class MeFragment: BaseNavFragment() {
 
-    override fun getSystemUIAppearances(context: Context): SystemUIAppearances =
+    override fun onSystemUIAppearances(context: Context): SystemUIAppearances =
         SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
             isFullScreen = true
             showBehavior = SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE

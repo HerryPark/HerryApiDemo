@@ -40,7 +40,7 @@ import java.util.Locale
 
 class SearchFeedsFragment: BaseNavView<SearchFeedsContract.View, SearchFeedsContract.Presenter>(), SearchFeedsContract.View {
 
-    override fun getSystemUIAppearances(context: Context): SystemUIAppearances =
+    override fun onSystemUIAppearances(context: Context): SystemUIAppearances =
         SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
             statusBar?.appearanceColorStyle = SystemUIAppearanceColorStyle.LIGHT
             statusBar?.visibility = SystemUIVisibility.SHOW

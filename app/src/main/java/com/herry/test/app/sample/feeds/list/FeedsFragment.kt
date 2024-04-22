@@ -28,7 +28,7 @@ import com.herry.test.widget.TabLayoutForm
 
 class FeedsFragment: BaseNavView<FeedsContract.View, FeedsContract.Presenter>(), FeedsContract.View {
 
-    override fun getSystemUIAppearances(context: Context): SystemUIAppearances =
+    override fun onSystemUIAppearances(context: Context): SystemUIAppearances =
         SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
             showBehavior = SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE
             statusBar?.backgroundColor = Color.WHITE

@@ -76,7 +76,7 @@ class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContrac
         }
     }
 
-    override fun getSystemUIAppearances(context: Context): SystemUIAppearances =
+    override fun onSystemUIAppearances(context: Context): SystemUIAppearances =
         SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
             isFullScreen = true
             statusBar?.backgroundColor = Color.TRANSPARENT

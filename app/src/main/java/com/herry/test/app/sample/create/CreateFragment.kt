@@ -17,12 +17,13 @@ import com.herry.test.app.base.nav.BaseNavFragment
 
 class CreateFragment: BaseNavFragment() {
 
-    override fun getSystemUIAppearances(context: Context): SystemUIAppearances =
-        SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
+    override fun onSystemUIAppearances(context: Context): SystemUIAppearances {
+        return SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
             isFullScreen = true
             statusBar?.backgroundColor = Color.BLACK
             statusBar?.visibility = SystemUIVisibility.SHOW
         }
+    }
 
     private var container: View? = null
 

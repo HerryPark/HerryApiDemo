@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.view.StyleableButton
+import com.herry.libs.widget.view.AppButton
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
 import com.herry.test.widget.TitleBarForm
@@ -31,14 +31,14 @@ class StyleableButtonFragment: BaseNavFragment() {
         }
 
         view.findViewById<ViewGroup?>(R.id.styleable_buttons_fragment_programmatically_container)?.let { container ->
-            StyleableButton(context, R.style.AppButton_Icon).apply {
+            AppButton(context, R.style.AppButton_Icon).apply {
                 this.setIcon(R.drawable.ic_settings)
                 this.setOnClickListener {}
             }.also { appButton ->
                 container.addView(appButton)
             }
 
-            StyleableButton(context, R.style.AppButton_Standard_Outline).apply {
+            AppButton(context, R.style.AppButton_Standard_Outline).apply {
                 this.setIcon(R.drawable.ic_settings)
                 this.setText("Test")
                 this.setOnClickListener {}

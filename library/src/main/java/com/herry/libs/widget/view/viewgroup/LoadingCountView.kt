@@ -111,6 +111,15 @@ class LoadingCountView : FrameLayout {
     fun hide(force: Boolean = false, listener: OnHideListener? = null) {
         this.onHideListener = listener
 
+        if (force) {
+            waitToIng?.cancel()
+            waitToIng = null
+            alpha = 0.0f
+            statusToInit()
+            onHideListener?.onDone()
+            return
+        }
+
         when(status) {
             Status.INIT -> {
             }

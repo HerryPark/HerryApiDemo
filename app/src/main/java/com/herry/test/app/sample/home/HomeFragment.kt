@@ -16,7 +16,7 @@ import com.herry.test.app.sample.home.form.HomeBottomNavControlForm
 import com.herry.test.app.sample.home.form.HomeBottomNavFragmentForm
 
 class HomeFragment: BaseNestedNavView<HomeContract.View, HomeContract.Presenter>(), HomeContract.View {
-    override fun getSystemUIAppearances(context: Context): SystemUIAppearances? = null
+    override fun onSystemUIAppearances(context: Context): SystemUIAppearances? = null
 
     override fun onCreatePresenter(): HomeContract.Presenter = HomePresenter()
 

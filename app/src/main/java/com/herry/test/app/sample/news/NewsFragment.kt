@@ -28,7 +28,7 @@ import com.herry.test.app.sample.tags.TagsFragment
 
 class NewsFragment: BaseNavView<NewsContract.View, NewsContract.Presenter>(), NewsContract.View {
 
-    override fun getSystemUIAppearances(context: Context): SystemUIAppearances =
+    override fun onSystemUIAppearances(context: Context): SystemUIAppearances =
         SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
             isFullScreen = true
             statusBar?.backgroundColor = Color.TRANSPARENT
