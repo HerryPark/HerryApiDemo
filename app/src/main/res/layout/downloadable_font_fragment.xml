@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:transitionGroup="true"
+    tools:ignore="HardcodedText,SpUsage"
+    tools:viewBindingIgnore="true">
+
+    <include
+        android:id="@+id/downloadable_font_fragment_title"
+        layout="@layout/title_bar_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/downloadable_font_fragment_applied_font"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:gravity="start|center_vertical"
+        android:textSize="20dp"
+        android:textStyle="normal"
+        android:text=""
+        android:textColor="@color/accent"
+        android:hint="Select font"
+        app:layout_constraintTop_toBottomOf="@id/downloadable_font_fragment_title"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/downloadable_font_fragment_fonts"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        app:layout_constraintTop_toBottomOf="@id/downloadable_font_fragment_applied_font"
+        app:layout_constraintBottom_toTopOf="@id/downloadable_font_fragment_apply"/>
+
+    <com.herry.libs.widget.view.AppButton
+        android:id="@+id/downloadable_font_fragment_apply"
+        style="@style/AppButton.Large.Fill.Solid"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_margin="4dp"
+        app:abText="Apply"
+        app:abWidth="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/downloadable_font_fragment_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/accent"
+            android:indeterminateTintMode="src_atop"/>
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

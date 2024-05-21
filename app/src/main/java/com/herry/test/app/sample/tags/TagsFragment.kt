@@ -111,7 +111,7 @@ class TagsFragment : BaseNavView<TagsContract.View, TagsContract.Presenter>(), T
             val spanCounts = if (screenSize.width <= 0) {
                 defaultSpanCounts
             } else {
-                ((defaultSpanCounts * ViewUtil.convertPixelsToDp(screenSize.width.toFloat()).toInt()) / (360 - (defaultSpanCounts + 1) * defaultMargin))
+                ((defaultSpanCounts * ViewUtil.convertPxToDp(screenSize.width.toFloat()).toInt()) / (360 - (defaultSpanCounts + 1) * defaultMargin))
             }
 
             return spanCounts

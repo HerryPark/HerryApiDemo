@@ -49,7 +49,7 @@ class OnProtectClick(val listener: ((v: View) -> Unit)): View.OnClickListener {
     }
 }
 
-fun View.setOnProtectClickListener(l: ((v: View) -> Unit)?) {
+fun View.setOnSingleClickListener(l: ((v: View) -> Unit)?) {
     if(l != null) {
         setOnClickListener(OnProtectClick(l))
     } else {

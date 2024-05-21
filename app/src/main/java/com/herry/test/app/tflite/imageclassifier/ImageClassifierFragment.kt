@@ -17,11 +17,10 @@ import com.bumptech.glide.Glide
 import com.herry.libs.app.activity_caller.module.ACPermission
 import com.herry.libs.app.activity_caller.module.ACPick
 import com.herry.libs.app.activity_caller.module.ACTake
-import com.herry.libs.log.Trace
 import com.herry.libs.permission.PermissionHelper
 import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.setImage
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.BuildConfig
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
@@ -59,7 +58,7 @@ class ImageClassifierFragment : BaseNavView<ImageClassifierContract.View, ImageC
         }
 
         loadImageButton = view.findViewById<View?>(R.id.image_classifier_fragment_load_image)?.apply {
-            this.setOnProtectClickListener {
+            this.setOnSingleClickListener {
                 Popup(requireActivity()).apply {
                     setTitle("Choice from")
                     setItems(
@@ -122,7 +121,7 @@ class ImageClassifierFragment : BaseNavView<ImageClassifierContract.View, ImageC
         loadedImageView = view.findViewById(R.id.image_classifier_fragment_image)
 
         classifyView = view.findViewById<View?>(R.id.image_classifier_fragment_classify)?.apply {
-            this.setOnProtectClickListener {
+            this.setOnSingleClickListener {
                 loadedImageView?.let { imageView ->
                     (imageView.drawable as?BitmapDrawable)?.bitmap?.let { bitmap ->
                         presenter?.classify(bitmap)
@@ -131,7 +130,7 @@ class ImageClassifierFragment : BaseNavView<ImageClassifierContract.View, ImageC
             }
         }
         clearView = view.findViewById<View?>(R.id.image_classifier_fragment_clear)?.apply {
-            this.setOnProtectClickListener {
+            this.setOnSingleClickListener {
                 presenter?.clear()
             }
         }

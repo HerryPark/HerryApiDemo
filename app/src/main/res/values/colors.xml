@@ -7,6 +7,7 @@
 
     <color name="transparent">@android:color/transparent</color>
 
+    <!-- https://www.figma.com/file/f18C8ASGS4SBkQqWKRrvif/%5B_General_%5D_KM_Uesr_Interface_Doc_v0.0?type=design&node_id=29_12011&mode=design&t=n288QLgp2Lq9lU9o_4 -->
     <color name="primary">#FFFCFCFC</color>
     <color name="on_primary">#FF323035</color>
     <color name="on_primary_80">#CC323035</color>
@@ -14,6 +15,7 @@
     <color name="on_primary_60">#99323035</color>
     <color name="on_primary_40">#66323035</color>
     <color name="on_primary_30">#4D323035</color>
+    <color name="on_primary_20">#33323035</color>
     <color name="on_primary_15">#26323035</color>
     <color name="on_primary_10">#1A323035</color>
 
@@ -28,7 +30,9 @@
     <color name="bk_fix_70">#B3000000</color>
     <color name="bk_fix_60">#99000000</color>
     <color name="bk_fix_40">#66000000</color>
+    <color name="bk_fix_35">#59000000</color>
     <color name="bk_fix_30">#4D000000</color>
+    <color name="bk_fix_25">#40000000</color>
     <color name="bk_fix_15">#26000000</color>
     <color name="bk_fix_10">#1A000000</color>
 
@@ -38,6 +42,7 @@
     <color name="wt_fix_60">#99FFFFFF</color>
     <color name="wt_fix_40">#66FFFFFF</color>
     <color name="wt_fix_30">#4DFFFFFF</color>
+    <color name="wt_fix_25">#40FFFFFF</color>
     <color name="wt_fix_15">#26FFFFFF</color>
     <color name="wt_fix_10">#1AFFFFFF</color>
 
@@ -48,8 +53,10 @@
     <color name="solid_gn">#FF34C759</color>
     <color name="solid_mt">#FF00C7BE</color>
     <color name="solid_bl">#FF007AFF</color>
-    <color name="solid_bl_50">#80323035</color>
+    <color name="solid_bl_50">#80007AFF</color>
     <color name="solid_in">#FF5856D6</color>
+    <color name="solid_cy">#FF32ADE6</color>
+    <color name="solid_bw">#FFA2845E</color>
     <color name="solid_pu">#FFAF52DE</color>
     <color name="solid_gy">#FFA9B2BC</color>
 
@@ -68,6 +75,8 @@
     <color name="gradient_end">#FF97D7FF</color>
     <color name="gradient_75_start">#BF9797FB</color>
     <color name="gradient_75_end">#BF97D7FF</color>
+    <color name="background_subscribe_start">#FAFBFC</color>
+    <color name="background_subscribe_end">#DCDCFC</color>
 
     <color name="surface_sheet_background">#FFFCFCFC</color>
 </resources>

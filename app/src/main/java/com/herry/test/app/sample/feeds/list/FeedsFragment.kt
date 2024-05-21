@@ -17,7 +17,7 @@ import com.herry.libs.widget.configure.SystemUIAppearances
 import com.herry.libs.widget.configure.SystemUIShowBehavior
 import com.herry.libs.widget.configure.SystemUIVisibility
 import com.herry.libs.widget.extension.navigateTo
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapExHelper
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapWithTabLayoutHelper
 import com.herry.test.R
@@ -64,7 +64,7 @@ class FeedsFragment: BaseNavView<FeedsContract.View, FeedsContract.Presenter>(),
         val context = view?.context ?: return
 
         view.findViewById<View>(R.id.feeds_fragment_search_container)?.run {
-            setOnProtectClickListener {
+            setOnSingleClickListener {
                 navigateTo(destinationId = R.id.feed_search_fragment)
             }
         }

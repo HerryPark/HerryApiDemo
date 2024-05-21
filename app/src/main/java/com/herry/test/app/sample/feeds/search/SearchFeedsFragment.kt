@@ -29,7 +29,7 @@ import com.herry.libs.widget.configure.SystemUIAppearanceColorStyle
 import com.herry.libs.widget.configure.SystemUIAppearances
 import com.herry.libs.widget.configure.SystemUIVisibility
 import com.herry.libs.widget.extension.navigateTo
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
 import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewForm
 import com.herry.test.R
@@ -163,7 +163,7 @@ class SearchFeedsFragment: BaseNavView<SearchFeedsContract.View, SearchFeedsCont
             val spanCounts = if (screenSize.width <= 0) {
                 defaultSpanCounts
             } else {
-                ((defaultSpanCounts * ViewUtil.convertPixelsToDp(screenSize.width.toFloat()).toInt()) / (360 - (defaultSpanCounts + 1) * defaultMargin))
+                ((defaultSpanCounts * ViewUtil.convertPxToDp(screenSize.width.toFloat()).toInt()) / (360 - (defaultSpanCounts + 1) * defaultMargin))
             }
 
             return spanCounts
@@ -251,12 +251,12 @@ class SearchFeedsFragment: BaseNavView<SearchFeedsContract.View, SearchFeedsCont
             val delete: View? = view.findViewById(R.id.recent_keyword_list_item_delete)
 
             init {
-                view.setOnProtectClickListener {
+                view.setOnSingleClickListener {
                     NodeRecyclerForm.getBindModel(this@RecentForm, this@Holder)?.let { model ->
                         onClickKeyword(model)
                     }
                 }
-                delete?.setOnProtectClickListener {
+                delete?.setOnSingleClickListener {
                     NodeRecyclerForm.getBindModel(this@RecentForm, this@Holder)?.let { model ->
                         onClickDelete(model)
                     }
@@ -285,7 +285,7 @@ class SearchFeedsFragment: BaseNavView<SearchFeedsContract.View, SearchFeedsCont
             init {
                 icon?.setImageResource(R.drawable.ic_search)
                 delete?.isVisible = false
-                view.setOnProtectClickListener {
+                view.setOnSingleClickListener {
                     NodeRecyclerForm.getBindModel(this@AutoCompleteForm, this@Holder)?.let { model ->
                         onClickKeyword(model)
                     }
@@ -310,7 +310,7 @@ class SearchFeedsFragment: BaseNavView<SearchFeedsContract.View, SearchFeedsCont
             val cover: ImageView? = view.findViewById(R.id.feed_list_item_form_cover)
 
             init {
-                container?.setOnProtectClickListener {
+                container?.setOnSingleClickListener {
                     onClickItem?.invoke(this@SearchResultFeedItemForm, this)
                 }
             }

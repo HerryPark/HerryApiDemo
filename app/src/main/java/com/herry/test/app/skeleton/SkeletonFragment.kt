@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 
@@ -38,8 +38,8 @@ class SkeletonFragment : BaseNavView<SkeletonContract.View, SkeletonContract.Pre
         contentsForm.bindFormHolder(requireContext(), view.findViewById(R.id.skeleton_fragment_contents))
 
         button = view.findViewById(R.id.skeleton_fragment_button)
-        button?.setOnProtectClickListener {
-            val current = contentsForm.model ?: return@setOnProtectClickListener
+        button?.setOnSingleClickListener {
+            val current = contentsForm.model ?: return@setOnSingleClickListener
 
             if (current.show) {
                 presenter?.hide()

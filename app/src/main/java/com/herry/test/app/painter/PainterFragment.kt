@@ -14,7 +14,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import com.herry.libs.draw.CircleView
 import com.herry.libs.draw.ColorPickerView
@@ -23,7 +22,7 @@ import com.herry.libs.util.AppUtil
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.util.ColorUtil
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.libs.widget.extension.setTintColor
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
@@ -132,13 +131,13 @@ class PainterFragment : BaseNavFragment() {
             }
         }
 
-        view.findViewById<View?>(R.id.painter_fragment_close)?.setOnProtectClickListener {
+        view.findViewById<View?>(R.id.painter_fragment_close)?.setOnSingleClickListener {
             AppUtil.pressBackKey(activity)
         }
 
         this.done = view.findViewById<View?>(R.id.painter_fragment_done)?.apply {
-            this.setOnProtectClickListener {
-                val drawView = this@PainterFragment.drawView ?: return@setOnProtectClickListener
+            this.setOnSingleClickListener {
+                val drawView = this@PainterFragment.drawView ?: return@setOnSingleClickListener
                 // create png
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                     var bitmapByteArray: ByteArray? = null
@@ -281,7 +280,7 @@ class PainterFragment : BaseNavFragment() {
     }
 
     private fun showDrawTools(show: Boolean) {
-        this.drawTools?.translationY = if (show) 0f else ViewUtil.convertDpToPixel(DRAWING_TOOL_SHOW_HEIGHT_DP)
+        this.drawTools?.translationY = if (show) 0f else ViewUtil.convertDpToPx(DRAWING_TOOL_SHOW_HEIGHT_DP)
     }
 
     @SuppressLint("SetTextI18n")

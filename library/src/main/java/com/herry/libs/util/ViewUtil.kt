@@ -271,7 +271,7 @@ object ViewUtil {
      * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
      * @return A float value to represent px equivalent to dp depending on device density
      */
-    fun convertDpToPixel(dp: Float): Float {
+    fun convertDpToPx(dp: Float): Float {
         val metrics = Resources.getSystem().displayMetrics
         //float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         //Trace.d("convertDpToPixel dp:" + dp + " to px:" + px);
@@ -284,7 +284,7 @@ object ViewUtil {
      * @param px A value in px (pixels) unit. Which we need to convert into db
      * @return A float value to represent dp equivalent to px value
      */
-    fun convertPixelsToDp(px: Float): Float {
+    fun convertPxToDp(px: Float): Float {
         val metrics = Resources.getSystem().displayMetrics
         //float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         //Trace.d("convertPixelsToDp px:" + px + " to dp:" + dp);

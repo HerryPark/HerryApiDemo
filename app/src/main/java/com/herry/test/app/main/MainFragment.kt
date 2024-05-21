@@ -26,7 +26,7 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setImage
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.nbnf.NBNFActivity
@@ -142,6 +142,9 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
             MainContract.TestItemType.TIMELINE -> {
                 navigateTo(destinationId = R.id.timeline_fragment)
             }
+            MainContract.TestItemType.DOWNLOADABLE_FONTS -> {
+                navigateTo(destinationId = R.id.downloadable_font_fragment)
+            }
         }
     }
 
@@ -166,7 +169,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
         inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
             val title: TextView? = view.findViewById(R.id.main_test_item_title)
             init {
-                view.setOnProtectClickListener {
+                view.setOnSingleClickListener {
                     NodeRecyclerForm.getBindModel(this@TestItemForm, this@Holder)?.let {
                         presenter?.moveToScreen(it)
                     }
@@ -179,24 +182,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
         override fun onLayout(): Int = R.layout.main_test_item
 
         override fun onBindModel(context: Context, holder: TestItemForm.Holder, model: MainContract.TestItemType) {
-            holder.title?.text = when (model) {
-                MainContract.TestItemType.SCHEME_TEST -> "Intent"
-                MainContract.TestItemType.GIF_DECODER -> "GIF Decoder"
-                MainContract.TestItemType.CHECKER_LIST -> "Data Checker"
-                MainContract.TestItemType.LAYOUT_SAMPLE -> "Layout Sample"
-                MainContract.TestItemType.PICK -> "Pick"
-                MainContract.TestItemType.NESTED_FRAGMENTS -> "Nested Fragments"
-                MainContract.TestItemType.NESTED_BOTTOM_NAV_FRAGMENTS -> "Nested Bottom Navigator Fragments"
-                MainContract.TestItemType.DIALOGS -> "Dialogs"
-                MainContract.TestItemType.LIST -> "List"
-                MainContract.TestItemType.SKELETON -> "Skeleton"
-                MainContract.TestItemType.RESIZING_UI -> "Resizing UI"
-                MainContract.TestItemType.SAMPLE_APP -> "Sample Application"
-                MainContract.TestItemType.PAINTER -> "Painter"
-                MainContract.TestItemType.TENSOR_FLOW_LITE -> "Tensorflow-lite"
-                MainContract.TestItemType.WIDGETS -> "Widgets"
-                MainContract.TestItemType.TIMELINE -> "Timeline"
-            }
+            holder.title?.text = model.label
         }
     }
 }

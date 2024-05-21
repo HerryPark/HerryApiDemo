@@ -5,9 +5,8 @@ import android.view.View
 import android.widget.TextView
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
-import com.herry.libs.nodeview.NodeView
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
 
 open class MediaAccessRequestForm(
@@ -25,7 +24,7 @@ open class MediaAccessRequestForm(
         init {
             ViewUtil.setProtectTouchLowLayer(view, true)
 
-            gotoSettings?.setOnProtectClickListener {
+            gotoSettings?.setOnSingleClickListener {
                 onGotoSettings()
             }
         }

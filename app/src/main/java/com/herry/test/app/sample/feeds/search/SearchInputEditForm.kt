@@ -10,7 +10,7 @@ import androidx.core.view.isVisible
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.NodeView
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.libs.widget.view.editor.EditTextEx
 import com.herry.test.R
 
@@ -53,7 +53,7 @@ class SearchInputEditForm(
                 }
             }
 
-            deleteView?.setOnProtectClickListener {
+            deleteView?.setOnSingleClickListener {
                 input?.let { input ->
                     if (!input.text.isNullOrEmpty()) {
                         input.setText("")

@@ -13,7 +13,7 @@ import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.setImage
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 
@@ -122,7 +122,7 @@ class LayoutSampleFragment : BaseNavView<LayoutSampleContract.View, LayoutSample
             val textView: TextView = view.findViewById(R.id.layout_sample_aspect_ratio_text)
 
             init {
-                view.setOnProtectClickListener {
+                view.setOnSingleClickListener {
                     model?.run { onClick?.let {
                         it(this)
                         presenter?.selectRatio(this.type)

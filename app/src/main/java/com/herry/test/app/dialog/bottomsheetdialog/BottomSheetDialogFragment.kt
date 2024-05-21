@@ -9,10 +9,9 @@ import android.widget.FrameLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
-import com.herry.test.widget.TitleBarForm
 
 /**
  *
@@ -61,15 +60,15 @@ class BottomSheetDialogFragment : BaseNavFragment() {
     private fun init(view: View?) {
         val context = view?.context ?: return
 
-        view.findViewById<View?>(R.id.bottom_sheet_dialog_fragment_close)?.setOnProtectClickListener {
+        view.findViewById<View?>(R.id.bottom_sheet_dialog_fragment_close)?.setOnSingleClickListener {
             cancel()
         }
 
-        view.findViewById<View?>(R.id.bottom_sheet_dialog_fragment_cancel)?.setOnProtectClickListener {
+        view.findViewById<View?>(R.id.bottom_sheet_dialog_fragment_cancel)?.setOnSingleClickListener {
             cancel()
         }
 
-        view.findViewById<View?>(R.id.bottom_sheet_dialog_fragment_ok)?.setOnProtectClickListener {
+        view.findViewById<View?>(R.id.bottom_sheet_dialog_fragment_ok)?.setOnSingleClickListener {
             ok()
         }
     }

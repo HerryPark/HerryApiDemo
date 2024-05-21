@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<!--    <color name="km5_dg6">#FCFCFC</color>-->
+
+    <!-- https://www.figma.com/file/f18C8ASGS4SBkQqWKRrvif/%5B_General_%5D_KM_Uesr_Interface_Doc_v0.0?type=design&node_id=29_12011&mode=design&t=n288QLgp2Lq9lU9o_4 -->
+    <color name="primary">#FF0E0E0E</color>
+    <color name="on_primary">#FFF0F0F0</color>
+    <color name="on_primary_80">#CCF0F0F0</color>
+    <color name="on_primary_70">#B3F0F0F0</color>
+    <color name="on_primary_60">#99F0F0F0</color>
+    <color name="on_primary_40">#66F0F0F0</color>
+    <color name="on_primary_30">#4DF0F0F0</color>
+    <color name="on_primary_20">#33F0F0F0</color>
+    <color name="on_primary_15">#26F0F0F0</color>
+    <color name="on_primary_10">#1AF0F0F0</color>
+
+    <color name="secondary">#FF141414</color>
+    <color name="on_secondary">#FFCCCCCC</color>
+
+    <color name="tertiary">#FF202020</color>
+    <color name="on_tertiary">#FF808080</color>
+
+    <color name="bk_fix">#FF000000</color>
+    <color name="bk_fix_80">#CC000000</color>
+    <color name="bk_fix_70">#B3000000</color>
+    <color name="bk_fix_60">#99000000</color>
+    <color name="bk_fix_40">#66000000</color>
+    <color name="bk_fix_35">#59000000</color>
+    <color name="bk_fix_30">#4D000000</color>
+    <color name="bk_fix_25">#40000000</color>
+    <color name="bk_fix_15">#26000000</color>
+    <color name="bk_fix_10">#1A000000</color>
+
+    <color name="wt_fix">#FFFFFFFF</color>
+    <color name="wt_fix_80">#CCFFFFFF</color>
+    <color name="wt_fix_70">#B3FFFFFF</color>
+    <color name="wt_fix_60">#99FFFFFF</color>
+    <color name="wt_fix_40">#66FFFFFF</color>
+    <color name="wt_fix_30">#4DFFFFFF</color>
+    <color name="wt_fix_25">#40FFFFFF</color>
+    <color name="wt_fix_15">#26FFFFFF</color>
+    <color name="wt_fix_10">#1AFFFFFF</color>
+
+    <color name="solid_rd">#FFFF453A</color>
+    <color name="solid_pk">#FFFF375F</color>
+    <color name="solid_or">#FFFF9F0A</color>
+    <color name="solid_yl">#FFFFD60A</color>
+    <color name="solid_gn">#FF30D158</color>
+    <color name="solid_mt">#FF63E6E2</color>
+    <color name="solid_bl">#FF0A84FF</color>
+    <color name="solid_bl_50">#800A84FF</color>
+    <color name="solid_in">#FF5E5CE6</color>
+    <color name="solid_cy">#FF64D2FF</color>
+    <color name="solid_bw">#FFA2845E</color>
+    <color name="solid_pu">#FFBF5AF2</color>
+    <color name="solid_gy">#FFBBC5D1</color>
+
+    <color name="accent">#FF777DFF</color>
+    <color name="accent_75">#BF777DFF</color>
+    <color name="accent_50">#80777DFF</color>
+    <color name="accent_25">#40777DFF</color>
+    <color name="accent_10">#1A777DFF</color>
+    <color name="accent_txt">#FF878CFF</color>
+    <color name="accent_txt_75">#BF878CFF</color>
+    <color name="accent_txt_50">#80878CFF</color>
+    <color name="accent_txt_25">#40878CFF</color>
+    <color name="accent_txt_10">#1A878CFF</color>
+    <!-- "gradient" Start: gradient_start, End: gradient_end -->
+    <color name="gradient_start">#FF9797FB</color>
+    <color name="gradient_end">#FF97D7FF</color>
+    <color name="gradient_75_start">#BF9797FB</color>
+    <color name="gradient_75_end">#BF97D7FF</color>
+    <color name="background_subscribe_start">#121314</color>
+    <color name="background_subscribe_end">#3A3A5A</color>
+
+    <color name="surface_sheet_background">#FF202020</color>
+</resources>

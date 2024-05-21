@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:transitionGroup="true"
-    tools:ignore="HardcodedText,SpUsage">
+    tools:ignore="HardcodedText,SpUsage"
+    tools:viewBindingIgnore="true">
 
     <include
         android:id="@+id/timeline_fragment_title"

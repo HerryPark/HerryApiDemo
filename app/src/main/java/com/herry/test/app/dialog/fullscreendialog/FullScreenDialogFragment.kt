@@ -6,7 +6,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.libs.widget.view.dialog.AppDialog
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
@@ -63,11 +63,11 @@ class FullScreenDialogFragment : BaseNavFragment() {
             bindFormModel(context, TitleBarForm.Model(title = "Full Screen Dialog (Fragment)", backEnable = true))
         }
 
-        view.findViewById<View?>(R.id.bottom_sheet_dialog_fragment_cancel)?.setOnProtectClickListener {
+        view.findViewById<View?>(R.id.bottom_sheet_dialog_fragment_cancel)?.setOnSingleClickListener {
             cancel()
         }
 
-        view.findViewById<View?>(R.id.bottom_sheet_dialog_fragment_ok)?.setOnProtectClickListener {
+        view.findViewById<View?>(R.id.bottom_sheet_dialog_fragment_ok)?.setOnSingleClickListener {
             ok()
         }
     }

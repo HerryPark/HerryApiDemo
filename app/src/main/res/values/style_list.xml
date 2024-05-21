@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppList.Item" parent="">
+        <item name="android:background">@drawable/drawables_e_transparent_fp_onprimary10_s_onprimary10_d_transparent</item>
+        <item name="android:foreground">@drawable/ripple_bg_onprimary20</item>
+    </style>
+
+    <style name="AppList.Item.Radio" parent="AppList.Item">
+        <item name="android:background">@drawable/drawables_e_transparent_fp_onprimary10_d_transparent</item>
+    </style>
+</resources>

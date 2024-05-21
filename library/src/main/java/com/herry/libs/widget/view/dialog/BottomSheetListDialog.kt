@@ -27,7 +27,7 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.extension.setImage
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import java.io.Serializable
 
 open class BottomSheetListDialog
@@ -189,7 +189,7 @@ class BottomSheetListItemForm(
         val icon: ImageView? = view.findViewById(R.id.bottom_sheet_list_item_icon)
 
         init {
-            view.setOnProtectClickListener {
+            view.setOnSingleClickListener {
                 NodeRecyclerForm.getBindNode(this@BottomSheetListItemForm, this@Holder)?.let { node ->
                     onClick(node.model)
                 }
@@ -226,7 +226,7 @@ class BottomSheetListSingleChoiceItemForm(
         val icon: ImageView? = view.findViewById(R.id.bottom_sheet_list_item_icon)
 
         init {
-            view.setOnProtectClickListener {
+            view.setOnSingleClickListener {
                 NodeRecyclerForm.getBindNode(this@BottomSheetListSingleChoiceItemForm, this@Holder)?.let { node ->
                     onClick(node.model)
                 }

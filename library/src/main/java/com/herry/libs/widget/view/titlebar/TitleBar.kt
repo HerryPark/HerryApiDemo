@@ -212,7 +212,7 @@ class TitleBar : FrameLayout {
             val textColor = attr.getColorStateList(R.styleable.TitleBar_actionBadgeTextColor)
             var textSize = attr.getDimensionPixelSize(R.styleable.TitleBar_actionBadgeTextSize, -1)
             if (-1 == textSize) {
-                textSize = ViewUtil.convertDpToPixel(10f).toInt()
+                textSize = ViewUtil.convertDpToPx(10f).toInt()
             }
 
             // text style
@@ -345,7 +345,7 @@ class TitleBar : FrameLayout {
                 // title size
                 var titleSize = attr.getDimensionPixelSize(R.styleable.TitleBar_subActionTextSize, -1)
                 if (0 > titleSize) {
-                    titleSize = ViewUtil.convertDpToPixel(18f).toInt()
+                    titleSize = ViewUtil.convertDpToPx(18f).toInt()
                 }
                 secondActionDefaultView.setTextSize(TypedValue.COMPLEX_UNIT_PX, titleSize.toFloat())
 
@@ -389,7 +389,7 @@ class TitleBar : FrameLayout {
                 // title size
                 var titleSize = attr.getDimensionPixelSize(R.styleable.TitleBar_subActionTextSize, -1)
                 if (-1 == titleSize) {
-                    titleSize = ViewUtil.convertDpToPixel(18f).toInt()
+                    titleSize = ViewUtil.convertDpToPx(18f).toInt()
                 }
                 if (0 <= titleSize) {
                     thirdActionDefaultView.setTextSize(TypedValue.COMPLEX_UNIT_PX, titleSize.toFloat())
@@ -435,7 +435,7 @@ class TitleBar : FrameLayout {
                 // title size
                 var titleSize = attr.getDimensionPixelSize(R.styleable.TitleBar_subActionTextSize, -1)
                 if (-1 == titleSize) {
-                    titleSize = ViewUtil.convertDpToPixel(18f).toInt()
+                    titleSize = ViewUtil.convertDpToPx(18f).toInt()
                 }
                 if (0 <= titleSize) {
                     fourthActionDefaultView.setTextSize(TypedValue.COMPLEX_UNIT_PX, titleSize.toFloat())
@@ -472,7 +472,7 @@ class TitleBar : FrameLayout {
                 // title size
                 var titleSize = attr.getDimensionPixelSize(R.styleable.TitleBar_menuActionTextSize, -1)
                 if (-1 == titleSize) {
-                    titleSize = ViewUtil.convertDpToPixel(14f).toInt()
+                    titleSize = ViewUtil.convertDpToPx(14f).toInt()
                 }
                 if (0 <= titleSize) {
                     menuActionView.setTextSize(TypedValue.COMPLEX_UNIT_PX, titleSize.toFloat())
@@ -503,7 +503,7 @@ class TitleBar : FrameLayout {
             mMenuItemLayoutRes = attr.getResourceId(R.styleable.TitleBar_menuWindowItemLayout, R.layout.hcs_titlebar_sub_menu_list_item)
             var menuWindowWidth = attr.getLayoutDimension(R.styleable.TitleBar_menuWindowWidth, 0)
             if (0 == menuWindowWidth) {
-                menuWindowWidth = ViewUtil.convertDpToPixel(143f).toInt()
+                menuWindowWidth = ViewUtil.convertDpToPx(143f).toInt()
             }
             if (0 > menuWindowWidth) {
                 if (ViewGroup.LayoutParams.MATCH_PARENT != menuWindowWidth
@@ -583,7 +583,7 @@ class TitleBar : FrameLayout {
                 // title size
                 var titleSize = attr.getDimensionPixelSize(R.styleable.TitleBar_mainTitleTextSize, -1)
                 if (-1 == titleSize) {
-                    titleSize = ViewUtil.convertDpToPixel(20f).toInt()
+                    titleSize = ViewUtil.convertDpToPx(20f).toInt()
                 }
                 if (0 <= titleSize) {
                     titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, titleSize.toFloat())
@@ -609,7 +609,7 @@ class TitleBar : FrameLayout {
                 // set shadow height
                 var shadowHeight = attr.getDimensionPixelSize(R.styleable.TitleBar_shadowHeight, -1)
                 if (-1 == shadowHeight) {
-                    shadowHeight = ViewUtil.convertDpToPixel(1f).toInt()
+                    shadowHeight = ViewUtil.convertDpToPx(1f).toInt()
                 }
                 if (0 <= shadowHeight) {
                     val layoutParams = titleShadowView.layoutParams

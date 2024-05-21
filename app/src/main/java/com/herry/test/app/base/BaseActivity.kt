@@ -21,10 +21,10 @@ import com.herry.libs.util.listener.ListenerRegistry
 abstract class BaseActivity : ACActivity() {
 
     @IdRes
-    open fun getHostViewID(): Int? = null
+    open fun getHostViewId(): Int? = null
 
     @LayoutRes
-    open fun getContentViewID(): Int = -1
+    protected open fun getContentViewId(): Int = 0
 
     open fun getStartFragment(): Fragment? = null
 
@@ -40,23 +40,30 @@ abstract class BaseActivity : ACActivity() {
         // super.onBackPressed() is deprecated from API 33
         this.onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
-        if (getContentViewID() != -1) {
-            createContentView()
+        val contentViewId = getContentViewId()
+        if (contentViewId != 0) {
+            createContentView(contentViewId)
         }
 
         ViewUtil.setSoftKeyboardVisibilityListener(this, onSoftKeyboardVisibilityListener)
     }
 
-    private fun createContentView() {
-        setContentView(getContentViewID())
+    private fun createContentView(@LayoutRes id: Int) {
+        onPreSetContentView()
+        setContentView(id)
+        onPostSetContentView()
 
         getStartFragment()?.run {
-            AppUtil.setFragment(this@BaseActivity, getHostViewID(),
+            AppUtil.setFragment(this@BaseActivity, getHostViewId(),
                 this,
                 FragmentAddingOption(isReplace = true, isAddToBackStack = true)
             )
         }
     }
+
+    protected open fun onPreSetContentView() { }
+
+    protected open fun onPostSetContentView() { }
 
     override fun onResume() {
         super.onResume()

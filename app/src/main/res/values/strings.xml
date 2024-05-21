@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Herry Api Demo</string>
     <string name="text_more">more</string>
+    <string name="button_cancel">Cancel</string>
 </resources>

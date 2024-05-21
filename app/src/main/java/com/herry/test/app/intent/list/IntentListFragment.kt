@@ -97,10 +97,7 @@ class IntentListFragment : BaseNavView<IntentListContract.View, IntentListContra
         override fun onLayout(): Int = R.layout.main_test_item
 
         override fun onBindModel(context: Context, holder: TestItemForm.Holder, model: IntentListContract.TestItemType) {
-            holder.title?.text = when (model) {
-                IntentListContract.TestItemType.SCHEME_TEST -> "Scheme Intent"
-                IntentListContract.TestItemType.MEDIA_SHARE_TEST -> "Media Share Intent"
-            }
+            holder.title?.text = model.label
         }
     }
 }

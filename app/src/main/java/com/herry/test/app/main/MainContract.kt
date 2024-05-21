@@ -17,22 +17,23 @@ interface MainContract {
         abstract fun moveToScreen(type: TestItemType)
     }
 
-    enum class TestItemType {
-        SCHEME_TEST,
-        GIF_DECODER,
-        CHECKER_LIST,
-        LAYOUT_SAMPLE,
-        PICK,
-        NESTED_FRAGMENTS,
-        NESTED_BOTTOM_NAV_FRAGMENTS,
-        DIALOGS,
-        LIST,
-        SKELETON,
-        RESIZING_UI,
-        SAMPLE_APP,
-        PAINTER,
-        TENSOR_FLOW_LITE,
-        WIDGETS,
-        TIMELINE
+    enum class TestItemType(val label: String) {
+        SCHEME_TEST ("Intent"),
+        GIF_DECODER ("GIF Decoder"),
+        CHECKER_LIST ("Data Checker"),
+        LAYOUT_SAMPLE ("Layout Sample"),
+        PICK ("Pick"),
+        NESTED_FRAGMENTS ("Nested Fragments"),
+        NESTED_BOTTOM_NAV_FRAGMENTS ("Nested Bottom Navigator Fragments"),
+        DIALOGS ("Dialogs"),
+        LIST ("List"),
+        SKELETON ("Skeleton"),
+        RESIZING_UI ("Resizing UI"),
+        SAMPLE_APP ("Sample Application"),
+        PAINTER ("Painter"),
+        TENSOR_FLOW_LITE ("Tensorflow-lite"),
+        WIDGETS ("Widgets"),
+        TIMELINE ("Timeline"),
+        DOWNLOADABLE_FONTS ("Downloadable fonts")
     }
 }

@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
 import com.herry.test.app.sample.repository.database.feed.Feed
 import java.util.*
@@ -23,7 +23,7 @@ class FeedsItemForm(
         val cover: ImageView? = view.findViewById(R.id.feed_list_item_form_cover)
 
         init {
-            container?.setOnProtectClickListener {
+            container?.setOnSingleClickListener {
                 onClickItem?.invoke(this@FeedsItemForm, this)
             }
         }

@@ -15,7 +15,7 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.widget.extension.navigateTo
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.widget.TitleBarForm
@@ -79,7 +79,7 @@ class ListFragment : BaseNavView<ListContract.View, ListContract.Presenter>(), L
             val title: TextView? = view.findViewById(R.id.list_item_name)
 
             init {
-                title?.setOnProtectClickListener {
+                title?.setOnSingleClickListener {
                     NodeRecyclerForm.getBindModel(this@ListItemForm, this@Holder)?.let { type ->
                         onClick.invoke(type)
                     }

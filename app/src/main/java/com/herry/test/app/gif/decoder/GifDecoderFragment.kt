@@ -19,7 +19,7 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.AppUtil
 import com.herry.libs.util.BundleUtil
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.data.GifMediaFileInfoData
@@ -191,7 +191,7 @@ class GifDecoderFragment : BaseNavView<GifDecoderContract.View, GifDecoderContra
             val frame: ImageView? = view.findViewById(R.id.gif_decoder_gif_frame_image)
 
             init {
-                view.setOnProtectClickListener {
+                view.setOnSingleClickListener {
                     NodeRecyclerForm.getBindNode(this@GifFrameForm, this@Holder)?.let { node ->
                         onClick?.let { it(node.getViewPosition(), node.model) }
                     }

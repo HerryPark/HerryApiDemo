@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.configure.SystemUIAppearance
-import com.herry.libs.widget.configure.SystemUIAppearanceColorStyle
 import com.herry.libs.widget.configure.SystemUIAppearances
 import com.herry.libs.widget.configure.SystemUIVisibility
 import com.herry.libs.widget.extension.*
@@ -45,7 +43,7 @@ class CreateFragment: BaseNavFragment() {
         view.findViewById<View>(R.id.create_fragment_setting)?.let { setting ->
             val margins = setting.getViewMargins()
             setting.setViewMarginTop(margins.top + ViewUtil.getStatusBarHeight(context))
-            setting.setOnProtectClickListener {
+            setting.setOnSingleClickListener {
                 navigateTo(destinationId = R.id.setting_fragment)
             }
         }

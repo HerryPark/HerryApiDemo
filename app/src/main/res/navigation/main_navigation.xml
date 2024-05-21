@@ -156,4 +156,11 @@
         android:id="@+id/timeline_fragment"
         android:name="com.herry.test.app.timeline.TimelineFragment"
         tools:layout="@layout/timeline_fragment" />
+
+
+    <fragment
+        android:id="@+id/downloadable_font_fragment"
+        android:name="com.herry.test.app.font.downloadable.DownloadableFontFragment"
+
+        />
 </navigation>

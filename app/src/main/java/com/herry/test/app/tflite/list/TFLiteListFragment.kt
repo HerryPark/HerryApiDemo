@@ -16,7 +16,7 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.navigateTo
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.widget.TitleBarForm
@@ -81,7 +81,7 @@ class TFLiteListFragment : BaseNavView<TFLiteListContract.View, TFLiteListContra
         inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
             val title: TextView? = view.findViewById(R.id.main_test_item_title)
             init {
-                view.setOnProtectClickListener {
+                view.setOnSingleClickListener {
                     onClickItem(this@ListItemForm, this@Holder)
                 }
             }

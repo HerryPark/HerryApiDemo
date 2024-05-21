@@ -179,6 +179,10 @@ class AppButton: FrameLayout {
         val buttonWidth = attr.getLayoutDimension(R.styleable.AppButton_abWidth, ViewGroup.LayoutParams.MATCH_PARENT)
         val buttonHeight = attr.getLayoutDimension(R.styleable.AppButton_abHeight, ViewGroup.LayoutParams.MATCH_PARENT)
         view.setViewSize(buttonWidth, buttonHeight)
+        val buttonMinWidth = attr.getDimensionPixelSize(R.styleable.AppButton_abMinWidth, 0)
+        view.minimumWidth = buttonMinWidth
+        val buttonMinHeight = attr.getDimensionPixelSize(R.styleable.AppButton_abMinHeight, 0)
+        view.minimumHeight = buttonMinHeight
 
         // button radius
         view.radius = attr.getDimensionPixelSize(R.styleable.AppButton_abCornerRadius, 0).toFloat()
@@ -244,6 +248,10 @@ class AppButton: FrameLayout {
         val buttonWidth = attr.getLayoutDimension(R.styleable.AppButton_abWidth, ViewGroup.LayoutParams.MATCH_PARENT)
         val buttonHeight = attr.getLayoutDimension(R.styleable.AppButton_abHeight, ViewGroup.LayoutParams.MATCH_PARENT)
         view.setViewSize(buttonWidth, buttonHeight)
+        val buttonMinWidth = attr.getDimensionPixelSize(R.styleable.AppButton_abMinWidth, 0)
+        view.minWidth = buttonMinWidth
+        val buttonMinHeight = attr.getDimensionPixelSize(R.styleable.AppButton_abMinHeight, 0)
+        view.minHeight = buttonMinHeight
 
         // sets button paddings
         val buttonPadding = attr.getDimensionPixelSize(R.styleable.AppButton_abPadding, UNDEFINED_PADDING)
@@ -838,5 +846,9 @@ class AppButton: FrameLayout {
     override fun setEnabled(enabled: Boolean) {
         ViewUtil.setViewEnabledWithChildView(containerView, enabled)
         super.setEnabled(enabled)
+    }
+
+    fun setCornerRadius(radius: Float) {
+        containerView?.radius = radius
     }
 }

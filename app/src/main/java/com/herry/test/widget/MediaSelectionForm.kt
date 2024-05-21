@@ -5,7 +5,7 @@ import android.view.View
 import android.widget.TextView
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
 
 open class MediaSelectionForm(
@@ -40,23 +40,23 @@ open class MediaSelectionForm(
         val permission: TextView? = view.findViewById(R.id.media_selection_form_permission)
 
         init {
-            images?.setOnProtectClickListener {
+            images?.setOnSingleClickListener {
                 onClickMediaType(MediaType.IMAGES_ONLY)
             }
 
-            videos?.setOnProtectClickListener {
+            videos?.setOnSingleClickListener {
                 onClickMediaType(MediaType.VIDEOS_ONLY)
             }
 
-            visualAll?.setOnProtectClickListener {
+            visualAll?.setOnSingleClickListener {
                 onClickMediaType(MediaType.VISUAL_ALL)
             }
 
-            audios?.setOnProtectClickListener {
+            audios?.setOnSingleClickListener {
                 onClickMediaType(MediaType.AUDIOS_ONLY)
             }
 
-            mediaAll?.setOnProtectClickListener {
+            mediaAll?.setOnSingleClickListener {
                 onClickMediaType(MediaType.MEDIA_ALL)
             }
         }

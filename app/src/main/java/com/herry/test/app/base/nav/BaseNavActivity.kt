@@ -48,10 +48,19 @@ abstract class BaseNavActivity : BaseActivity() {
         }
 
         navController = navHostFragment?.findNavController()
+
+        onSetupStartDestination()
+    }
+
+    protected open fun onSetupStartDestination() {
+        setStartDestination(getStartDestination())
+    }
+
+    protected fun setStartDestination(@IdRes startDestination: Int) {
         navController?.let {
             val navGraph = it.navInflater.inflate(getGraph())
-            if (getStartDestination() != 0) {
-                navGraph.setStartDestination(getStartDestination())
+            if (startDestination != 0) {
+                navGraph.setStartDestination(startDestination)
             }
             it.setGraph(navGraph, getDefaultBundle())
         }
@@ -83,6 +92,7 @@ abstract class BaseNavActivity : BaseActivity() {
         return super.onSupportNavigateUp()
     }
 
+    @Deprecated("Deprecated in Java")
     final override fun onBackPressed() {
         if (navigateUpResult()) {
             if (!navigateUp()) {
@@ -193,8 +203,15 @@ abstract class BaseNavActivity : BaseActivity() {
         return if (intent != null) intent.getBundleExtra(NavMovement.NAV_BUNDLE) else null
     }
 
-    private fun getStartDestination(): Int {
-        return if (intent != null) intent.getIntExtra(NavMovement.NAV_START_DESTINATION, 0) else 0
+    @IdRes
+    protected open fun getStartDestination(): Int {
+        var startDestination = intent?.getIntExtra(NavMovement.NAV_START_DESTINATION, 0) ?: 0
+        if (startDestination == 0) {
+            val navGraph = navController?.navInflater?.inflate(getGraph())
+            startDestination = navGraph?.startDestinationId ?: 0
+        }
+
+        return startDestination
     }
 
     @Suppress("unused")

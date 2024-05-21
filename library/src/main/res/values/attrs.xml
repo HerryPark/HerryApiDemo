@@ -639,6 +639,9 @@
             <enum name="match_parent" value="-1" />
             <enum name="wrap_content" value="-2" />
         </attr>
+        <attr name="abMinWidth" format="dimension" />
+        <attr name="abMinHeight" format="dimension" />
+
         <!--        <attr name="sbMinWidth" format="dimension" />-->
         <!--        <attr name="sbMinHeight" format="dimension" />-->
         <attr name="abCornerRadius" format="dimension"/>

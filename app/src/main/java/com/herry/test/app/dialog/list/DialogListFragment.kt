@@ -18,7 +18,7 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.widget.extension.launchWhenViewResumed
 import com.herry.libs.widget.extension.navigateTo
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.libs.widget.view.dialog.BottomSheetListDialog
 import com.herry.libs.widget.view.dialog.BottomSheetListSingleChoiceItemForm
 import com.herry.test.R
@@ -157,7 +157,7 @@ class DialogListFragment : BaseNavView<DialogListContract.View, DialogListContra
             val title: TextView? = view.findViewById(R.id.list_item_name)
 
             init {
-                view.setOnProtectClickListener {
+                view.setOnSingleClickListener {
                     onClickItem(this@ListItemForm, this@Holder)
                 }
             }

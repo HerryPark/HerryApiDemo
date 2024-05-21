@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
-import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 
 class HomeBottomNavControlItemForm(

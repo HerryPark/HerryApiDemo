@@ -16,7 +16,7 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.libs.widget.view.recyclerview.scroller.RecyclerViewAlphabetIndexerScrollerView
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
@@ -93,7 +93,7 @@ class IndexerListFragment : BaseNavView<IndexerListContract.View, IndexerListCon
             val title: TextView? = view.findViewById(R.id.list_item_name)
 
             init {
-                view.setOnProtectClickListener {
+                view.setOnSingleClickListener {
                     NodeRecyclerForm.getBindModel(this@ListItemForm, this@Holder)?.let { model ->
                         onClick.invoke(model)
                     }

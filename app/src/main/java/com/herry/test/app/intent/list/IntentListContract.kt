@@ -17,8 +17,8 @@ interface IntentListContract {
         abstract fun moveToScreen(type: TestItemType)
     }
 
-    enum class TestItemType {
-        SCHEME_TEST,
-        MEDIA_SHARE_TEST
+    enum class TestItemType(val label: String) {
+        SCHEME_TEST ("Scheme Intent"),
+        MEDIA_SHARE_TEST ("Media Share Intent")
     }
 }

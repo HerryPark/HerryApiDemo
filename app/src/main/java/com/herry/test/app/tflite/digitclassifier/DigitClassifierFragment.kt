@@ -18,7 +18,7 @@ import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setImage
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.painter.PainterFragment
@@ -53,7 +53,7 @@ class DigitClassifierFragment : BaseNavView<DigitClassifierContract.View, DigitC
         }
 
         loadImageButton = view.findViewById<View?>(R.id.image_classifier_fragment_load_image)?.apply {
-            this.setOnProtectClickListener {
+            this.setOnSingleClickListener {
                 Popup(requireActivity()).apply {
                     setTitle("Choice from")
                     setItems(
@@ -91,7 +91,7 @@ class DigitClassifierFragment : BaseNavView<DigitClassifierContract.View, DigitC
         loadedImageView = view.findViewById(R.id.image_classifier_fragment_image)
 
         classifyView = view.findViewById<View?>(R.id.image_classifier_fragment_classify)?.apply {
-            this.setOnProtectClickListener {
+            this.setOnSingleClickListener {
                 loadedImageView?.let { imageView ->
                     (imageView.drawable as?BitmapDrawable)?.bitmap?.let { bitmap ->
                         presenter?.classify(bitmap)
@@ -100,7 +100,7 @@ class DigitClassifierFragment : BaseNavView<DigitClassifierContract.View, DigitC
             }
         }
         clearView = view.findViewById<View?>(R.id.image_classifier_fragment_clear)?.apply {
-            this.setOnProtectClickListener {
+            this.setOnSingleClickListener {
                 presenter?.clear()
             }
         }
