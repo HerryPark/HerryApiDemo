@@ -62,7 +62,8 @@ class WidgetsFragment: BaseNavView<WidgetsContract.View, WidgetsContract.Present
             list.add(WidgetItemForm { item ->
                 navigateTo(destinationId = when (item) {
                     WidgetsContract.Widget.SPINNERS -> R.id.spinners_fragment
-                    WidgetsContract.Widget.STYLEABLE_BUTTONS -> R.id.styleable_buttons_fragment
+                    WidgetsContract.Widget.APP_BUTTONS -> R.id.app_buttons_fragment
+                    WidgetsContract.Widget.TITLE_FORM -> R.id.title_form_fragment
                 })
             })
         }

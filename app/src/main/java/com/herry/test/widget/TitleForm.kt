@@ -306,7 +306,7 @@ open class TitleForm(
     /* ---------------------------------------------------------------
      * the action button
      * --------------------------------------------------------------- */
-    fun setActionButton(to: ActionButton, @DrawableRes icon: Int? = null, @StringRes text: Int? = null, @StyleRes styleRes: Int): View? {
+    fun setActionButton(to: ActionButton, @DrawableRes icon: Int? = null, @StringRes text: Int? = null, @StyleRes styleRes: Int): AppButton? {
         val context = holder?.context ?: return null
         if ((icon == null || icon == 0) && (text == null || text == 0)) return null
         return createActionButton(context, to, styleRes)?.apply {
@@ -315,7 +315,7 @@ open class TitleForm(
         }
     }
 
-    fun setActionButton(to: ActionButton, icon: Drawable? = null, text: String? = null, @StyleRes styleRes: Int): View? {
+    fun setActionButton(to: ActionButton, icon: Drawable? = null, text: String? = null, @StyleRes styleRes: Int): AppButton? {
         val context = holder?.context ?: return null
         if ((icon == null) && (text == null)) return null
         return createActionButton(context, to, styleRes)?.apply {
@@ -327,7 +327,7 @@ open class TitleForm(
     /* ---------------------------------------------------------------
      * the icon action button
      * --------------------------------------------------------------- */
-    fun setIconActionButton(to: ActionButton, @DrawableRes icon: Int, @StyleRes styleRes: Int = R.style.AppButton_Icon): View? {
+    fun setIconActionButton(to: ActionButton, @DrawableRes icon: Int, @StyleRes styleRes: Int = R.style.AppButton_Icon): AppButton? {
         val context = holder?.context ?: return null
         if (icon == 0) return null
 
@@ -336,7 +336,7 @@ open class TitleForm(
         }
     }
 
-    fun setIconActionButton(to: ActionButton, icon: Drawable?, @StyleRes styleRes: Int = R.style.AppButton_Icon): View? {
+    fun setIconActionButton(to: ActionButton, icon: Drawable?, @StyleRes styleRes: Int = R.style.AppButton_Icon): AppButton? {
         val context = holder?.context ?: return null
         return createActionButton(context, to, styleRes)?.apply {
             this.setIcon(icon)
@@ -346,14 +346,14 @@ open class TitleForm(
     /* ---------------------------------------------------------------
      * the text action button
      * --------------------------------------------------------------- */
-    fun setTextActionButton(to: ActionButton, @StringRes text: Int, @StyleRes styleRes: Int = R.style.AppButton_Standard_Fill_Solid): View? {
+    fun setTextActionButton(to: ActionButton, @StringRes text: Int, @StyleRes styleRes: Int = R.style.AppButton_Standard_Fill_Solid): AppButton? {
         val context = holder?.context ?: return null
         return createActionButton(context, to, styleRes)?.apply {
             this.setText(text)
         }
     }
 
-    fun setTextActionButton(to: ActionButton, text: String, @StyleRes styleRes: Int = R.style.AppButton_Standard_Fill_Solid): View? {
+    fun setTextActionButton(to: ActionButton, text: String, @StyleRes styleRes: Int = R.style.AppButton_Standard_Fill_Solid): AppButton? {
         val context = holder?.context ?: return null
         return createActionButton(context, to, styleRes)?.apply {
             this.setText(text)
@@ -381,18 +381,17 @@ open class TitleForm(
         }
     }
 
-    fun getActionButton(to: ActionButton): AppButton? {
-        return getActionButton(getActionButtonContainer(to)) as? AppButton
+    fun getActionButton(to: ActionButton): View? {
+        return getActionButton(getActionButtonContainer(to))
     }
 
     private fun getActionButton(container: ViewGroup?): View? {
         return container?.getChildAt(0)
     }
 
-    fun setActionButtonIcon(to: ActionButton, @DrawableRes icon: Int): AppButton? {
-        val actionButton = getActionButton(to)
+    fun setActionButtonIcon(to: ActionButton, @DrawableRes icon: Int) {
+        val actionButton = getActionButton(to) as? AppButton
         actionButton?.setIcon(icon)
-        return actionButton
     }
 
     fun removeActionButton(to: ActionButton) {

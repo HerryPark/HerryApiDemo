@@ -7,6 +7,7 @@ import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.LayoutRes
 import androidx.annotation.TransitionRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -22,7 +23,11 @@ import com.herry.libs.widget.configure.SystemUIAppearances
 import com.herry.libs.widget.view.viewgroup.LoadingCountView
 import java.lang.ref.WeakReference
 
-open class BaseFragment : DialogFragment() {
+open class BaseFragment : DialogFragment {
+    constructor() : super()
+
+    constructor(@LayoutRes contentLayoutId: Int) : super(contentLayoutId)
+
     internal open var activityCaller: AC? = null
 
     internal val fragmentTag: String = createTag()

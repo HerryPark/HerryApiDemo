@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.DialogFragmentNavigator
 import androidx.navigation.fragment.findNavController
@@ -20,7 +21,11 @@ import com.herry.test.app.base.BaseFragment
 import kotlinx.coroutines.*
 
 @Suppress("SameParameterValue", "KDocUnresolvedReference")
-open class BaseNavFragment : BaseFragment(), NavMovement {
+open class BaseNavFragment : BaseFragment, NavMovement {
+
+    constructor() : super()
+
+    constructor(@LayoutRes contentLayoutId: Int) : super(contentLayoutId)
 
     companion object {
         private const val NavigationID = "NavigationID"

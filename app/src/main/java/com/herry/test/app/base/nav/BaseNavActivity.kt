@@ -72,7 +72,7 @@ abstract class BaseNavActivity : BaseActivity() {
     @IdRes
     protected open fun getNavHostFragment(): Int = R.id.activity_navigation_fragment
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
         val bundle = getDefaultBundle()

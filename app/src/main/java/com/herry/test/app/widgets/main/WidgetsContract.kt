@@ -16,6 +16,7 @@ interface WidgetsContract {
 
     enum class Widget {
         SPINNERS,
-        STYLEABLE_BUTTONS
+        APP_BUTTONS,
+        TITLE_FORM
     }
 }

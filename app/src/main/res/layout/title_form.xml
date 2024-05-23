@@ -22,6 +22,8 @@
             android:textSize="16dp"
             android:textColor="@color/on_primary"
             android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
             app:autoSizeMaxTextSize="16dp"
             app:autoSizeMinTextSize="8dp"
             app:autoSizeStepGranularity="1dp"

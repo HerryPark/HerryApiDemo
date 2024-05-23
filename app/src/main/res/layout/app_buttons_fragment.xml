@@ -10,7 +10,7 @@
     tools:ignore="HardcodedText,MissingDefaultResource,SpUsage">
 
     <include
-        android:id="@+id/styleable_buttons_fragment_title"
+        android:id="@+id/app_buttons_fragment_title"
         layout="@layout/title_bar_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -22,14 +22,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/styleable_buttons_fragment_title"
+        app:layout_constraintTop_toBottomOf="@id/app_buttons_fragment_title"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/styleable_buttons_fragment_title"
+            app:layout_constraintTop_toBottomOf="@id/app_buttons_fragment_title"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -45,7 +45,7 @@
                 android:text="AppButton Programmatically"/>
 
             <LinearLayout
-                android:id="@+id/styleable_buttons_fragment_programmatically_container"
+                android:id="@+id/app_buttons_fragment_programmatically_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"/>
@@ -77,7 +77,7 @@
                     android:text="normal"/>
 
                 <com.herry.libs.widget.view.AppButton
-                    android:id="@+id/styleable_buttons_fragment_button_1"
+                    android:id="@+id/app_buttons_fragment_button_1"
                     style="@style/AppButton.Subscribe"
                     android:layout_width="44dp"
                     android:layout_height="44dp"
@@ -118,7 +118,7 @@
                         android:text="normal"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_icon_normal"
+                        android:id="@+id/app_buttons_fragment_button_icon_normal"
                         style="@style/AppButton.Icon"
                         app:abIconSrc="@drawable/ic_settings"
                         android:layout_width="44dp"
@@ -141,7 +141,7 @@
                         android:text="selected"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_icon_selected"
+                        android:id="@+id/app_buttons_fragment_button_icon_selected"
                         style="@style/AppButton.Icon"
                         android:layout_width="44dp"
                         android:layout_height="44dp"
@@ -164,7 +164,7 @@
                         android:text="disabled"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_icon_disabled"
+                        android:id="@+id/app_buttons_fragment_button_icon_disabled"
                         style="@style/AppButton.Icon"
                         android:layout_width="44dp"
                         android:layout_height="44dp"
@@ -208,7 +208,7 @@
                         android:text="normal"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_standard"
+                        android:id="@+id/app_buttons_fragment_button_standard"
                         style="@style/AppButton.Standard.Outline"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -232,7 +232,7 @@
                         android:text="disabled"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_standard_disabled"
+                        android:id="@+id/app_buttons_fragment_button_standard_disabled"
                         style="@style/AppButton.Standard.Outline"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -274,7 +274,7 @@
                         android:text="normal"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_standard_fill_sold"
+                        android:id="@+id/app_buttons_fragment_button_standard_fill_sold"
                         style="@style/AppButton.Standard.Fill.Solid"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -297,7 +297,7 @@
                         android:text="disabled"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_standard_fill_sold_disabled"
+                        android:id="@+id/app_buttons_fragment_button_standard_fill_sold_disabled"
                         style="@style/AppButton.Standard.Fill.Solid"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -341,7 +341,7 @@
                         android:text="normal"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_standard_fill_accent"
+                        android:id="@+id/app_buttons_fragment_button_standard_fill_accent"
                         style="@style/AppButton.Standard.Fill.Accent"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -364,7 +364,7 @@
                         android:text="disabled"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_standard_fill_accent_disabled"
+                        android:id="@+id/app_buttons_fragment_button_standard_fill_accent_disabled"
                         style="@style/AppButton.Standard.Fill.Accent"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -408,7 +408,7 @@
                         android:text="normal"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_standard_fill_gradient_accent"
+                        android:id="@+id/app_buttons_fragment_button_standard_fill_gradient_accent"
                         style="@style/AppButton.Standard.Fill.AccentGradient"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -431,7 +431,7 @@
                         android:text="disabled"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_standard_fill_gradient_accent_disabled"
+                        android:id="@+id/app_buttons_fragment_button_standard_fill_gradient_accent_disabled"
                         style="@style/AppButton.Standard.Fill.AccentGradient"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -475,7 +475,7 @@
                         android:text="normal"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_text_only"
+                        android:id="@+id/app_buttons_fragment_button_text_only"
                         style="@style/AppButton.TextOnly"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -498,7 +498,7 @@
                         android:text="disabled"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_text_only_disabled"
+                        android:id="@+id/app_buttons_fragment_button_text_only_disabled"
                         style="@style/AppButton.TextOnly"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -541,7 +541,7 @@
                         android:text="normal"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_small"
+                        android:id="@+id/app_buttons_fragment_button_small"
                         style="@style/AppButton.Small.Outline"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -565,7 +565,7 @@
                         android:text="disabled"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_small_disabled"
+                        android:id="@+id/app_buttons_fragment_button_small_disabled"
                         style="@style/AppButton.Small.Outline"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -608,7 +608,7 @@
                         android:text="normal"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_small_fill_accent"
+                        android:id="@+id/app_buttons_fragment_button_small_fill_accent"
                         style="@style/AppButton.Small.Fill.Accent"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -632,7 +632,7 @@
                         android:text="disabled"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_small_fill_accent_disabled"
+                        android:id="@+id/app_buttons_fragment_button_small_fill_accent_disabled"
                         style="@style/AppButton.Small.Fill.Accent"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
@@ -676,7 +676,7 @@
                         android:text="normal"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_large"
+                        android:id="@+id/app_buttons_fragment_button_large"
                         style="@style/AppButton.Large.Outline"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -701,7 +701,7 @@
                         android:text="disabled"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_large_disabled"
+                        android:id="@+id/app_buttons_fragment_button_large_disabled"
                         style="@style/AppButton.Large.Outline"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -745,7 +745,7 @@
                         android:text="normal"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_large_fill_solid"
+                        android:id="@+id/app_buttons_fragment_button_large_fill_solid"
                         style="@style/AppButton.Large.Fill.Solid"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -768,7 +768,7 @@
                         android:text="disabled"/>
 
                     <com.herry.libs.widget.view.AppButton
-                        android:id="@+id/styleable_buttons_fragment_button_large_fill_solid_disabled"
+                        android:id="@+id/app_buttons_fragment_button_large_fill_solid_disabled"
                         style="@style/AppButton.Large.Fill.Solid"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
