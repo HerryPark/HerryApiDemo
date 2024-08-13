@@ -12,6 +12,7 @@ interface ListContract {
     enum class Type {
         FAST_SCROLLER,
         ENDLESS,
-        INDEXER
+        INDEXER,
+        INFINITE_LINEAR_HORIZONTAL
     }
 }

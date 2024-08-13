@@ -18,14 +18,43 @@ import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
-import android.view.*
-import android.widget.*
-import androidx.annotation.*
+import android.view.ContextThemeWrapper
+import android.view.Gravity
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Checkable
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ListAdapter
+import android.widget.ListView
+import android.widget.TextView
+import androidx.annotation.ArrayRes
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
+import androidx.annotation.IntDef
+import androidx.annotation.LayoutRes
+import androidx.annotation.Px
+import androidx.annotation.StringRes
+import androidx.annotation.StyleRes
+import androidx.annotation.StyleableRes
 import androidx.appcompat.app.AppCompatDialog
 import androidx.core.view.isVisible
 import androidx.core.view.setMargins
 import com.herry.libs.R
-import com.herry.libs.widget.extension.*
+import com.herry.libs.widget.extension.addLink
+import com.herry.libs.widget.extension.setLayoutGravity
+import com.herry.libs.widget.extension.setViewHeight
+import com.herry.libs.widget.extension.setViewMargin
+import com.herry.libs.widget.extension.setViewPadding
+import com.herry.libs.widget.extension.setViewSize
+import com.herry.libs.widget.extension.setViewWeight
 import com.herry.libs.widget.view.viewgroup.FrameLayoutEx
 import kotlin.math.roundToInt
 
@@ -241,10 +270,12 @@ open class AppDialog(context: Context?, @StyleRes styleResId: Int = 0, @StyleRes
     }
 
     private fun retrieveAttributes(@StyleRes styleResId: Int) {
+        if (styleResId == 0) return
+
         val displayWidth = getDisplaySize()?.x ?: return
         val displayHeight = getDisplaySize()?.y ?: return
 
-        val attrs = this.context?.theme?.obtainStyledAttributes(styleResId, R.styleable.AppDialog)
+        val attrs = this.context?.obtainStyledAttributes(styleResId, R.styleable.AppDialog)
         if (attrs != null) {
             // sets dialog attributes
 

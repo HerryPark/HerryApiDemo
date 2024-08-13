@@ -1,10 +1,40 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/on_primary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="AppThemeBase" parent="Theme.MaterialComponents.NoActionBar">
+        <!-- status bar style -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/primary</item>
+        <item name="android:windowLightNavigationBar" >true</item>
+        <item name="android:navigationBarColor">@color/primary</item>
+        <item name="android:backgroundDimAmount">0.6</item>
+    </style>
+
+    <!-- Activity Theme -->
+    <style name="AppTheme" parent="AppThemeBase">
+        <item name="android:windowContentOverlay">@null</item>
+
+        <!-- prevents multiple view touches -->
+        <item name="android:windowEnableSplitTouch">false</item>
+        <item name="android:splitMotionEvents">false</item>
+
+        <!-- colors -->
+        <item name="android:windowBackground">@color/primary</item>
+        <item name="android:colorBackground">@color/primary</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorOnSecondary">@color/on_secondary</item>
+        <item name="colorAccent">@color/accent</item>
+
+        <!-- component styles -->
+        <item name="android:textAllCaps">false</item>
+        <!--        <item name="editTextStyle">@style/AppEditText</item>-->
+        <item name="snackbarStyle">@style/AppSnackbar</item>
+        <item name="snackbarButtonStyle">@style/AppSnackbar.Button</item>
+        <item name="snackbarTextViewStyle">@style/AppSnackbar.TextView</item>
+        <!-- edit text input field cursor color -->
+        <item name="colorControlActivated">@color/accent</item>
     </style>
 
     <style name="AppTheme.FullScreen" parent="AppTheme">

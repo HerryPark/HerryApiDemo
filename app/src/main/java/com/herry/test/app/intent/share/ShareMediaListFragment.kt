@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,15 +20,16 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
+import com.herry.libs.permission.PermissionHelper
 import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewEmptyTextForm
 import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewForm
 import com.herry.test.BuildConfig
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
-import com.herry.libs.permission.PermissionHelper
 import com.herry.test.data.MediaFileInfoData
-import com.herry.test.widget.MediaAccessRequestForm
+import com.herry.test.widget.MediaAccessPermissionNoticeForm
+import com.herry.test.widget.MediaAccessPermissionNoticeModel
 import com.herry.test.widget.MediaSelectionForm
 import com.herry.test.widget.Popup
 import com.herry.test.widget.TitleBarForm
@@ -49,10 +51,18 @@ class ShareMediaListFragment : BaseNavView<ShareMediaListContract.View, ShareMed
 
     private var container: View? = null
 
-    private var mediaSelection = MediaSelectionForm(
+    private val mediaSelection = MediaSelectionForm(
         onClickMediaType = { type ->
             presenter?.setMediaType(type)
         }
+    )
+
+    private var mediaAccessPermissionNoticeMotionLayout: MotionLayout? = null
+
+    private val mediaAccessPermissionNoticeForm: MediaAccessPermissionNoticeForm = MediaAccessPermissionNoticeForm(
+        onClickSelection = { presenter?.selectLimitedVisualMedia() },
+        onClickSetting = { AppUtil.showAppInfoSettingScreen(context) },
+        onClickDismiss = { hidePermissionNotice() }
     )
 
     private var mediaListForm = object: RecyclerViewForm() {
@@ -91,7 +101,13 @@ class ShareMediaListFragment : BaseNavView<ShareMediaListContract.View, ShareMed
         }
 
         view.findViewById<View?>(R.id.share_media_list_fragment_media_selection)?.let {
-            mediaSelection.bindHolder(context, it)
+            mediaSelection.bindFormHolder(context, it)
+        }
+
+        mediaAccessPermissionNoticeMotionLayout = view.findViewById(R.id.share_media_list_fragment_access_permission_notice_container)
+
+        view.findViewById<View?>(R.id.share_media_list_fragment_media_access_permission_notice)?.let {
+            mediaAccessPermissionNoticeForm.bindFormHolder(context, it)
         }
     }
 
@@ -111,52 +127,58 @@ class ShareMediaListFragment : BaseNavView<ShareMediaListContract.View, ShareMed
         }
     }
 
-    override fun onRequestPermission(type: PermissionHelper.Type, onGranted: () -> Unit, onDenied: () -> Unit, onBlocked: () -> Unit) {
+    override fun onRequestPermission(type: PermissionHelper.Type, onGranted: (() -> Unit)?, onDenied: (() -> Unit)?, onBlocked: (() -> Unit)?) {
         activityCaller?.call(ACPermission.Caller(
             permissions = type.permissions.toTypedArray(),
             showBlockedDefaultPopup = false,
             onGranted = {
-                onGranted()
+                onGranted?.invoke()
             },
             onDenied = {
-                onDenied()
+                onDenied?.invoke()
             },
             onBlocked = {
-                onBlocked()
+                onBlocked?.invoke()
             }
         ))
     }
 
-    override fun onUpdatedMediaPermission(model: MediaSelectionForm.Model) {
+    override fun onUpdatedAccessPermission(model: MediaAccessPermissionNoticeModel, isShow: Boolean) {
+        val context = this.context ?: return
+        if (isShow) {
+            showPermissionNotice()
+        } else {
+            hidePermissionNotice()
+        }
+
+        mediaAccessPermissionNoticeForm.bindFormModel(context, model)
+    }
+
+    private fun showPermissionNotice() {
+        this.mediaAccessPermissionNoticeMotionLayout?.transitionToEnd()
+    }
+
+    private fun hidePermissionNotice() {
+        this.mediaAccessPermissionNoticeMotionLayout?.transitionToStart()
+        presenter?.setAccessPermissionNoticeVisible(false)
+    }
+
+    override fun onUpdatedMediaSelectionType(model: MediaSelectionForm.Model) {
         val context = context ?: return
+
         mediaSelection.bindFormModel(context, model)
     }
 
-    override fun onLoadedList(count: Int, permitted: PermissionHelper.Permitted) {
+    override fun onLoadedList(count: Int) {
         val context = this.context ?: return
         if (count > 0) {
             mediaListForm.setEmptyView(null)
         } else {
-            when (permitted) {
-                PermissionHelper.Permitted.BLOCKED -> {
-                    MediaAccessRequestForm(onGotoSettings = {
-                        AppUtil.showAppInfoSettingScreen(context)
-                    }).apply {
-                        createFormHolder(context, mediaListForm.getEmptyParentView())
-                        bindFormModel(context, MediaAccessRequestForm.Model())
-                    }.also {
-                        mediaListForm.setEmptyView(it.getView())
-                    }
-                }
-                PermissionHelper.Permitted.GRANTED,
-                PermissionHelper.Permitted.DENIED -> {
-                    RecyclerViewEmptyTextForm().apply {
-                        createFormHolder(context, mediaListForm.getEmptyParentView())
-                        bindFormModel(context, "The media files are not exist or the file access permission is denied")
-                    }.also {
-                        mediaListForm.setEmptyView(it.getView())
-                    }
-                }
+            RecyclerViewEmptyTextForm().apply {
+                createFormHolder(context, mediaListForm.getEmptyParentView())
+                bindFormModel(context, "The media files are not exist or the file access permission is denied")
+            }.also {
+                mediaListForm.setEmptyView(it.getView())
             }
         }
     }

@@ -1,16 +1,21 @@
 package com.herry.test.app.intent.share
 
+import android.Manifest
 import android.content.ContentUris
 import android.content.Context
 import android.provider.MediaStore
+import androidx.annotation.RequiresApi
 import com.herry.libs.helper.ApiHelper
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.nodeview.model.NodeModelGroup
 import com.herry.libs.permission.PermissionHelper
 import com.herry.test.data.MediaFileInfoData
+import com.herry.test.widget.MediaAccessPermissionNoticeModel
+import com.herry.test.widget.MediaAccessPermissionNoticeType
 import com.herry.test.widget.MediaSelectionForm
 import io.reactivex.Observable
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 
 
@@ -31,19 +36,10 @@ class ShareMediaListPresenter : ShareMediaListContract.Presenter() {
     }
 
     override fun onResume(view: ShareMediaListContract.View, state: ResumeState) {
+        // update access permission notice
+        if (ApiHelper.hasAPI33()) updateAccessPermissionNotice(state)
+
         setMediaType(mediaType.get() ?: MediaSelectionForm.MediaType.IMAGES_ONLY)
-    }
-
-    private fun displayMediaPermission(type: MediaSelectionForm.MediaType, accessPermission: PermissionHelper.Access) {
-        val model = MediaSelectionForm.Model(
-            currentType = type,
-            permissionType = when (accessPermission) {
-                PermissionHelper.Access.FULL -> MediaSelectionForm.PermissionType.FULL
-                PermissionHelper.Access.PARTIAL -> MediaSelectionForm.PermissionType.PARTIAL
-                PermissionHelper.Access.DENIED -> MediaSelectionForm.PermissionType.DENIED
-            })
-
-        view?.onUpdatedMediaPermission(model)
     }
 
     private fun getRequestMediaPermissionType(type: MediaSelectionForm.MediaType): PermissionHelper.Type {
@@ -61,47 +57,38 @@ class ShareMediaListPresenter : ShareMediaListContract.Presenter() {
     }
 
     override fun setMediaType(type: MediaSelectionForm.MediaType) {
-        mediaType.set(type)
-
-        val onRespondedPermissions: (permitted: PermissionHelper.Permitted) -> Unit = { permitted ->
-            launch(LaunchWhenPresenter.LAUNCHED) {
-                val context = view?.getViewContext() ?: return@launch
-                val accessPermission = PermissionHelper.getAccessPermission(context, getRequestMediaPermissionType(type))
-                displayMediaPermission(type, accessPermission)
-                if (permitted == PermissionHelper.Permitted.GRANTED) {
-                    loadMediaList(type, permitted)
-                } else {
-                    updateMediaList(mutableListOf(), permitted)
-                }
-            }
+        if (mediaType.get() != type) {
+            currentAccessPermission.set(null)
+            mediaType.set(type)
+            view?.onUpdatedMediaSelectionType(MediaSelectionForm.Model(currentType = type))
         }
 
-        val requestPermissionType = getRequestMediaPermissionType(type)
-
-        view?.onRequestPermission(
-            type = requestPermissionType,
-            onGranted = {
-                onRespondedPermissions(PermissionHelper.Permitted.GRANTED)
-            },
-            onDenied = {
-                onRespondedPermissions(PermissionHelper.Permitted.DENIED)
-            },
-            onBlocked = {
-                onRespondedPermissions(PermissionHelper.Permitted.BLOCKED)
-            }
-        )
+        requestPermissionType = getRequestMediaPermissionType(type)
+        loadMediaList(type)
     }
 
-    private fun loadMediaList(mediaType: MediaSelectionForm.MediaType, permitted: PermissionHelper.Permitted) {
-        subscribeObservable(
-            observable = getMediaContentsFromMediaStore(mediaType = mediaType),
-            onNext = {
-                updateMediaList(it, permitted)
-            }
-        )
+    override fun selectLimitedVisualMedia() {
+        if (ApiHelper.hasAPI34()) {
+            choiceLimitedVisualMedia(
+                onDone = {
+                    loadMediaList(mediaType.get())
+                }
+            )
+        }
     }
 
-    private fun updateMediaList(list: MutableList<MediaFileInfoData>, permitted: PermissionHelper.Permitted) {
+    private fun loadMediaList(mediaType: MediaSelectionForm.MediaType) {
+        checkAccessPermissions(isNoticeEnabled = ApiHelper.hasAPI33()) {
+            subscribeObservable(
+                observable = getMediaContentsFromMediaStore(mediaType = mediaType),
+                onNext = {
+                    updateMediaList(it)
+                }
+            )
+        }
+    }
+
+    private fun updateMediaList(list: MutableList<MediaFileInfoData>) {
         view?.getViewContext() ?: return
 
         this.nodes.beginTransition()
@@ -112,7 +99,7 @@ class ShareMediaListPresenter : ShareMediaListContract.Presenter() {
         NodeHelper.upsert(this.nodes, nodes)
         this.nodes.endTransition()
 
-        view?.onLoadedList(count = list.size, permitted = permitted)
+        view?.onLoadedList(count = list.size)
     }
 
     private fun getMediaContentsFromMediaStore(mediaType: MediaSelectionForm.MediaType): Observable<MutableList<MediaFileInfoData>> {
@@ -201,5 +188,163 @@ class ShareMediaListPresenter : ShareMediaListContract.Presenter() {
 
             medias
         }
+    }
+
+    private val currentAccessPermission: AtomicReference<PermissionHelper.Access?> = AtomicReference(null)
+    private val isAccessPermissionNoticeVisible: AtomicBoolean = AtomicBoolean(false)
+
+    private var requestPermissionType: PermissionHelper.Type? = null
+
+    @RequiresApi(api = ApiHelper.API33)
+    private fun isCheckedAccessPermission(): Boolean = currentAccessPermission.get() != null
+
+    @RequiresApi(api = ApiHelper.API33)
+    private fun isChangedAccessPermission(): Boolean {
+        val context = view?.getViewContext() ?: return false
+
+        val requestPermissionType = requestPermissionType ?: return false
+
+        val currentAccessPermission = currentAccessPermission.get()
+        return when {
+            currentAccessPermission == null -> false
+            else -> currentAccessPermission != PermissionHelper.getAccessPermission(context, requestPermissionType)
+        }
+    }
+
+    @RequiresApi(api = ApiHelper.API34)
+    private fun choiceLimitedVisualMedia(onDone: () -> Unit, onFailure: (() -> Unit)? = null) {
+        val context = view?.getViewContext()
+        if (context == null) {
+            onFailure?.invoke()
+            return
+        }
+
+        val requestPermissionType = requestPermissionType
+        if (requestPermissionType == null || !requestPermissionType.permissions.contains(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)) {
+            onFailure?.invoke()
+            return
+        }
+
+        if (PermissionHelper.getAccessPermission(context, requestPermissionType) == PermissionHelper.Access.PARTIAL) {
+            // request permission
+            view?.onRequestPermission(
+                type = requestPermissionType,
+                onGranted = {
+                    launch(LaunchWhenPresenter.LAUNCHED) {
+                        updateAccessPermissionNotice(true)
+                        onDone()
+                    }
+                }
+            )
+        }
+    }
+
+    private fun checkAccessPermissions(isNoticeEnabled: Boolean, onDone: (permitted: PermissionHelper.Permitted) -> Unit) {
+        val context = view?.getViewContext() ?: return
+
+        val requestPermissionType = requestPermissionType
+        if (requestPermissionType == null) {
+            onDone(PermissionHelper.Permitted.GRANTED)
+            return
+        }
+
+        val hasPermission = PermissionHelper.hasPermission(context, requestPermissionType.permissions.toTypedArray())
+        // check permission
+        if (!hasPermission && currentAccessPermission.get() == null) {
+            val onRespondedPermissions: (permitted: PermissionHelper.Permitted) -> Unit = { permitted ->
+                launch(LaunchWhenPresenter.LAUNCHED) {
+                    if (ApiHelper.hasAPI33() && isNoticeEnabled) {
+                        updateAccessPermissionNotice()
+                    }
+                    onDone(permitted)
+                }
+            }
+
+            // gets current permission for the "requestPermissionType"
+            val currentAccessPermission = PermissionHelper.getAccessPermission(context, requestPermissionType)
+            when (currentAccessPermission) {
+                PermissionHelper.Access.FULL -> { onRespondedPermissions(PermissionHelper.Permitted.GRANTED) }
+                PermissionHelper.Access.PARTIAL -> {
+                    onRespondedPermissions(PermissionHelper.Permitted.GRANTED)
+                }
+                PermissionHelper.Access.DENIED -> {
+                    // request permission
+                    view?.onRequestPermission(
+                        type = requestPermissionType,
+                        onGranted = {
+                            onRespondedPermissions(PermissionHelper.Permitted.GRANTED)
+                        },
+                        onDenied = {
+                            onRespondedPermissions(PermissionHelper.Permitted.DENIED)
+                        },
+                        onBlocked = {
+                            onRespondedPermissions(PermissionHelper.Permitted.BLOCKED)
+                        }
+                    )
+                }
+            }
+        } else {
+            onDone(PermissionHelper.Permitted.GRANTED)
+        }
+    }
+
+    @RequiresApi(api = ApiHelper.API33)
+    private fun updateAccessPermissionNotice(state: ResumeState) {
+        // checks changed permission
+        if (isCheckedAccessPermission()) {
+            if (isChangedAccessPermission()) {
+                updateAccessPermissionNotice(reCheckAccessPermission = true)
+            } else if (state.isLaunch()) {
+                updateAccessPermissionNotice(reCheckAccessPermission = false)
+            }
+        }
+    }
+
+    @RequiresApi(api = ApiHelper.API33)
+    private fun updateAccessPermissionNotice(reCheckAccessPermission: Boolean = true) {
+        val context = view?.getViewContext() ?: return
+
+        val requestPermissionType = requestPermissionType ?: return
+        val accessNoticeType: MediaAccessPermissionNoticeType = if (requestPermissionType == PermissionHelper.Type.STORAGE_AUDIO_ONLY) {
+            MediaAccessPermissionNoticeType.AUDIO
+        } else {
+            MediaAccessPermissionNoticeType.VISUAL_MEDIA
+        }
+
+        if (reCheckAccessPermission) {
+            val accessPermission = PermissionHelper.getAccessPermission(context, requestPermissionType)
+            currentAccessPermission.set(accessPermission)
+
+            val isShowNotice = when (accessPermission) {
+                PermissionHelper.Access.FULL -> false
+                PermissionHelper.Access.PARTIAL,
+                PermissionHelper.Access.DENIED -> true
+            }
+
+            isAccessPermissionNoticeVisible.set(isShowNotice)
+
+            // sets permission
+            view?.onUpdatedAccessPermission(
+                model = MediaAccessPermissionNoticeModel(
+                    type = accessNoticeType,
+                    access = accessPermission
+                ),
+                isShow = isShowNotice
+            )
+        } else {
+            currentAccessPermission.get()?.let { currentAccessPermission ->
+                view?.onUpdatedAccessPermission(
+                    model = MediaAccessPermissionNoticeModel(
+                        type = accessNoticeType,
+                        access = currentAccessPermission
+                    ),
+                    isShow = isAccessPermissionNoticeVisible.get()
+                )
+            }
+        }
+    }
+
+    override fun setAccessPermissionNoticeVisible(visible: Boolean) {
+        isAccessPermissionNoticeVisible.set(visible)
     }
 }

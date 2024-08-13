@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/primary"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,45 +11,12 @@
         layout="@layout/title_form"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/title_form_fragment_card_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:cardCornerRadius="4dp"
-        app:cardBackgroundColor="@color/surface_sheet_background"
-        app:cardElevation="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_form_fragment_title_form">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:orientation="vertical">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@color/on_primary"
-                android:text="Android" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/on_primary"
-                android:textSize="14dp"
-                android:text="Jetpack Compose" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/title_form_fragment_compose_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_form_fragment_card_view"/>
+        app:layout_constraintTop_toBottomOf="@id/title_form_fragment_title_form"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,10 +1,10 @@
 package com.herry.libs.permission
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
-import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.herry.libs.helper.ApiHelper
@@ -19,10 +19,11 @@ object PermissionHelper {
         STORAGE_MEDIA_ALL(mutableListOf<String>().apply {
             if (!ApiHelper.hasAPI33()) {
                 add(Manifest.permission.READ_EXTERNAL_STORAGE)
-                if (!ApiHelper.hasAPI29()) {
-                    // max sdk is 28
-                    add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
+                // When the 'android:maxSdkVersion="28"' of 'Manifest.permission.WRITE_EXTERNAL_STORAGE'
+                // is set on the  Huawei OS 10 device, the media content to external storage can't despite that
+                // the maxSdkVersion setting is the Android official guide. So, it is not set.
+                // Also, if the 'File Open Error No.' is a 13, it means that the file accessing permission does not have.
+                add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             } else {
                 add(Manifest.permission.READ_MEDIA_IMAGES)
                 add(Manifest.permission.READ_MEDIA_VIDEO)
@@ -32,7 +33,7 @@ object PermissionHelper {
                 add(Manifest.permission.READ_MEDIA_AUDIO)
             }
         }),
-        @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+        @RequiresApi(api = ApiHelper.API33)
         STORAGE_VISUAL_MEDIA(mutableListOf<String>().apply {
             add(Manifest.permission.READ_MEDIA_IMAGES)
             add(Manifest.permission.READ_MEDIA_VIDEO)
@@ -40,21 +41,21 @@ object PermissionHelper {
                 add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
             }
         }),
-        @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+        @RequiresApi(api = ApiHelper.API33)
         STORAGE_IMAGE_ONLY(mutableListOf<String>().apply {
             add(Manifest.permission.READ_MEDIA_IMAGES)
             if (ApiHelper.hasAPI34()) {
                 add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
             }
         }),
-        @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+        @RequiresApi(api = ApiHelper.API33)
         STORAGE_VIDEO_ONLY(mutableListOf<String>().apply {
             add(Manifest.permission.READ_MEDIA_VIDEO)
             if (ApiHelper.hasAPI34()) {
                 add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
             }
         }),
-        @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+        @RequiresApi(api = ApiHelper.API33)
         STORAGE_AUDIO_ONLY(mutableListOf<String>().apply {
             add(Manifest.permission.READ_MEDIA_AUDIO)
         }),
@@ -68,13 +69,13 @@ object PermissionHelper {
         VOICE_RECORD(mutableListOf<String>().apply {
             add(Manifest.permission.RECORD_AUDIO)
         }),
-        @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+        @RequiresApi(api = ApiHelper.API33)
         NOTIFICATION(mutableListOf<String>().apply {
             add(Manifest.permission.POST_NOTIFICATIONS)
         });
 
         companion object {
-            fun generate(permissions: MutableList<String>) : Type? = values().firstOrNull { it.permissions == permissions }
+            fun generate(permissions: MutableList<String>) : Type? = entries.firstOrNull { it.permissions == permissions }
         }
     }
 
@@ -92,14 +93,6 @@ object PermissionHelper {
                 grantedPermissions.add(checkPermission)
             } else {
                 deniedPermissions.add(checkPermission)
-            }
-        }
-
-        if (ApiHelper.hasAPI34()) {
-            // checks has partial permission for the visual media (READ_MEDIA_IMAGES or READ_MEDIA_VIDEO)
-            if (grantedPermissions.contains(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)) {
-                deniedPermissions.remove(Manifest.permission.READ_MEDIA_IMAGES)
-                deniedPermissions.remove(Manifest.permission.READ_MEDIA_VIDEO)
             }
         }
 
@@ -136,7 +129,7 @@ object PermissionHelper {
         }
     }
 
-    fun getAccessPermission(context: Context?, permission: String): Access {
+    private fun getAccessPermission(context: Context?, permission: String): Access {
         context ?: return Access.DENIED
 
         val access = ContextCompat.checkSelfPermission(context, permission)
@@ -148,10 +141,12 @@ object PermissionHelper {
                     Access.FULL
                 } else if (ApiHelper.hasAPI34() &&
                     ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
-                    == PackageManager.PERMISSION_GRANTED) {
+                    == PackageManager.PERMISSION_GRANTED
+                ) {
                     // Partial access on Android 14+
                     Access.PARTIAL
-                } else {
+                }
+                else {
                     Access.DENIED
                 }
             }
@@ -164,16 +159,16 @@ object PermissionHelper {
         }
     }
 
-    fun createPermissionSettingScreenPopup(context: Context?, onCancel: ((dialog: DialogInterface) -> Unit)? = null): AppDialog? {
-        context ?: return null
+    fun createPermissionSettingScreenPopup(activity: Activity?, onCancel: ((dialog: DialogInterface) -> Unit)? = null): AppDialog? {
+        activity ?: return null
 
-        return AppDialog(context).apply {
+        return AppDialog(activity).apply {
             setCancelable(false)
             setTitle("Setting permissions")
             setMessage("Permission settings are turned off and can not access those services.\n\nPlease turn in [Settings] > [authority].")
             setPositiveButton(android.R.string.ok) { dialog, _ ->
                 dialog.dismiss()
-                AppUtil.showAppInfoSettingScreen(context)
+                AppUtil.showAppInfoSettingScreen(activity)
             }
             setNegativeButton(android.R.string.cancel,
                 if (onCancel != null) {

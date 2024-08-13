@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- the Snackbar's style -->
+    <style name="AppSnackbar" parent="Widget.MaterialComponents.Snackbar">
+        <!-- snackbar horizontal padding-->
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <!-- snackbar margin -->
+        <item name="android:layout_margin">16dp</item>
+        <!-- snackbar background -->
+        <item name="backgroundTint">@color/on_primary_80</item>
+        <item name="backgroundTintMode">src_in</item>
+        <!-- snackbar shape -->
+        <item name="shapeAppearance">@style/AppSnackbar.ShapeAppearance</item>
+        <item name="elevation">8dp</item>
+        <!-- snackbar show/hide animation -->
+        <item name="animationMode">fade</item>
+        <!-- snackbar action max width for inline,
+              if action text length is large than the maxActionInlineWidth, the action button is displayed under message
+         -->
+        <item name="maxActionInlineWidth">@dimen/design_snackbar_action_inline_max_width</item>
+    </style>
+
+    <style name="AppSnackbar.ShapeAppearance" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <!-- snackbar action button -->
+    <style name="AppSnackbar.Button" parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
+        <item name="android:textColor">@color/snackbars_button_accent</item>
+        <item name="android:textAppearance">@style/AppSnackbar.Button.TextAppearance</item>
+    </style>
+
+    <style name="AppSnackbar.Button.TextAppearance" parent="">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize" tools:ignore="SpUsage">16dp</item>
+    </style>
+
+    <!-- snackbar message -->
+    <style name="AppSnackbar.TextView" parent="Widget.MaterialComponents.Snackbar.TextView">
+        <item name="android:alpha">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">10</item>
+        <item name="android:textAppearance">@style/AppSnackbar.TextView.TextAppearance</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
+        <item name="android:gravity">start|center_vertical</item>
+    </style>
+
+    <style name="AppSnackbar.TextView.TextAppearance" parent="">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize" tools:ignore="SpUsage">14dp</item>
+    </style>
+</resources>

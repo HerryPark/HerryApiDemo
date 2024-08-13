@@ -18,13 +18,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/share_media_list_fragment_access_permission_notice_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:transitionGroup="true"
+        app:layoutDescription="@xml/media_selection_permission_notice_scene"
+        app:layout_constraintTop_toBottomOf="@id/share_media_list_fragment_title"
+        tools:applyMotionScene="false"
+        tools:ignore="HardcodedText,SpUsage">
+
+        <include
+            android:id="@+id/share_media_list_fragment_media_access_permission_notice"
+            layout="@layout/media_access_permission_notice"/>
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+
     <include
         android:id="@+id/share_media_list_fragment_media_selection"
         layout="@layout/media_selection_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/share_media_list_fragment_title" />
+        app:layout_constraintTop_toBottomOf="@id/share_media_list_fragment_access_permission_notice_container" />
 
     <include
         android:id="@+id/share_media_list_fragment_list"

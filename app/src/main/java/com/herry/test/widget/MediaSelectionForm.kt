@@ -1,8 +1,8 @@
 package com.herry.test.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
-import android.widget.TextView
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.widget.extension.setOnSingleClickListener
@@ -19,15 +19,8 @@ open class MediaSelectionForm(
         MEDIA_ALL
     }
 
-    enum class PermissionType {
-        PARTIAL,
-        FULL,
-        DENIED
-    }
-
     data class Model(
-        val currentType: MediaType,
-        val permissionType: PermissionType
+        val currentType: MediaType
     )
 
     inner class Holder(context: Context, view: View): NodeHolder(context, view) {
@@ -36,8 +29,6 @@ open class MediaSelectionForm(
         val visualAll: View? = view.findViewById(R.id.media_selection_form_visual_all)
         val audios: View? = view.findViewById(R.id.media_selection_form_audios)
         val mediaAll: View? = view.findViewById(R.id.media_selection_form_all)
-
-        val permission: TextView? = view.findViewById(R.id.media_selection_form_permission)
 
         init {
             images?.setOnSingleClickListener {
@@ -66,13 +57,12 @@ open class MediaSelectionForm(
 
     override fun onCreateHolder(context: Context, view: View): Holder = Holder(context, view)
 
+    @SuppressLint("SetTextI18n")
     override fun onBindModel(context: Context, holder: Holder, model: Model) {
         holder.images?.isSelected = model.currentType == MediaType.IMAGES_ONLY
         holder.videos?.isSelected = model.currentType == MediaType.VIDEOS_ONLY
         holder.visualAll?.isSelected = model.currentType == MediaType.VISUAL_ALL
         holder.audios?.isSelected = model.currentType == MediaType.AUDIOS_ONLY
         holder.mediaAll?.isSelected = model.currentType == MediaType.MEDIA_ALL
-
-        holder.permission?.text = model.permissionType.name
     }
 }

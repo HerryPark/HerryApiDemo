@@ -103,6 +103,11 @@
 <!--    <include app:graph="@navigation/nested_nav_fragments_navigation" />-->
 
     <fragment
+        android:id="@+id/infinite_list_fragment"
+        android:name="com.herry.test.app.list.infinite.InfiniteListFragment"
+        tools:layout="@layout/list_fragment" />
+
+    <fragment
         android:id="@+id/skeleton_fragment"
         android:name="com.herry.test.app.skeleton.SkeletonFragment"
         tools:layout="@layout/skeleton_fragment" />

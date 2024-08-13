@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/on_primary_15"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="0dp"
+    tools:viewBindingIgnore="true"
+    tools:ignore="SpUsage">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/media_access_permission_notice_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/media_access_permission_notice_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:text=""
+            android:textSize="14dp"
+            android:textColor="@color/on_primary"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/media_access_permission_notice_buttons"
+            tools:text="Current" />
+
+        <LinearLayout
+            android:id="@+id/media_access_permission_notice_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/media_access_permission_notice_message"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <com.herry.libs.widget.view.AppButton
+                android:id="@+id/media_access_permission_notice_selection"
+                style="@style/AppButton.TextOnly.Accent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                app:abWidth="wrap_content"
+                app:abHeight="24dp"
+                app:abPaddingHorizontal="4dp"
+                app:abText="Select"
+                app:abTextSize="14dp"
+                app:abTextStyle="bold" />
+
+            <com.herry.libs.widget.view.AppButton
+                android:id="@+id/media_access_permission_notice_setting"
+                style="@style/AppButton.TextOnly.Accent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                app:abWidth="wrap_content"
+                app:abHeight="24dp"
+                app:abText="Setting"
+                app:abTextSize="14dp"
+                app:abTextStyle="bold" />
+
+            <com.herry.libs.widget.view.AppButton
+                android:id="@+id/media_access_permission_notice_dismiss"
+                style="@style/AppButton.TextOnly.Accent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:abWidth="wrap_content"
+                app:abHeight="24dp"
+                app:abText="Dismiss"
+                app:abTextSize="14dp"
+                app:abTextStyle="bold" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</com.google.android.material.card.MaterialCardView>

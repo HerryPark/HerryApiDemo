@@ -835,6 +835,19 @@ class AppButton: FrameLayout {
         buttonView?.background = drawable
     }
 
+    fun setButtonPadding(padding: Int) {
+        buttonView?.setPadding(/* left = */ padding, /* top = */ padding, /* right = */ padding, /* bottom = */ padding)
+    }
+
+    fun setButtonPadding(
+        left: Int = buttonView?.paddingLeft ?: 0,
+        top: Int = buttonView?.paddingTop ?: 0,
+        right: Int = buttonView?.paddingRight ?: 0,
+        bottom: Int = buttonView?.paddingBottom ?: 0
+    ) {
+        buttonView?.setPadding(/* left = */ left, /* top = */ top, /* right = */ right, /* bottom = */ bottom)
+    }
+
     fun setIconSize(width: Int, height: Int) {
         iconView?.setViewSize(width, height)
     }

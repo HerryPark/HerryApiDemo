@@ -1,6 +1,7 @@
 package com.herry.libs.app.activity_caller.result
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -16,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.nav.NavMovement
 import com.herry.libs.helper.ApiHelper
+import kotlin.jvm.Throws
 
 class ACActivityResultLaunchers(var activity: ComponentActivity) {
 
@@ -153,7 +155,8 @@ class ACActivityResultLaunchers(var activity: ComponentActivity) {
 
         activityResultViewModel.requestPermissionResults.onResult = null
     }
-    
+
+    @Throws(ActivityNotFoundException::class)
     fun processLaunchActivity(intent: Intent, options: ActivityOptionsCompat?, onResult: ((result: ACNavigation.Result) -> Unit)?) {
         activityResultViewModel.launchIntentResult.onResult = onResult
 
@@ -173,6 +176,7 @@ class ACActivityResultLaunchers(var activity: ComponentActivity) {
         activityResultViewModel.launchIntentResult.onResult = null
     }
 
+    @Throws(ActivityNotFoundException::class)
     fun processLaunchPicker(request: PickVisualMediaRequest, onResult: ((uris: List<Uri>) -> Unit)?) {
         activityResultViewModel.launchPickerResult.onResult = onResult
 
@@ -183,6 +187,7 @@ class ACActivityResultLaunchers(var activity: ComponentActivity) {
         activityResultViewModel.launchPickerResult.onResult?.invoke(uris)
     }
 
+    @Throws(ActivityNotFoundException::class)
     fun processLaunchTake(request: TakeMediaRequest, onResult: ((success: Boolean) -> Unit)?) {
         activityResultViewModel.launchTakeResult.onResult = onResult
 

@@ -79,4 +79,5 @@
     <color name="background_subscribe_end">#DCDCFC</color>
 
     <color name="surface_sheet_background">#FFFCFCFC</color>
+    <color name="snackbars_button_accent">#FF969AFF</color>
 </resources>

@@ -67,6 +67,7 @@ class ListFragment : BaseNavView<ListContract.View, ListContract.Presenter>(), L
                     ListContract.Type.FAST_SCROLLER -> navigateTo(destinationId = R.id.fast_scroller_list_fragment)
                     ListContract.Type.ENDLESS -> navigateTo(destinationId = R.id.endless_list_fragment)
                     ListContract.Type.INDEXER -> navigateTo(destinationId = R.id.indexer_list_fragment)
+                    ListContract.Type.INFINITE_LINEAR_HORIZONTAL -> navigateTo(destinationId = R.id.infinite_list_fragment)
                 }
             })
         }

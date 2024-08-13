@@ -6,24 +6,45 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.graphics.*
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.ResultReceiver
-import android.text.*
+import android.text.Selection
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.TextUtils
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.DisplayMetrics
 import android.util.Size
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.view.WindowInsets
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
-import androidx.annotation.*
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import com.herry.libs.helper.ApiHelper
 
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
@@ -289,13 +310,6 @@ object ViewUtil {
         //float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         //Trace.d("convertPixelsToDp px:" + px + " to dp:" + dp);
         return px / (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
-    }
-
-    fun getScreenSize(context: Context?): Size {
-        val resources = context?.resources ?: return Size(0, 0)
-
-        val displayMetrics = resources.displayMetrics ?: return Size(0, 0)
-        return Size(displayMetrics.widthPixels, displayMetrics.heightPixels)
     }
 
     fun isTabletDevice(context: Context?): Boolean = (context?.resources?.configuration?.smallestScreenWidthDp ?: 0) >= 600
@@ -646,5 +660,54 @@ object ViewUtil {
         }
 
         return totalHeight
+    }
+
+
+    @JvmStatic
+    fun getScreenWidth(context: Context?): Int {
+        val windowManager = context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager ?: return 0
+        return if (ApiHelper.hasAPI30()) {
+            val windowMetrics = windowManager.currentWindowMetrics
+            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            windowMetrics.bounds.width() - insets.left - insets.right
+        } else {
+            val displayMetrics = DisplayMetrics()
+            windowManager.defaultDisplay.getRealMetrics(displayMetrics)
+            return displayMetrics.widthPixels
+        }
+    }
+
+    @JvmStatic
+    fun getScreenHeight(context: Context?): Int {
+        val windowManager = context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager ?: return 0
+        return if (ApiHelper.hasAPI30()) {
+            val windowMetrics = windowManager.currentWindowMetrics
+            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            windowMetrics.bounds.height() - insets.bottom - insets.top
+        } else {
+            val displayMetrics = DisplayMetrics()
+            windowManager.defaultDisplay.getRealMetrics(displayMetrics)
+            return displayMetrics.heightPixels
+        }
+    }
+
+    fun getScreenSize(context: Context?): Size {
+        val windowManager = context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager ?: return Size(0, 0)
+
+        val width: Int
+        val height: Int
+
+        if (ApiHelper.hasAPI30()) {
+            val windowMetrics = windowManager.currentWindowMetrics
+            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            width = windowMetrics.bounds.width() - insets.left - insets.right
+            height = windowMetrics.bounds.height() - insets.bottom - insets.top
+        } else {
+            val resources = context?.resources ?: return Size(0, 0)
+            val displayMetrics = resources.displayMetrics ?: return Size(0, 0)
+            return Size(displayMetrics.widthPixels, displayMetrics.heightPixels)
+        }
+
+        return Size(width, height)
     }
 }
