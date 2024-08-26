@@ -28,7 +28,7 @@ import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setImage
 import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.app.nbnf.NBNFActivity
 import com.herry.test.app.nestedfragments.NestedNavFragmentsActivity
 import com.herry.test.app.sample.SampleActivity
@@ -39,7 +39,7 @@ import com.herry.test.widget.TitleBarForm
 /**
  * Created by herry.park on 2020/06/11.
  **/
-class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), MainContract.View {
+class MainFragment : BaseMVPNavView<MainContract.View, MainContract.Presenter>(), MainContract.View {
 
     override fun onCreatePresenter(): MainContract.Presenter = MainPresenter()
 
@@ -144,6 +144,9 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
             }
             MainContract.TestItemType.DOWNLOADABLE_FONTS -> {
                 navigateTo(destinationId = R.id.downloadable_font_fragment)
+            }
+            MainContract.TestItemType.MVVM_TEST -> {
+                navigateTo(destinationId = R.id.mvvm_test_fragment)
             }
         }
     }

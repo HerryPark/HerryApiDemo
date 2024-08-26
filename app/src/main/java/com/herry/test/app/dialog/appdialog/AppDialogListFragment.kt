@@ -20,7 +20,7 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.ViewUtil.getColorDrawable
 import com.herry.libs.widget.view.dialog.AppDialog
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.Popup
 import com.herry.test.widget.TitleBarForm
 
@@ -28,7 +28,7 @@ import com.herry.test.widget.TitleBarForm
 /**
  * Created by herry.park on 2020/06/11.
  **/
-class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogListContract.Presenter>(), AppDialogListContract.View {
+class AppDialogListFragment : BaseMVPNavView<AppDialogListContract.View, AppDialogListContract.Presenter>(), AppDialogListContract.View {
 
     override fun onCreatePresenter(): AppDialogListContract.Presenter = AppDialogListPresenter()
 

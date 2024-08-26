@@ -2,7 +2,7 @@ package com.herry.test.app.gif.decoder
 
 import android.graphics.Bitmap
 import com.herry.libs.mvp.MVPView
-import com.herry.test.app.base.mvp.BasePresenter
+import com.herry.test.app.base.mvp.BaseMVPPresenter
 import com.herry.test.data.GifMediaFileInfoData
 import java.io.Serializable
 
@@ -15,7 +15,7 @@ interface GifDecoderContract {
         fun onDecoded(mediaInfo: DecodedGifMediaInfo)
     }
 
-    abstract class Presenter : BasePresenter<View>()
+    abstract class Presenter : BaseMVPPresenter<View>()
 
     data class DecodedGifMediaInfo(
         val data: GifMediaFileInfoData,

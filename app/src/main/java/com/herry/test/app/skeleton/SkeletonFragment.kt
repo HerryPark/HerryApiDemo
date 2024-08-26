@@ -12,9 +12,9 @@ import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 
-class SkeletonFragment : BaseNavView<SkeletonContract.View, SkeletonContract.Presenter>(), SkeletonContract.View {
+class SkeletonFragment : BaseMVPNavView<SkeletonContract.View, SkeletonContract.Presenter>(), SkeletonContract.View {
     override fun onCreatePresenter(): SkeletonContract.Presenter = SkeletonPresenter()
 
     override fun onCreatePresenterView(): SkeletonContract.View = this

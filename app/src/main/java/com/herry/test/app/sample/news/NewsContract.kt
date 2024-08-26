@@ -3,7 +3,7 @@ package com.herry.test.app.sample.news
 import androidx.media3.exoplayer.ExoPlayer
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
-import com.herry.test.app.base.nav.BaseNavPresenter
+import com.herry.test.app.base.nav.BaseMVPNavPresenter
 import com.herry.test.app.sample.forms.FeedForm
 
 interface NewsContract {
@@ -12,7 +12,7 @@ interface NewsContract {
         fun onScrollTo(position: Int)
     }
 
-    abstract class Presenter: BaseNavPresenter<View>() {
+    abstract class Presenter: BaseMVPNavPresenter<View>() {
         abstract fun setCurrentPosition(position: Int)
         abstract fun preparePlayer(model: FeedForm.Model?): ExoPlayer?
         abstract fun play(position: Int)

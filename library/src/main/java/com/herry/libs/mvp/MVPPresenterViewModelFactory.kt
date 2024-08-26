@@ -16,7 +16,7 @@ class MVPPresenterViewModelFactory<V: MVPView<P>, P: MVPPresenter<V>>(private va
                     created = true
                     modelClass.cast(presenter)
                 } else {
-                    modelClass.newInstance()
+                    modelClass.getDeclaredConstructor().newInstance()
                 }
             } else {
                 throw IllegalArgumentException()

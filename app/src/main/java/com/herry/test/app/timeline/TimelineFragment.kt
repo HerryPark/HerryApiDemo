@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.TitleBarForm
 
-class TimelineFragment : BaseNavView<TimelineContract.View, TimelineContract.Presenter>(), TimelineContract.View {
+class TimelineFragment : BaseMVPNavView<TimelineContract.View, TimelineContract.Presenter>(), TimelineContract.View {
     override fun onCreatePresenter(): TimelineContract.Presenter = TimelinePresenter()
 
     override fun onCreatePresenterView(): TimelineContract.View = this

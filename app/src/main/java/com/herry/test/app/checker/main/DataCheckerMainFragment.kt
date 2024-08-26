@@ -19,13 +19,13 @@ import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.TitleBarForm
 
 /**
  * Created by herry.park on 2020/7/7
  **/
-class DataCheckerMainFragment : BaseNavView<DataCheckerMainContract.View, DataCheckerMainContract.Presenter>(), DataCheckerMainContract.View {
+class DataCheckerMainFragment : BaseMVPNavView<DataCheckerMainContract.View, DataCheckerMainContract.Presenter>(), DataCheckerMainContract.View {
 
     override fun onCreatePresenter(): DataCheckerMainContract.Presenter =
         DataCheckerMainPresenter()

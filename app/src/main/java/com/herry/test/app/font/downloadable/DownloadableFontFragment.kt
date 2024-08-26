@@ -19,11 +19,11 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.libs.widget.view.AppButton
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.TitleBarForm
 import java.util.Locale
 
-class DownloadableFontFragment: BaseNavView<DownloadableFontContract.View, DownloadableFontContract.Presenter>(), DownloadableFontContract.View {
+class DownloadableFontFragment: BaseMVPNavView<DownloadableFontContract.View, DownloadableFontContract.Presenter>(), DownloadableFontContract.View {
     override fun onCreatePresenter(): DownloadableFontContract.Presenter = DownloadableFontPresenter()
 
     override fun onCreatePresenterView(): DownloadableFontContract.View = this

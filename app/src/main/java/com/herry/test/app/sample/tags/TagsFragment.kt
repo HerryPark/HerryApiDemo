@@ -21,12 +21,12 @@ import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScroll
 import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewForm
 import com.herry.libs.widget.view.swiperefreshlayout.SwipeRefreshLayoutEx
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.app.sample.feeds.detail.FeedDetailFragment
 import com.herry.test.app.sample.forms.FeedsItemForm
 import com.herry.test.widget.TitleBarForm
 
-class TagsFragment : BaseNavView<TagsContract.View, TagsContract.Presenter>(), TagsContract.View {
+class TagsFragment : BaseMVPNavView<TagsContract.View, TagsContract.Presenter>(), TagsContract.View {
 
     companion object {
         private const val ARG_TAG = "ARG_TAG"

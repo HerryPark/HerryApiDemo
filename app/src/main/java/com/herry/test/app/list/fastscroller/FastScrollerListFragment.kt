@@ -15,10 +15,10 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.widget.view.recyclerview.scroller.RecyclerViewFastScrollerView
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.TitleBarForm
 
-class FastScrollerListFragment: BaseNavView<FastScrollerListContract.View, FastScrollerListContract.Presenter>(), FastScrollerListContract.View {
+class FastScrollerListFragment: BaseMVPNavView<FastScrollerListContract.View, FastScrollerListContract.Presenter>(), FastScrollerListContract.View {
 
     override fun onCreatePresenter(): FastScrollerListContract.Presenter = FastScrollerListPresenter()
 

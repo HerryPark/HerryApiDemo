@@ -26,7 +26,7 @@ import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewEmptyTe
 import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewForm
 import com.herry.test.BuildConfig
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.data.MediaFileInfoData
 import com.herry.test.widget.MediaAccessPermissionNoticeForm
 import com.herry.test.widget.MediaAccessPermissionNoticeModel
@@ -38,7 +38,7 @@ import java.io.File
 /**
  * Created by herry.park on 2020/06/11.
  **/
-class ShareMediaListFragment : BaseNavView<ShareMediaListContract.View, ShareMediaListContract.Presenter>(), ShareMediaListContract.View {
+class ShareMediaListFragment : BaseMVPNavView<ShareMediaListContract.View, ShareMediaListContract.Presenter>(), ShareMediaListContract.View {
 
     override fun onCreatePresenter(): ShareMediaListContract.Presenter = ShareMediaListPresenter()
 

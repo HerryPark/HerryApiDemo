@@ -15,9 +15,9 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.widget.extension.setImage
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 
-class ResizingUIFragment: BaseNavView<ResizingUIContract.View, ResizingUIContract.Presenter>(), ResizingUIContract.View {
+class ResizingUIFragment: BaseMVPNavView<ResizingUIContract.View, ResizingUIContract.Presenter>(), ResizingUIContract.View {
     override fun onCreatePresenter(): ResizingUIContract.Presenter = ResizingUIPresenter()
 
     override fun onCreatePresenterView(): ResizingUIContract.View = this

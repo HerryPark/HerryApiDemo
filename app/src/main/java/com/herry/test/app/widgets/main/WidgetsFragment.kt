@@ -16,10 +16,10 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.TitleBarForm
 
-class WidgetsFragment: BaseNavView<WidgetsContract.View, WidgetsContract.Presenter>(), WidgetsContract.View {
+class WidgetsFragment: BaseMVPNavView<WidgetsContract.View, WidgetsContract.Presenter>(), WidgetsContract.View {
     override fun onCreatePresenter(): WidgetsContract.Presenter = WidgetsPresenter()
 
     override fun onCreatePresenterView(): WidgetsContract.View = this

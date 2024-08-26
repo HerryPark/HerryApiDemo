@@ -2,7 +2,7 @@ package com.herry.test.app.gif.list
 
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
-import com.herry.test.app.base.mvp.BasePresenter
+import com.herry.test.app.base.mvp.BaseMVPPresenter
 import com.herry.libs.permission.PermissionHelper
 import com.herry.test.data.GifMediaFileInfoData
 
@@ -17,7 +17,7 @@ interface GifListContract {
         fun onDetail(content: GifMediaFileInfoData)
     }
 
-    abstract class Presenter : BasePresenter<View>() {
+    abstract class Presenter : BaseMVPPresenter<View>() {
         abstract fun decode(content: GifMediaFileInfoData)
     }
 

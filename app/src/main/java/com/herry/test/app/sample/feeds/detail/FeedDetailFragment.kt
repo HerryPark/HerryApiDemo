@@ -30,7 +30,6 @@ import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.anim.ViewAnimCreator
 import com.herry.libs.widget.anim.ViewAnimListener
 import com.herry.libs.widget.anim.ViewAnimPlayer
-import com.herry.libs.widget.configure.SystemUIAppearance
 import com.herry.libs.widget.configure.SystemUIAppearances
 import com.herry.libs.widget.configure.SystemUIVisibility
 import com.herry.libs.widget.extension.navigateTo
@@ -38,14 +37,14 @@ import com.herry.libs.widget.extension.setViewMarginTop
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapExHelper
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.app.sample.forms.FeedForm
 import com.herry.test.app.sample.repository.database.feed.Feed
 import com.herry.test.app.sample.tags.TagsFragment
 import com.herry.test.widget.TitleBarForm
 import java.util.Locale
 
-class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContract.Presenter>(), FeedDetailContract.View {
+class FeedDetailFragment: BaseMVPNavView<FeedDetailContract.View, FeedDetailContract.Presenter>(), FeedDetailContract.View {
 
     companion object {
         private var sharedElementTransitionName: String? = null

@@ -19,10 +19,10 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.libs.widget.view.recyclerview.scroller.RecyclerViewAlphabetIndexerScrollerView
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.TitleBarForm
 
-class IndexerListFragment : BaseNavView<IndexerListContract.View, IndexerListContract.Presenter>(), IndexerListContract.View {
+class IndexerListFragment : BaseMVPNavView<IndexerListContract.View, IndexerListContract.Presenter>(), IndexerListContract.View {
     override fun onCreatePresenter(): IndexerListContract.Presenter = IndexerListPresenter()
 
     override fun onCreatePresenterView(): IndexerListContract.View = this

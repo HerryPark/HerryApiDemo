@@ -19,7 +19,7 @@ import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewEmptyTextForm
 import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewForm
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.app.gif.decoder.GifDecoderFragment
 import com.herry.libs.permission.PermissionHelper
 import com.herry.test.data.GifMediaFileInfoData
@@ -28,7 +28,7 @@ import com.herry.test.widget.TitleBarForm
 /**
  * Created by herry.park on 2020/06/11.
  **/
-class GifListFragment : BaseNavView<GifListContract.View, GifListContract.Presenter>(), GifListContract.View {
+class GifListFragment : BaseMVPNavView<GifListContract.View, GifListContract.Presenter>(), GifListContract.View {
 
     override fun onCreatePresenter(): GifListContract.Presenter = GifListPresenter()
 

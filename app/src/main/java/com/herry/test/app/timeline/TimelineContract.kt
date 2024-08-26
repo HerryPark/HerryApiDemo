@@ -1,7 +1,7 @@
 package com.herry.test.app.timeline
 
 import com.herry.libs.mvp.MVPView
-import com.herry.test.app.base.mvp.BasePresenter
+import com.herry.test.app.base.mvp.BaseMVPPresenter
 
 interface TimelineContract {
 
@@ -9,7 +9,7 @@ interface TimelineContract {
 
     }
 
-    abstract class Presenter : BasePresenter<View>() {
+    abstract class Presenter : BaseMVPPresenter<View>() {
 
     }
 

@@ -21,12 +21,12 @@ import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapExHelper
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapWithTabLayoutHelper
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.app.sample.feeds.detail.FeedDetailFragment
 import com.herry.test.widget.TabLayoutForm
 
 
-class FeedsFragment: BaseNavView<FeedsContract.View, FeedsContract.Presenter>(), FeedsContract.View {
+class FeedsFragment: BaseMVPNavView<FeedsContract.View, FeedsContract.Presenter>(), FeedsContract.View {
 
     override fun onSystemUIAppearances(context: Context): SystemUIAppearances =
         SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {

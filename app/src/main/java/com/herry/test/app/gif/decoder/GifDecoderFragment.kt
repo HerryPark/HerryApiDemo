@@ -21,7 +21,7 @@ import com.herry.libs.util.AppUtil
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.data.GifMediaFileInfoData
 import com.herry.test.widget.TitleBarForm
 import java.text.SimpleDateFormat
@@ -31,7 +31,7 @@ import java.util.*
 /**
  * Created by herry.park on 2020/06/11.
  **/
-class GifDecoderFragment : BaseNavView<GifDecoderContract.View, GifDecoderContract.Presenter>(), GifDecoderContract.View {
+class GifDecoderFragment : BaseMVPNavView<GifDecoderContract.View, GifDecoderContract.Presenter>(), GifDecoderContract.View {
 
     companion object {
         const val ARG_GIF_INFO_DATA: String = "ARG_GIF_INFO_DATA"

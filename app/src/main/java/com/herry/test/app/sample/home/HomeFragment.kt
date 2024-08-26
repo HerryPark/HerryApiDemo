@@ -11,11 +11,11 @@ import com.herry.libs.helper.ToastHelper
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.configure.SystemUIAppearances
 import com.herry.test.R
-import com.herry.test.app.base.nestednav.BaseNestedNavView
+import com.herry.test.app.base.nestednav.BaseMVPNestedNavView
 import com.herry.test.app.sample.home.form.HomeBottomNavControlForm
 import com.herry.test.app.sample.home.form.HomeBottomNavFragmentForm
 
-class HomeFragment: BaseNestedNavView<HomeContract.View, HomeContract.Presenter>(), HomeContract.View {
+class HomeFragment: BaseMVPNestedNavView<HomeContract.View, HomeContract.Presenter>(), HomeContract.View {
     override fun onSystemUIAppearances(context: Context): SystemUIAppearances? = null
 
     override fun onCreatePresenter(): HomeContract.Presenter = HomePresenter()

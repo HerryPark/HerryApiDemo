@@ -2,7 +2,7 @@ package com.herry.test.app.main
 
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
-import com.herry.test.app.base.mvp.BasePresenter
+import com.herry.test.app.base.mvp.BaseMVPPresenter
 
 /**
  * Created by herry.park on 2020/06/11.
@@ -13,7 +13,7 @@ interface MainContract {
         fun onScreen(type: TestItemType)
     }
 
-    abstract class Presenter : BasePresenter<View>() {
+    abstract class Presenter : BaseMVPPresenter<View>() {
         abstract fun moveToScreen(type: TestItemType)
     }
 
@@ -34,6 +34,7 @@ interface MainContract {
         TENSOR_FLOW_LITE ("Tensorflow-lite"),
         WIDGETS ("Widgets"),
         TIMELINE ("Timeline"),
-        DOWNLOADABLE_FONTS ("Downloadable fonts")
+        DOWNLOADABLE_FONTS ("Downloadable fonts"),
+        MVVM_TEST ("MVVM test")
     }
 }

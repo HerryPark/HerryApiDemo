@@ -17,10 +17,10 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.TitleBarForm
 
-class ListFragment : BaseNavView<ListContract.View, ListContract.Presenter>(), ListContract.View {
+class ListFragment : BaseMVPNavView<ListContract.View, ListContract.Presenter>(), ListContract.View {
     override fun onCreatePresenter(): ListContract.Presenter = ListPresenter()
 
     override fun onCreatePresenterView(): ListContract.View = this

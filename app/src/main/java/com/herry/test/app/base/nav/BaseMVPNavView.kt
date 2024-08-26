@@ -9,7 +9,7 @@ import com.herry.libs.mvp.MVPView
 import com.herry.libs.mvp.MVPViewCreation
 
 @Suppress("unused")
-abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment(), MVPView<P>, MVPViewCreation<V, P> {
+abstract class BaseMVPNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment(), MVPView<P>, MVPViewCreation<V, P> {
 
     override var presenter: P? = null
 
@@ -72,16 +72,16 @@ abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment()
     override fun onTransitionStart() {
         super.onTransitionStart()
 
-        if(presenter is BaseNavPresenter<*>) {
-            (presenter as BaseNavPresenter<*>).navTransitionStart()
+        if(presenter is BaseMVPNavPresenter<*>) {
+            (presenter as BaseMVPNavPresenter<*>).navTransitionStart()
         }
     }
 
     override fun onTransitionEnd() {
         super.onTransitionEnd()
 
-        if(presenter is BaseNavPresenter<*>) {
-            (presenter as BaseNavPresenter<*>).navTransitionEnd()
+        if(presenter is BaseMVPNavPresenter<*>) {
+            (presenter as BaseMVPNavPresenter<*>).navTransitionEnd()
         }
     }
 

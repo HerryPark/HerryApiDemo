@@ -22,11 +22,11 @@ import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapExHelper
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.app.sample.forms.FeedForm
 import com.herry.test.app.sample.tags.TagsFragment
 
-class NewsFragment: BaseNavView<NewsContract.View, NewsContract.Presenter>(), NewsContract.View {
+class NewsFragment: BaseMVPNavView<NewsContract.View, NewsContract.Presenter>(), NewsContract.View {
 
     override fun onSystemUIAppearances(context: Context): SystemUIAppearances =
         SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {

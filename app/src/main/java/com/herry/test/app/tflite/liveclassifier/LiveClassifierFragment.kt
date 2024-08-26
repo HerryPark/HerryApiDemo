@@ -13,12 +13,12 @@ import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.extension.launchWhenViewResumed
 import com.herry.libs.widget.view.dialog.AppDialog
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.libs.permission.PermissionHelper
 import com.herry.test.widget.TitleBarForm
 
 
-class LiveClassifierFragment : BaseNavView<LiveClassifierContract.View, LiveClassifierContract.Presenter>(), LiveClassifierContract.View {
+class LiveClassifierFragment : BaseMVPNavView<LiveClassifierContract.View, LiveClassifierContract.Presenter>(), LiveClassifierContract.View {
     override fun onCreatePresenter(): LiveClassifierContract.Presenter = LiveClassifierPresenter()
 
     override fun onCreatePresenterView(): LiveClassifierContract.View = this

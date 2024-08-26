@@ -3,7 +3,7 @@ package com.herry.test.app.font.downloadable
 import android.graphics.Typeface
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.model.NodeRoot
-import com.herry.test.app.base.mvp.BasePresenter
+import com.herry.test.app.base.mvp.BaseMVPPresenter
 
 interface DownloadableFontContract {
     interface View: MVPView<Presenter> {
@@ -13,7 +13,7 @@ interface DownloadableFontContract {
         fun onFailed(reason: Int)
     }
 
-    abstract class Presenter: BasePresenter<View>() {
+    abstract class Presenter: BaseMVPPresenter<View>() {
         abstract fun selectFont(model: FontListItemForm.Model)
         abstract fun applyFont()
     }

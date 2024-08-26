@@ -22,12 +22,12 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.libs.permission.PermissionHelper
 import com.herry.test.widget.TitleBarForm
 import java.io.IOException
 
-class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Presenter>(), PickListContract.View {
+class PickListFragment: BaseMVPNavView<PickListContract.View, PickListContract.Presenter>(), PickListContract.View {
 
     override fun onCreatePresenter(): PickListContract.Presenter = PickListPresenter()
 

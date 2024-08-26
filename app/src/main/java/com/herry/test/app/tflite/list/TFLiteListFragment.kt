@@ -18,10 +18,10 @@ import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.TitleBarForm
 
-class TFLiteListFragment : BaseNavView<TFLiteListContract.View, TFLiteListContract.Presenter>(), TFLiteListContract.View {
+class TFLiteListFragment : BaseMVPNavView<TFLiteListContract.View, TFLiteListContract.Presenter>(), TFLiteListContract.View {
     override fun onCreatePresenter(): TFLiteListContract.Presenter = TFLiteListPresenter()
 
     override fun onCreatePresenterView(): TFLiteListContract.View = this

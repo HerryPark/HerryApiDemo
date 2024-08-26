@@ -2,7 +2,7 @@ package com.herry.test.app.tflite.liveclassifier
 
 import androidx.camera.view.PreviewView
 import com.herry.libs.mvp.MVPView
-import com.herry.test.app.base.mvp.BasePresenter
+import com.herry.test.app.base.mvp.BaseMVPPresenter
 import com.herry.libs.permission.PermissionHelper
 
 interface LiveClassifierContract {
@@ -12,6 +12,6 @@ interface LiveClassifierContract {
         fun getCameraPreviewView(): PreviewView?
     }
 
-    abstract class Presenter : BasePresenter<View>() {
+    abstract class Presenter : BaseMVPPresenter<View>() {
     }
 }

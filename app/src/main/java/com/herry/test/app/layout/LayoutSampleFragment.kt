@@ -15,12 +15,12 @@ import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.setImage
 import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 
 /**
  * Created by herry.park on 2020/08/19.
  **/
-class LayoutSampleFragment : BaseNavView<LayoutSampleContract.View, LayoutSampleContract.Presenter>(), LayoutSampleContract.View {
+class LayoutSampleFragment : BaseMVPNavView<LayoutSampleContract.View, LayoutSampleContract.Presenter>(), LayoutSampleContract.View {
 
     override fun onCreatePresenter(): LayoutSampleContract.Presenter {
         return LayoutSamplePresenter()

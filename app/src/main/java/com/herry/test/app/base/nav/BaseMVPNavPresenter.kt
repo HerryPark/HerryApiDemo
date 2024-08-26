@@ -1,10 +1,8 @@
 package com.herry.test.app.base.nav
 
-import android.os.Handler
-import android.os.Looper
-import com.herry.test.app.base.mvp.BasePresenter
+import com.herry.test.app.base.mvp.BaseMVPPresenter
 
-abstract class BaseNavPresenter<V>: BasePresenter<V>() {
+abstract class BaseMVPNavPresenter<V>: BaseMVPPresenter<V>() {
 
     fun navTransitionStart() {
         super.startTransition()

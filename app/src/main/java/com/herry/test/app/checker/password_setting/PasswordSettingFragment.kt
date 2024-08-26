@@ -10,13 +10,13 @@ import android.widget.EditText
 import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.util.AppUtil
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.TitleBarForm
 
 /**
  * Created by herry.park on 2020/7/7
  **/
-class PasswordSettingFragment : BaseNavView<PasswordSettingContract.View, PasswordSettingContract.Presenter>(), PasswordSettingContract.View {
+class PasswordSettingFragment : BaseMVPNavView<PasswordSettingContract.View, PasswordSettingContract.Presenter>(), PasswordSettingContract.View {
 
     override fun onCreatePresenter(): PasswordSettingContract.Presenter =
         PasswordSettingPresenter()

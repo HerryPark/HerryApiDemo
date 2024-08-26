@@ -33,12 +33,12 @@ import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
 import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerViewForm
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.app.sample.feeds.detail.FeedDetailFragment
 import com.herry.test.app.sample.repository.database.searchlog.RecentlySearchKeyword
 import java.util.Locale
 
-class SearchFeedsFragment: BaseNavView<SearchFeedsContract.View, SearchFeedsContract.Presenter>(), SearchFeedsContract.View {
+class SearchFeedsFragment: BaseMVPNavView<SearchFeedsContract.View, SearchFeedsContract.Presenter>(), SearchFeedsContract.View {
 
     override fun onSystemUIAppearances(context: Context): SystemUIAppearances =
         SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {

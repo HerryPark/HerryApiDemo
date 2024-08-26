@@ -22,10 +22,10 @@ import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.libs.widget.view.dialog.BottomSheetListDialog
 import com.herry.libs.widget.view.dialog.BottomSheetListSingleChoiceItemForm
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.TitleBarForm
 
-class DialogListFragment : BaseNavView<DialogListContract.View, DialogListContract.Presenter>(), DialogListContract.View {
+class DialogListFragment : BaseMVPNavView<DialogListContract.View, DialogListContract.Presenter>(), DialogListContract.View {
 
     override fun onCreatePresenter(): DialogListContract.Presenter = DialogListPresenter()
 

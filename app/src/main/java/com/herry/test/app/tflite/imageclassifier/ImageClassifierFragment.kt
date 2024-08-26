@@ -23,7 +23,7 @@ import com.herry.libs.widget.extension.setImage
 import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.BuildConfig
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.Popup
 import com.herry.test.widget.TitleBarForm
 import java.io.File
@@ -31,7 +31,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ImageClassifierFragment : BaseNavView<ImageClassifierContract.View, ImageClassifierContract.Presenter>(), ImageClassifierContract.View {
+class ImageClassifierFragment : BaseMVPNavView<ImageClassifierContract.View, ImageClassifierContract.Presenter>(), ImageClassifierContract.View {
     override fun onCreatePresenter(): ImageClassifierContract.Presenter = ImageClassifierPresenter()
 
     override fun onCreatePresenterView(): ImageClassifierContract.View = this

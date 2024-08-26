@@ -20,13 +20,13 @@ import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setImage
 import com.herry.libs.widget.extension.setOnSingleClickListener
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.app.painter.PainterFragment
 import com.herry.test.widget.Popup
 import com.herry.test.widget.TitleBarForm
 import java.util.*
 
-class DigitClassifierFragment : BaseNavView<DigitClassifierContract.View, DigitClassifierContract.Presenter>(), DigitClassifierContract.View {
+class DigitClassifierFragment : BaseMVPNavView<DigitClassifierContract.View, DigitClassifierContract.Presenter>(), DigitClassifierContract.View {
     override fun onCreatePresenter(): DigitClassifierContract.Presenter = DigitClassifierPresenter()
 
     override fun onCreatePresenterView(): DigitClassifierContract.View = this

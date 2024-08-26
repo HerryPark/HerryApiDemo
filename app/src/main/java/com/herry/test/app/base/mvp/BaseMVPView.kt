@@ -8,7 +8,7 @@ import com.herry.libs.mvp.MVPView
 import com.herry.libs.mvp.MVPViewCreation
 import com.herry.test.app.base.BaseFragment
 
-abstract class BaseView<V: MVPView<P>, P: MVPPresenter<V>>: BaseFragment(), MVPView<P>, MVPViewCreation<V, P> {
+abstract class BaseMVPView<V: MVPView<P>, P: MVPPresenter<V>>: BaseFragment(), MVPView<P>, MVPViewCreation<V, P> {
 
     override var presenter: P? = null
 

@@ -15,10 +15,10 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.TitleBarForm
 
-class EndlessListFragment : BaseNavView<EndlessListContract.View, EndlessListContract.Presenter>(), EndlessListContract.View {
+class EndlessListFragment : BaseMVPNavView<EndlessListContract.View, EndlessListContract.Presenter>(), EndlessListContract.View {
     override fun onCreatePresenter(): EndlessListContract.Presenter = EndlessListPresenter()
 
     override fun onCreatePresenterView(): EndlessListContract.View = this

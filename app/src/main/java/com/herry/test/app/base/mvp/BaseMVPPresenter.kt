@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 
 @Suppress("MemberVisibilityCanBePrivate")
-abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
+abstract class BaseMVPPresenter<V> : MVPPresenter<V>(), LifecycleObserver {
 
     companion object {
         private const val TAG = "BasePresenter"

@@ -2,7 +2,7 @@ package com.herry.test.app.intent.share
 
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
-import com.herry.test.app.base.mvp.BasePresenter
+import com.herry.test.app.base.mvp.BaseMVPPresenter
 import com.herry.libs.permission.PermissionHelper
 import com.herry.test.widget.MediaAccessPermissionNoticeModel
 import com.herry.test.widget.MediaSelectionForm
@@ -19,7 +19,7 @@ interface ShareMediaListContract {
         fun onLoadedList(count: Int)
     }
 
-    abstract class Presenter : BasePresenter<View>() {
+    abstract class Presenter : BaseMVPPresenter<View>() {
         abstract fun setMediaType(type: MediaSelectionForm.MediaType)
         abstract fun selectLimitedVisualMedia()
         abstract fun setAccessPermissionNoticeVisible(visible: Boolean)

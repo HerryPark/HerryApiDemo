@@ -2,14 +2,14 @@ package com.herry.test.app.dialog.list
 
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
-import com.herry.test.app.base.mvp.BasePresenter
+import com.herry.test.app.base.mvp.BaseMVPPresenter
 
 interface DialogListContract {
     interface View : MVPView<Presenter>, INodeRoot {
         fun onScreen(type: ItemType)
     }
 
-    abstract class Presenter : BasePresenter<View>() {
+    abstract class Presenter : BaseMVPPresenter<View>() {
         abstract fun moveToScreen(type: ItemType)
     }
 

@@ -2,7 +2,7 @@ package com.herry.test.app.widgets.main
 
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
-import com.herry.test.app.base.mvp.BasePresenter
+import com.herry.test.app.base.mvp.BaseMVPPresenter
 
 interface WidgetsContract {
 
@@ -10,7 +10,7 @@ interface WidgetsContract {
 
     }
 
-    abstract class Presenter : BasePresenter<View>() {
+    abstract class Presenter : BaseMVPPresenter<View>() {
 
     }
 

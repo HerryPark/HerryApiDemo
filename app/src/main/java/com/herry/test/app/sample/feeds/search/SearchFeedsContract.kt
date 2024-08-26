@@ -2,7 +2,7 @@ package com.herry.test.app.sample.feeds.search
 
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.model.NodeRoot
-import com.herry.test.app.base.nav.BaseNavPresenter
+import com.herry.test.app.base.nav.BaseMVPNavPresenter
 import com.herry.test.app.sample.feeds.detail.FeedDetailCallData
 import com.herry.test.app.sample.repository.database.feed.Feed
 
@@ -15,7 +15,7 @@ interface SearchFeedsContract {
         fun onUpdatedSearchFeedResult()
     }
 
-    abstract class Presenter: BaseNavPresenter<View>() {
+    abstract class Presenter: BaseMVPNavPresenter<View>() {
         abstract fun getAutoComplete(keyword: String)
         abstract fun searchFeeds(keyword: String)
         abstract fun loadMoreSearchResults()

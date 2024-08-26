@@ -170,7 +170,10 @@
 
     <fragment
         android:id="@+id/downloadable_font_fragment"
-        android:name="com.herry.test.app.font.downloadable.DownloadableFontFragment"
+        android:name="com.herry.test.app.font.downloadable.DownloadableFontFragment" />
 
-        />
+    <fragment
+        android:id="@+id/mvvm_test_fragment"
+        android:name="com.herry.test.app.mvvm.MVVMTestFragment"
+        tools:layout="@layout/mvvm_test_fragment"/>
 </navigation>

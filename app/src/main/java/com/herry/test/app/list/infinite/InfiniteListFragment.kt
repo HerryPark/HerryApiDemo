@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.herry.libs.helper.ToastHelper
 import com.herry.libs.widget.view.recyclerview.snap.LinearSnapExHelper
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.base.nav.BaseMVPNavView
 import com.herry.test.widget.TitleBarForm
 
-class InfiniteListFragment: BaseNavView<InfiniteListContract.View, InfiniteListContract.Presenter>(), InfiniteListContract.View {
+class InfiniteListFragment: BaseMVPNavView<InfiniteListContract.View, InfiniteListContract.Presenter>(), InfiniteListContract.View {
     override fun onCreatePresenter(): InfiniteListContract.Presenter = InfiniteListPresenter()
 
     override fun onCreatePresenterView(): InfiniteListContract.View = this
