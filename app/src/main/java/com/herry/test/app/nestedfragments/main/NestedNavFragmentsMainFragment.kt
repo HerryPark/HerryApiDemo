@@ -135,7 +135,7 @@ class NestedNavFragmentsMainFragment : BaseNestedNavFragment() {
             }
 
             R.id.nested_nav_fragments_4th_fragment -> {
-                Toast.makeText(requireContext(), "from 4 ${BundleUtil[result, "aa", Int::class]}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "from 4 ${BundleUtil.get(result, "aa", Int::class)}", Toast.LENGTH_SHORT).show()
             }
         }
     }

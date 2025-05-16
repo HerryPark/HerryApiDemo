@@ -35,6 +35,6 @@ interface MainContract {
         WIDGETS ("Widgets"),
         TIMELINE ("Timeline"),
         DOWNLOADABLE_FONTS ("Downloadable fonts"),
-        MVVM_TEST ("MVVM test")
+        KEEP_CHILD_VM("Keep Child ViewModel")
     }
 }

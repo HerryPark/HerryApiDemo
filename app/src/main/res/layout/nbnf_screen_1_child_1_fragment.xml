@@ -16,6 +16,7 @@
         android:gravity="center"
         android:text="CHILD 1"
         android:textSize="@dimen/size20"
+        android:textColor="@color/on_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,7 +29,7 @@
         android:gravity="center"
         android:text="Go to the Screen2"
         android:textSize="@dimen/size16"
-        android:textColor="@color/tbc_100"
+        android:textColor="@color/primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/nbnf_screen_1_child_1_fragment_label"

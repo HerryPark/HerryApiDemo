@@ -145,8 +145,8 @@ class MainFragment : BaseMVPNavView<MainContract.View, MainContract.Presenter>()
             MainContract.TestItemType.DOWNLOADABLE_FONTS -> {
                 navigateTo(destinationId = R.id.downloadable_font_fragment)
             }
-            MainContract.TestItemType.MVVM_TEST -> {
-                navigateTo(destinationId = R.id.mvvm_test_fragment)
+            MainContract.TestItemType.KEEP_CHILD_VM -> {
+                navigateTo(destinationId = R.id.keep_child_vm_fragment)
             }
         }
     }

@@ -101,7 +101,7 @@ class DigitClassifierFragment : BaseMVPNavView<DigitClassifierContract.View, Dig
         }
         clearView = view.findViewById<View?>(R.id.image_classifier_fragment_clear)?.apply {
             this.setOnSingleClickListener {
-                presenter?.clear()
+                presenter?.clearClassify()
             }
         }
         resultView = view.findViewById(R.id.image_classifier_fragment_result)

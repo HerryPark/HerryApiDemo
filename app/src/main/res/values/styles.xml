@@ -51,14 +51,14 @@
 
     <style name="TitleBar">
         <item name="android:minHeight">?attr/actionBarSize</item>
-        <item name="mainTitleTextColor">@color/tbc_10</item>
+        <item name="mainTitleTextColor">@color/on_primary</item>
         <item name="mainTitleTextGravity">center</item>
-        <item name="titleBarBackground">@color/on_primary</item>
+        <item name="titleBarBackground">@color/secondary</item>
         <item name="mainTitleTextStyle">bold</item>
         <item name="mainTitleTextSize">20dp</item>
         <item name="showShadow">hide</item>
         <item name="shadowHeight">1dp</item>
-        <item name="shadowBackground">@color/tbc_40</item>
+        <item name="shadowBackground">@color/on_primary_40</item>
         <item name="subActionTextSize">@dimen/size18</item>
         <item name="subActionViewPaddingEnd">0dp</item>
         <item name="menuActionViewMarginTop">@dimen/size09</item>
@@ -73,7 +73,7 @@
         <item name="actionBadgeMarginBottom">0dp</item>
         <item name="actionBadgeMarginEnd">9dp</item>
         <item name="actionBadgeMarginStart">0dp</item>
-        <item name="actionBadgeTextColor">@color/tbc_10</item>
+        <item name="actionBadgeTextColor">@color/on_primary_10</item>
         <item name="actionBadgeTextSize">10dp</item>
         <item name="actionBadgeTextStyle">normal</item>
         <item name="actionBadgeLayoutGravity">top|end</item>

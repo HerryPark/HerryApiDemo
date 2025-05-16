@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.herry.libs.app.activity_caller.activity.ACActivity
 import com.herry.libs.helper.ApiHelper
@@ -17,6 +18,7 @@ import com.herry.libs.util.FragmentAddingOption
 import com.herry.libs.util.OnSoftKeyboardVisibilityListener
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.util.listener.ListenerRegistry
+import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class BaseActivity : ACActivity() {
 
@@ -67,6 +69,8 @@ abstract class BaseActivity : ACActivity() {
 
     override fun onResume() {
         super.onResume()
+
+        withoutSavedInstance.set(false)
 
         // checks changed application by user
         if ((application is BaseApplication) && (application as BaseApplication).isNeedRestartApp()) {
@@ -144,5 +148,18 @@ abstract class BaseActivity : ACActivity() {
      */
     internal fun removeOnSoftKeyboardVisibilityListener(listener: OnSoftKeyboardVisibilityListener) {
         softKeyboardVisibilityListeners.unregister(listener)
+    }
+
+
+    private val withoutSavedInstance: AtomicBoolean = AtomicBoolean(false)
+    protected fun recreate(withoutSavedInstance: Boolean) {
+        this.withoutSavedInstance.set(withoutSavedInstance)
+        ActivityCompat.recreate(this)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        if (!withoutSavedInstance.get()) {
+            super.onSaveInstanceState(outState)
+        }
     }
 }

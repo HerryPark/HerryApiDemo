@@ -5,20 +5,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:ignore="HardcodedText"
+    tools:ignore="HardcodedText, SpUsage"
     tools:viewBindingIgnore="true">
 
-    <TextView
-        android:id="@+id/nbnf_screen_1_child_2_sub_2_fragment_label"
+    <include
+        android:id="@+id/account_fragment_title"
+        layout="@layout/title_bar_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/account_fragment_label"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:gravity="center"
-        android:text="SUB 2 of the CHILD 2"
-        android:textSize="@dimen/size20"
+        android:text="ACCOUNT"
+        android:textSize="20dp"
         android:textColor="@color/on_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/account_fragment_title"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -167,13 +167,13 @@
         android:name="com.herry.test.app.timeline.TimelineFragment"
         tools:layout="@layout/timeline_fragment" />
 
-
     <fragment
         android:id="@+id/downloadable_font_fragment"
         android:name="com.herry.test.app.font.downloadable.DownloadableFontFragment" />
 
     <fragment
-        android:id="@+id/mvvm_test_fragment"
-        android:name="com.herry.test.app.mvvm.MVVMTestFragment"
-        tools:layout="@layout/mvvm_test_fragment"/>
+        android:id="@+id/keep_child_vm_fragment"
+        android:name="com.herry.test.app.keepchildvm.KeepChildVMFragment"
+        tools:layout="@layout/keep_child_vm_fragment" />
+
 </navigation>

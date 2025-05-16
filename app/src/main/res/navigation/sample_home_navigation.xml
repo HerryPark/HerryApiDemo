@@ -2,14 +2,8 @@
 <navigation
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sample_home_navigation"
-    app:startDestination="@+id/sample_home_root_fragment">
-
-    <fragment
-        android:id="@+id/sample_home_root_fragment"
-        android:name="com.herry.test.app.sample.home.HomeRootFragment"
-        tools:layout="@layout/empty_fragment" />
+    app:startDestination="@id/sample_create_navigation">
 
     <include app:graph="@navigation/sample_news_navigation"/>
     <include app:graph="@navigation/sample_feeds_navigation"/>

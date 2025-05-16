@@ -101,12 +101,12 @@ class SearchFeedsFragment: BaseMVPNavView<SearchFeedsContract.View, SearchFeedsC
     override fun onChangedViewMode(mode: SearchFeedsContract.ViewMode) {
         when (mode) {
             SearchFeedsContract.ViewMode.RECOMMEND -> {
-                keywordsRecyclerForm.isVisible(true)
-                feedsRecyclerForm.isVisible(false)
+                keywordsRecyclerForm.setVisible(true)
+                feedsRecyclerForm.setVisible(false)
             }
             SearchFeedsContract.ViewMode.SEARCH_RESULT -> {
-                feedsRecyclerForm.isVisible(true)
-                keywordsRecyclerForm.isVisible(false)
+                feedsRecyclerForm.setVisible(true)
+                keywordsRecyclerForm.setVisible(false)
             }
         }
     }

@@ -39,8 +39,8 @@
             android:layout_height="match_parent"
             android:scaleType="center"
             android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@id/title_form_start_button_1_container"
-            app:layout_constraintEnd_toStartOf="@id/title_form_end_button_5_container"
+            app:layout_constraintStart_toEndOf="@id/title_form_normal_start_button_1_container"
+            app:layout_constraintEnd_toStartOf="@id/title_form_normal_end_button_5_container"
             app:layout_constraintHorizontal_bias="0.0"
             tools:visibility="visible"
             />
@@ -60,7 +60,7 @@
             />
 
         <FrameLayout
-            android:id="@+id/title_form_start_custom_button_container"
+            android:id="@+id/title_form_normal_start_custom_button_container"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginHorizontal="10dp"
@@ -73,17 +73,17 @@
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <FrameLayout
-            android:id="@+id/title_form_start_button_1_container"
+            android:id="@+id/title_form_normal_start_button_1_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
             app:layout_goneMarginStart="0dp"
-            app:layout_constraintStart_toEndOf="@id/title_form_start_custom_button_container"
+            app:layout_constraintStart_toEndOf="@id/title_form_normal_start_custom_button_container"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <FrameLayout
-            android:id="@+id/title_form_end_custom_button_container"
+            android:id="@+id/title_form_normal_end_custom_button_container"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="10dp"
@@ -95,79 +95,113 @@
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <FrameLayout
-            android:id="@+id/title_form_end_button_1_container"
+            android:id="@+id/title_form_normal_end_button_1_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:visibility="gone"
             app:layout_goneMarginEnd="0dp"
-            app:layout_constraintEnd_toStartOf="@id/title_form_end_custom_button_container"
+            app:layout_constraintEnd_toStartOf="@id/title_form_normal_end_custom_button_container"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <FrameLayout
-            android:id="@+id/title_form_end_button_2_container"
+            android:id="@+id/title_form_normal_end_button_2_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@id/title_form_end_button_1_container"
+            app:layout_constraintEnd_toStartOf="@id/title_form_normal_end_button_1_container"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <FrameLayout
-            android:id="@+id/title_form_end_button_3_container"
+            android:id="@+id/title_form_normal_end_button_3_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@id/title_form_end_button_2_container"
+            app:layout_constraintEnd_toStartOf="@id/title_form_normal_end_button_2_container"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <FrameLayout
-            android:id="@+id/title_form_end_button_4_container"
+            android:id="@+id/title_form_normal_end_button_4_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@id/title_form_end_button_3_container"
+            app:layout_constraintEnd_toStartOf="@id/title_form_normal_end_button_3_container"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <FrameLayout
-            android:id="@+id/title_form_end_button_5_container"
+            android:id="@+id/title_form_normal_end_button_5_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@id/title_form_end_button_4_container"
+            app:layout_constraintEnd_toStartOf="@id/title_form_normal_end_button_4_container"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/title_form_search_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:paddingHorizontal="16dp"
+        android:paddingHorizontal="6dp"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <FrameLayout
+            android:id="@+id/title_form_search_start_custom_button_container"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="10dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_goneMarginStart="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/title_form_search_start_button_1_container"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <FrameLayout
+            android:id="@+id/title_form_search_start_button_1_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_goneMarginStart="0dp"
+            app:layout_constraintStart_toEndOf="@id/title_form_search_start_custom_button_container"
+            app:layout_constraintEnd_toStartOf="@id/title_form_search_input_container"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/title_form_search_input_container"
             android:layout_width="0dp"
             android:layout_height="36dp"
             android:layout_weight="1"
             android:layout_gravity="center"
             android:gravity="center"
             android:orientation="horizontal"
-            android:background="@drawable/shape_ra18_bg_onprimary10">
+            android:background="@drawable/shape_ra18_bg_onprimary10"
+            app:layout_constraintStart_toEndOf="@id/title_form_search_start_button_1_container"
+            app:layout_constraintEnd_toStartOf="@id/title_form_search_end_button_1_container"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="16dp"
@@ -210,13 +244,34 @@
                 tools:visibility="visible" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <com.herry.libs.widget.view.AppButton
-            android:id="@+id/title_form_search_cancel"
-            style="@style/AppButton.TextOnly"
+        <FrameLayout
+            android:id="@+id/title_form_search_end_button_1_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            app:abText="@string/button_cancel"/>
+            android:layout_marginStart="6dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_goneMarginEnd="0dp"
+            app:layout_constraintStart_toEndOf="@id/title_form_search_input_container"
+            app:layout_constraintEnd_toStartOf="@id/title_form_search_end_custom_button_container"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-    </LinearLayout>
+        <FrameLayout
+            android:id="@+id/title_form_search_end_custom_button_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="10dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintStart_toEndOf="@id/title_form_search_end_button_1_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -195,6 +195,7 @@ abstract class BaseNavActivity : BaseActivity() {
 
     private fun getActiveFragment(): Fragment? {
         return getActiveNavHostFragment()?.childFragmentManager?.primaryNavigationFragment
+            ?: this.navHostFragment?.childFragmentManager?.primaryNavigationFragment
     }
 
     abstract fun getGraph(): Int

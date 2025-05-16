@@ -15,6 +15,6 @@ interface DigitClassifierContract {
     abstract class Presenter : BaseMVPPresenter<View>() {
         abstract fun loadedImage(loadedImage: Any?, onLoaded: ((image: Any?) -> Unit)? = null)
         abstract fun classify(image: Bitmap)
-        abstract fun clear()
+        abstract fun clearClassify()
     }
 }

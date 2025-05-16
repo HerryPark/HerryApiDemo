@@ -82,7 +82,7 @@ class PainterFragment : BaseNavFragment() {
         }
 
         fun getResult(bundle: Bundle): ResultData? {
-            return BundleUtil[bundle, RESULT_DATA, ResultData::class]
+            return BundleUtil.get(bundle, RESULT_DATA, ResultData::class)
         }
 
         private fun createResultBundle(bitmapByteArray: ByteArray): Bundle {

@@ -73,7 +73,7 @@ class FeedsFragment: BaseMVPNavView<FeedsContract.View, FeedsContract.Presenter>
             tabMode = TabLayoutForm.TabMode.AUTO,
             gapWidth = ViewUtil.getDimensionPixelSize(context, R.dimen.size10)
         ).also {
-            it.bindHolder(context, view, R.id.feeds_fragment_categories_form)
+            it.bindHolder(context, view as? ViewGroup, R.id.feeds_fragment_categories_form)
         }
 
         val tabLayout = categoriesForm.getTabLayout()

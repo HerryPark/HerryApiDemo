@@ -31,4 +31,8 @@
         android:name="com.herry.test.app.sample.feeds.search.SearchFeedsFragment"
         tools:layout="@layout/search_feeds_fragment" />
 
+    <fragment
+        android:id="@+id/account_fragment"
+        android:name="com.herry.test.app.sample.account.AccountFragment"
+        tools:layout="@layout/account_fragment" />
 </navigation>

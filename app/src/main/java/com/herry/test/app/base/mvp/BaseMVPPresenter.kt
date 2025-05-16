@@ -240,12 +240,13 @@ abstract class BaseMVPPresenter<V> : MVPPresenter<V>(), LifecycleObserver {
 
     protected open fun launch(
         launchWhen: LaunchWhenPresenter,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit
     ): Job? {
         return viewLifecycleOwner?.lifecycleScope?.run {
             when (launchWhen) {
-                LaunchWhenPresenter.LAUNCHED -> presenterLifecycle.launchWhenPresenterLaunched(this, block)
-                LaunchWhenPresenter.RESUMED -> presenterLifecycle.launchWhenPresenterResumed(this, block)
+                LaunchWhenPresenter.LAUNCHED -> presenterLifecycle.launchWhenPresenterLaunched(viewLifecycleScope = this, start = start, block = block)
+                LaunchWhenPresenter.RESUMED -> presenterLifecycle.launchWhenPresenterResumed(viewLifecycleScope = this, start = start, block = block)
             }
         }
     }
@@ -390,12 +391,12 @@ abstract class BaseMVPPresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         tag: String = "",
         launchWhen: LaunchWhenPresenter = LaunchWhenPresenter.LAUNCHED
     ): PerformBlocks = object : PerformBlocks(tag = tag) {
-        override fun performActionsJob(block: suspend CoroutineScope.() -> Unit): Job? {
-            return launch(launchWhen) { block() }
+        override fun performActionsJob(start: CoroutineStart, block: suspend CoroutineScope.() -> Unit): Job? {
+            return launch(launchWhen = launchWhen, start = start) { block() }
         }
 
-        override fun actionJob(block: suspend CoroutineScope.() -> Unit): Job? {
-            return launch(launchWhen) { block() }
+        override fun actionJob(start: CoroutineStart, block: suspend CoroutineScope.() -> Unit): Job? {
+            return launch(launchWhen = launchWhen, start = start) { block() }
         }
     }
 

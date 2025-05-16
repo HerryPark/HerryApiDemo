@@ -1,56 +1,25 @@
 package com.herry.test.app.sample.home
 
-import com.herry.test.R
-import com.herry.test.app.sample.home.form.HomeBottomNavControlForm
-import com.herry.test.app.sample.home.form.HomeBottomNavControlItemForm
-import com.herry.test.app.sample.home.form.HomeBottomNavScreenId
+import com.herry.libs.log.Trace
 
 class HomePresenter : HomeContract.Presenter() {
-    private var currentScreen: HomeBottomNavScreenId? = null
-    private val tabs = arrayListOf(
-        // mix
-        HomeBottomNavControlItemForm.Model(id = R.id.sample_news_navigation, icon = R.drawable.ic_navigation_new, "New"),
-        // mix
-        HomeBottomNavControlItemForm.Model(id = R.id.sample_feeds_navigation, icon = R.drawable.ic_navigation_feeds, "Feeds"),
-        // mix
-        HomeBottomNavControlItemForm.Model(id = R.id.sample_create_navigation, icon = R.drawable.ic_navigation_create, "Create"),
-        // mix
-        HomeBottomNavControlItemForm.Model(id = R.id.sample_me_navigation, icon = R.drawable.ic_navigation_me, "Me")
-    )
+    private var currentScreen: HomeTab? = null
 
     override fun onResume(view: HomeContract.View, state: ResumeState) {
-        if (state.isLaunch()) {
-            loadNavigator(state == ResumeState.LAUNCH)
-        }
     }
 
-    private fun loadNavigator(init: Boolean) {
-        displayNavigator(false, init)
-    }
-
-    private fun displayNavigator(hasNewNotice: Boolean, isStart: Boolean) {
-        view?.getViewContext() ?: return
-
-        val currentScreen = this.currentScreen ?: HomeBottomNavScreenId.CREATE
-
-        setCurrent(currentScreen, isStart = isStart, force = true)
-    }
-
-    override fun setCurrent(id: HomeBottomNavScreenId, isStart: Boolean, force: Boolean) {
-        if (this.currentScreen == id && !force) {
+    override fun setCurrent(tab: HomeTab, isStart: Boolean, force: Boolean) {
+        if (this.currentScreen == tab && !force) {
             return
         }
 
-        this.currentScreen = id
+        this.currentScreen = tab
 
         view?.onSelectTab(
-            model = HomeBottomNavControlForm.Model(
-                selected = id,
-                items = tabs
-            ),
+            tab = tab,
             isStart = isStart
         )
     }
 
-    override fun getCurrent(): HomeBottomNavScreenId? = this.currentScreen
+    override fun getCurrent(): HomeTab? = this.currentScreen
 }

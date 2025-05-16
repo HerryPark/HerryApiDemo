@@ -59,7 +59,7 @@ class ImageClassifierPresenter : ImageClassifierContract.Presenter() {
         )
     }
 
-    override fun clear() {
+    override fun clearClassify() {
         loadedImage(null) { image ->
             displayLoadedImage(image)
         }

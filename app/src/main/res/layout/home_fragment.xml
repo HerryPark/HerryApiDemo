@@ -7,22 +7,32 @@
     android:layout_height="match_parent"
     tools:viewBindingIgnore="true">
 
-    <include
-        android:id="@+id/home_fragment_bottom_navigator_fragment_form"
-        layout="@layout/home_bottom_navigator_fragment_form"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/home_fragment_container"
+        android:name="com.herry.libs.app.nav.BottomNavHostFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/sample_home_navigation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/home_fragment_bottom_navigator_form"/>
+        app:layout_constraintBottom_toTopOf="@id/home_fragment_bottom_nav_view"/>
 
-    <include
-        android:id="@+id/home_fragment_bottom_navigator_form"
-        layout="@layout/home_bottom_nav_control_form"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/home_fragment_bottom_nav_view"
         android:layout_width="0dp"
-        android:layout_height="@dimen/size48"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="7dp"
+        app:itemBackground="@drawable/selector_bottom_nav"
+        app:itemIconTint="@color/selector_bottom_nav"
+        app:itemTextColor="@color/selector_bottom_nav"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:menu="@menu/home_bottom_nav_menu"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

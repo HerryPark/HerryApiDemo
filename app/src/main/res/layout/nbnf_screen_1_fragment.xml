@@ -24,7 +24,7 @@
         android:id="@+id/nbnf_screen_1_child_control_container"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size56"
-        android:background="@color/tbc_80"
+        android:background="@color/secondary"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
@@ -60,7 +60,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/size01"
-            android:background="@color/tbc_10_a20"
+            android:background="@color/on_primary_10"
             android:layout_gravity="top|center_horizontal" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

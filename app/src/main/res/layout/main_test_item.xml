@@ -19,6 +19,6 @@
         android:layout_height="match_parent"
         android:gravity="start|center_vertical"
         android:textSize="@dimen/size16"
-        android:textColor="@color/tbc_100"
+        android:textColor="@color/on_primary"
         />
 </LinearLayout>
