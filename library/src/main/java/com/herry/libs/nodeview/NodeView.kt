@@ -22,7 +22,7 @@ abstract class NodeView<H : NodeHolder> {
         return bindHolder(context, view)
     }
 
-    fun bindHolder(context: Context, parent: View?, @IdRes id: Int): H? {
+    fun bindHolder(context: Context, parent: ViewGroup?, @IdRes id: Int): H? {
         return bindHolder(context, parent?.findViewById(id))
     }
 
@@ -30,15 +30,24 @@ abstract class NodeView<H : NodeHolder> {
         holder = view?.let {
             onCreateHolder(context, it)
         }
+
+        holder?.let {
+            onBindHolder(context, it)
+        }
         return holder
     }
 
     protected open fun onCreateView(context: Context, parent: ViewGroup?): View =
         LayoutInflater.from(context).inflate(onLayout(), parent, false)
 
+    /**
+     * Sets a layout resource id for inflating view.
+     */
     @LayoutRes
     protected abstract fun onLayout(): Int
 
     protected abstract fun onCreateHolder(context: Context, view: View): H
+
+    protected open fun onBindHolder(context: Context, holder: H) {}
 
 }

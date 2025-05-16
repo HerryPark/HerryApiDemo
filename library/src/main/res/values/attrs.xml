@@ -808,6 +808,7 @@
             <enum name="add" value="16" />
         </attr>
         <attr name="abIconRelativeOfText">
+            <enum name="overlap" value="0" />
             <enum name="top" value="1" />
             <enum name="bottom" value="2" />
             <enum name="start" value="3" />
@@ -848,6 +849,8 @@
         </attr>
         <attr name="abTextLines" format="integer" min="0" />
         <attr name="abTextMaxLines" format="integer" min="0" />
+        <attr name="abTextLineSpacingExtra" format="dimension" />
+        <attr name="abTextLineSpacingMultiplier" format="float" />
         <attr name="abTextGravity" >
             <!-- Push object to the top of its container, not changing its size. -->
             <flag name="top" value="0x01" />

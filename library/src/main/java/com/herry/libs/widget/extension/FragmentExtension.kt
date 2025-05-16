@@ -12,6 +12,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.Factory
+import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.*
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.fragment.DialogFragmentNavigator
@@ -19,6 +23,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.herry.libs.app.nav.BottomNavHostFragment
 import com.herry.libs.app.nav.NavBundleUtil
+import kotlin.reflect.KClass
 
 fun Fragment.getNavCurrentDestinationID(): Int = findNavController().currentDestination?.id ?: 0
 
@@ -159,6 +164,10 @@ fun Fragment.setFragmentResultListener(requestKey: String, listener: ((resultKey
     this.parentFragmentManager.setFragmentResultListener(requestKey, this, listener)
 }
 
+fun Fragment.setChildFragmentResultListener(requestKey: String, listener: ((resultKey: String, bundle: Bundle) -> Unit)) {
+    this.childFragmentManager.setFragmentResultListener(requestKey, this, listener)
+}
+
 /**
  * Sends data to NavHostFragment of this fragment
  */
@@ -264,30 +273,33 @@ private fun onNavigated(fragment: Fragment, onNavigated: ((navigatedFragment: Fr
  * @param singleInstance true - If a destination fragment exists, it is not called.
  */
 fun Fragment.navigateTo(navController: NavController? = null, @IdRes destinationId: Int, args: Bundle?, navOptions: NavOptions?, navigatorExtras: Navigator.Extras?, isCheckParent: Boolean = true, singleInstance: Boolean = false, onNavigated: ((navigatedFragment: Fragment) -> Unit)? = null) {
-    val findNavController = navController ?: findNavController()
-    try {
-        if (singleInstance && findNavController.hasNavDestinationID(destinationId)) {
-            return
-        }
-        findNavController.navigate(destinationId, args, navOptions, navigatorExtras)
-        if (onNavigated != null) {
-            onNavigated(this, onNavigated)
-        }
-    } catch (ex: IllegalArgumentException) {
-        if (isCheckParent) {
-            try {
-                val navControllers = findAllNavControllers()
-                navControllers.forEach { parentNavController ->
-                    try {
-                        navigateTo(parentNavController, destinationId, args, navOptions, navigatorExtras, isCheckParent = false, singleInstance = singleInstance, onNavigated = onNavigated)
-                        return
-                    } catch (_: Exception) {
-                    }
-                }
-            } catch (_: Exception) {
+    // navigate to screen on the UI thread
+    activity?.runOnUiThread {
+        val findNavController = navController ?: findNavController()
+        try {
+            if (singleInstance && findNavController.hasNavDestinationID(destinationId)) {
+                return@runOnUiThread
             }
-        } else {
-            throw ex
+            findNavController.navigate(destinationId, args, navOptions, navigatorExtras)
+            if (onNavigated != null) {
+                onNavigated(this, onNavigated)
+            }
+        } catch (ex: IllegalArgumentException) {
+            if (isCheckParent) {
+                try {
+                    val navControllers = findAllNavControllers()
+                    navControllers.forEach { parentNavController ->
+                        try {
+                            navigateTo(parentNavController, destinationId, args, navOptions, navigatorExtras, isCheckParent = false, singleInstance = singleInstance, onNavigated = onNavigated)
+                            return@runOnUiThread
+                        } catch (_: Exception) {
+                        }
+                    }
+                } catch (_: Exception) {
+                }
+            } else {
+                throw ex
+            }
         }
     }
 }
@@ -387,7 +399,8 @@ fun BottomNavHostFragment.setNavigate(@IdRes destinationId: Int, navAnim: NavAni
             navController = navController,
             destinationId = destinationId,
             navOptions = NavOptions.Builder().apply {
-                this.setLaunchSingleTop(true).setRestoreState(true)
+                this.setLaunchSingleTop(true)
+                this.setRestoreState(true)
                 if (navAnim != null) {
                     this.setEnterAnim(navAnim.enterAnim)
                         .setExitAnim(navAnim.exitAnim)
@@ -401,4 +414,34 @@ fun BottomNavHostFragment.setNavigate(@IdRes destinationId: Int, navAnim: NavAni
         )
     } catch (_: IllegalArgumentException) {
     }
+}
+
+
+fun <T : ViewModel> Fragment.createViewModel(factory:Factory? = null, extras: CreationExtras? = null, key: String = "", modelClass: KClass<T>): T {
+    val viewModelProvider = ViewModelProvider.create(
+        owner = this,
+        factory = factory ?: defaultViewModelProviderFactory,
+        extras = extras ?: this.defaultViewModelCreationExtras
+    )
+
+    return if (key.isNotBlank()) {
+        viewModelProvider[key, modelClass]
+    } else {
+        viewModelProvider[modelClass]
+    }
+}
+
+/**
+ * Creates the child fragment's ViewModel of the parent fragment
+ * i.e> A child fragment is used in the StateFragmentAdapter
+ */
+@Throws(IllegalStateException::class)
+fun <T : ViewModel> Fragment.createChildFragmentViewModel(factory: Factory? = null, extras: CreationExtras? = null, key: String = "", modelClass: KClass<T>): T {
+    val parentFragment = this.parentFragment ?: throw IllegalStateException("Unknown $this's parent fragment or this is not attached to the parent fragment")
+    return parentFragment.createViewModel(
+        factory = factory ?: this.defaultViewModelProviderFactory,
+        extras = extras ?: this.defaultViewModelCreationExtras,
+        key = key,
+        modelClass = modelClass
+    )
 }

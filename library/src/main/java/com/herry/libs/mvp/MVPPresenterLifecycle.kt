@@ -74,11 +74,11 @@ class MVPPresenterLifecycle {
         }
     }
 
-    fun launchWhenPresenterLaunched(viewLifecycleScope: CoroutineScope, block: suspend CoroutineScope.() -> Unit): Job = viewLifecycleScope.launch {
+    fun launchWhenPresenterLaunched(viewLifecycleScope: CoroutineScope, start: CoroutineStart = CoroutineStart.DEFAULT, block: suspend CoroutineScope.() -> Unit): Job = viewLifecycleScope.launch(start = start) {
         launchWhenPresenterStateAtLeast(State.LAUNCHED, block)
     }
 
-    fun launchWhenPresenterResumed(viewLifecycleScope: CoroutineScope, block: suspend CoroutineScope.() -> Unit): Job = viewLifecycleScope.launch {
+    fun launchWhenPresenterResumed(viewLifecycleScope: CoroutineScope, start: CoroutineStart = CoroutineStart.DEFAULT, block: suspend CoroutineScope.() -> Unit): Job = viewLifecycleScope.launch(start = start) {
         launchWhenPresenterStateAtLeast(State.RESUMED, block)
     }
 }

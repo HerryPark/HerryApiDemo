@@ -23,7 +23,7 @@ object Trace {
         val callerElement = Exception().stackTrace[1]
         this.e(callerElement.fileName, "[${callerElement.fileName} (${callerElement.lineNumber})] $log", throwable)
     }
-    
+
     fun d(tag: String, log: String) {
         if (isDebug()) {
             Log.d(tag, log)
@@ -35,26 +35,26 @@ object Trace {
         this.d(callerElement.fileName, "[${callerElement.fileName} (${callerElement.lineNumber})] $log")
     }
 
-    fun w(tag: String, log: String) {
+    fun w(tag: String, log: String, throwable: Throwable? = null) {
         if (isDebug()) {
-            Log.w(tag, log)
+            Log.w(tag, log, throwable)
         }
     }
 
-    fun w(log: String) {
+    fun w(log: String, throwable: Throwable? = null) {
         val callerElement = Exception().stackTrace[1]
-        this.w(callerElement.fileName, "[${callerElement.fileName} (${callerElement.lineNumber})] $log")
+        this.w(callerElement.fileName, "[${callerElement.fileName} (${callerElement.lineNumber})] $log", throwable)
     }
 
-    fun i(tag: String, log: String) {
+    fun i(tag: String, log: String, throwable: Throwable? = null) {
         if (isDebug()) {
-            Log.i(tag, log)
+            Log.i(tag, log, throwable)
         }
     }
 
-    fun i(log: String) {
+    fun i(log: String, throwable: Throwable? = null) {
         val callerElement = Exception().stackTrace[1]
-        this.i(callerElement.fileName, "[${callerElement.fileName} (${callerElement.lineNumber})] $log")
+        this.i(callerElement.fileName, "[${callerElement.fileName} (${callerElement.lineNumber})] $log", throwable)
     }
 
     fun v(tag: String, log: String) {

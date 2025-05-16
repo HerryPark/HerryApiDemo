@@ -5,52 +5,68 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.herry.libs.log.Trace
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.atomic.AtomicBoolean
 
-/**
- * action() 호출로, 조건을 만족할 때까지 (@see setReady(true)) block (function)을 쌓아 놓은 후,
- * 조건 전 까지 쌓아 놓은 block 들을 performActions()로 실행
- */
+@Suppress("MemberVisibilityCanBePrivate")
 open class PerformBlocks(private val tag: String = "", lifecycleOwner: LifecycleOwner? = null) {
     private val lifecycleScope: CoroutineScope? = lifecycleOwner?.lifecycleScope
     private val blockedActs: ConcurrentLinkedQueue<suspend CoroutineScope.() -> Unit> = ConcurrentLinkedQueue()
 
-    private var isPerformed: Boolean = false
+    private var isPerformed: AtomicBoolean = AtomicBoolean(false)
 
-    fun isPerformed(): Boolean = isPerformed
+    fun isPerformed(): Boolean = isPerformed.get()
 
     // perform blocked actions on the main thread
     @MainThread
-    fun perform() {
-        performActionsJob {
-            if (isPerformed) return@performActionsJob
-            val iterator = blockedActs.iterator()
-            var performCounts = 0
-            while (iterator.hasNext()) {
-                performCounts++
-                iterator.next().also { iterator.remove() }.invoke(this/*CoroutineScope*/)
+    fun perform(start: CoroutineStart = CoroutineStart.DEFAULT) {
+        performActionsJob(start = start) {
+            val isAlreadyPerformed = isPerformed.get()
+            if (tag.isNotBlank()) {
+                Trace.d(tag, "is already performed? $isAlreadyPerformed")
+            }
+            if (isAlreadyPerformed) return@performActionsJob
+            val pendingPerformIterator = blockedActs.iterator()
+            var pendingPerformCounts = 0
+            while (pendingPerformIterator.hasNext()) {
+                pendingPerformCounts++
+                pendingPerformIterator.next().also {
+                    it.invoke(this/*CoroutineScope*/)
+                    pendingPerformIterator.remove()
+                }
+            }
+
+            isPerformed.set(true)
+
+            val whilePerformIterator = blockedActs.iterator()
+            var whilePerformCounts = 0
+            while (whilePerformIterator.hasNext()) {
+                whilePerformCounts++
+                whilePerformIterator.next().also {
+                    it.invoke(this/*CoroutineScope*/)
+                    whilePerformIterator.remove()
+                }
             }
 
             if (tag.isNotBlank()) {
-                Trace.d(tag, "perform with $performCounts acts")
+                Trace.d(tag, "performed ${pendingPerformCounts + whilePerformCounts} acts (pending: $pendingPerformCounts, while: $whilePerformCounts)")
             }
-
-            isPerformed = true
         }
     }
 
-    protected open fun performActionsJob(block: suspend CoroutineScope.() -> Unit): Job? = lifecycleScope?.launch(Dispatchers.Main.immediate) { block() }
+    protected open fun performActionsJob(start: CoroutineStart = CoroutineStart.DEFAULT, block: suspend CoroutineScope.() -> Unit): Job? = lifecycleScope?.launch(Dispatchers.Main.immediate, start = start) { block() }
 
     @MainThread
-    fun act(block: suspend CoroutineScope.() -> Unit): Job? {
-        return actionJob {
+    fun act(start: CoroutineStart = CoroutineStart.DEFAULT, block: suspend CoroutineScope.() -> Unit): Job? {
+        return actionJob(start = start) {
             if (tag.isNotBlank()) {
-                Trace.d(tag, "act in performed ($isPerformed)")
+                Trace.d(tag, "act in performed (${isPerformed.get()})")
             }
-            if (isPerformed) {
+            if (isPerformed.get()) {
                 block()
             } else {
                 blockedActs.add(block)
@@ -58,7 +74,7 @@ open class PerformBlocks(private val tag: String = "", lifecycleOwner: Lifecycle
         }
     }
 
-    protected open fun actionJob(block: suspend CoroutineScope.() -> Unit): Job? = lifecycleScope?.launch(Dispatchers.Main.immediate) { block() }
+    protected open fun actionJob(start: CoroutineStart = CoroutineStart.DEFAULT, block: suspend CoroutineScope.() -> Unit): Job? = lifecycleScope?.launch(context = Dispatchers.Main.immediate, start = start) { block() }
 
     fun flush() {
         blockedActs.clear()
@@ -66,6 +82,6 @@ open class PerformBlocks(private val tag: String = "", lifecycleOwner: Lifecycle
 
     fun reset() {
         flush()
-        isPerformed = false
+        isPerformed.set(false)
     }
 }

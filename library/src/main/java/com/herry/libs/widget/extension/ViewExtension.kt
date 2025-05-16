@@ -17,6 +17,9 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.Px
+import androidx.appcompat.widget.TooltipCompat
+import androidx.core.view.forEach
+import com.google.android.material.tabs.TabLayout
 import com.herry.libs.util.ViewUtil
 import java.util.regex.Pattern
 
@@ -290,3 +293,25 @@ fun View.convertDpToPx(dp: Float): Int {
     } else (dp * context.resources.displayMetrics.density + 0.5f).toInt()
 }
 
+// TabLayout Tooltip_Disable
+fun TabLayout.disableTooltip() {
+    for (i in 0 until tabCount) {
+        getTabAt(i)?.view?.let { tabView ->
+            TooltipCompat.setTooltipText(tabView, null)
+        }
+    }
+}
+
+// BottomNavigationView Tooltip_Disable
+fun ViewGroup.disableTooltip() {
+    val content: View = getChildAt(0)
+    if (content is ViewGroup) {
+        content.forEach {
+            it.setOnLongClickListener {
+                return@setOnLongClickListener true
+            }
+            // disable vibration also
+            it.isHapticFeedbackEnabled = false
+        }
+    }
+}

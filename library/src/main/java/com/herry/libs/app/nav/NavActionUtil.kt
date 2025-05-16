@@ -1,23 +1,22 @@
 package com.herry.libs.app.nav
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import com.herry.libs.util.BundleUtil
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlin.reflect.full.cast
+import com.herry.libs.widget.extension.setFragmentResult
+import com.herry.libs.widget.extension.setFragmentResultListener
 
 object NavActionUtil {
 
+    const val ACTION_DATA = "action_data"
+
+    /**
+     * Adds a data of the action key.
+     * data is MUST class instance of java.io.Serializable or annotated to @kotlinx.serialization.Serializable
+     */
     inline fun <reified T: Any> createActionDataBundle(action: String, data: T?): Bundle {
         return NavBundleUtil.createNavigationAction(action).apply {
-            data ?: return@apply
-
-            if (data is java.io.Serializable) {
-                putSerializable("action_data", data)
-            } else {
-                putString("action_data", Json.encodeToString(data))
-            }
+            BundleUtil.putSerializableDataToBundle(this, ACTION_DATA, data)
         }
     }
 
@@ -27,17 +26,23 @@ object NavActionUtil {
             return null
         }
 
-        if (T::class.isInstance(java.io.Serializable::class)) {
-            return BundleUtil.getSerializableData(bundle, "action_data", T::class)
-        } else {
-            val actionData = BundleUtil[bundle, "action_data", ""]
-            if (actionData.isNotBlank()) {
-                val output = Json.decodeFromString<T>(actionData)
-                if (T::class.isInstance(output)) {
-                    return T::class.cast(output)
-                }
-            }
+        return BundleUtil.getSerializableDataFromBundle(bundle, ACTION_DATA)
+    }
+
+    fun setChildActionListener(fragment: Fragment, requestKey: String, onReceivedAction: (action: String, bundle: Bundle) -> Unit) {
+        if (requestKey.isBlank()) throw IllegalArgumentException("request key is blank")
+
+        fragment.setFragmentResultListener(/* requestKey = */ requestKey) { _, bundle ->
+            val action = NavBundleUtil.getNavigationAction(bundle)
+            if (action.isBlank()) return@setFragmentResultListener
+
+            onReceivedAction(action, bundle)
         }
-        return null
+    }
+
+    inline fun <reified T: Any> notifyChildAction(fragment: Fragment, requestKey: String, action: String, data: T? = null) {
+        fragment.parentFragment ?: throw IllegalArgumentException("${fragment::class.java.name} has not parent fragment")
+        if (requestKey.isBlank()) throw IllegalArgumentException("request key is blank")
+        fragment.setFragmentResult(/* requestKey = */ requestKey, createActionDataBundle<T>(action, data))
     }
 }

@@ -12,11 +12,11 @@ import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
+import android.view.MotionEvent
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
@@ -25,6 +25,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.withStyledAttributes
 import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
 import androidx.core.view.marginEnd
@@ -41,7 +42,7 @@ import com.herry.libs.widget.extension.setViewMarginTop
 import com.herry.libs.widget.extension.setViewPadding
 import com.herry.libs.widget.extension.setViewSize
 
-@Suppress("SameParameterValue", "unused")
+@Suppress("SameParameterValue", "unused", "MemberVisibilityCanBePrivate")
 class AppButton: FrameLayout {
 
     companion object {
@@ -64,7 +65,7 @@ class AppButton: FrameLayout {
     private var iconView: AppCompatImageView? = null
     private var textView: AppCompatTextView? = null
     private var iconTextRelativeMargin: Int = 0
-    private var iconTextRelativeOf: Int = 0
+    private var iconTextRelativeOf: RelativeOf = RelativeOf.START
     private var iconTextRelativeChainStyle: Int = ConstraintSet.CHAIN_PACKED
 
     constructor(context: Context) : this(context, null)
@@ -74,13 +75,13 @@ class AppButton: FrameLayout {
     constructor(context: Context, attrs: AttributeSet?, @AttrRes defStyleAttr: Int) : this(context, attrs, defStyleAttr, 0)
 
     constructor(context: Context, attrs: AttributeSet?, @AttrRes defStyleAttr: Int, @StyleRes defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.AppButton)
-        retrieveAttributes(context, typedArray, attrs, defStyleAttr)
-        typedArray.recycle()
+        context.withStyledAttributes(attrs, R.styleable.AppButton) {
+            retrieveAttributes(context, this, attrs, defStyleAttr)
+        }
     }
 
     @SuppressLint("ResourceType")
-    constructor(context: Context, @StyleRes styleResId: Int, width: Int = ViewGroup.LayoutParams.WRAP_CONTENT, height: Int = ViewGroup.LayoutParams.WRAP_CONTENT) : super(context, null, 0) {
+    constructor(context: Context, @StyleRes styleResId: Int, width: Int = LayoutParams.WRAP_CONTENT, height: Int = LayoutParams.WRAP_CONTENT) : super(context, null, 0) {
         val sizeTypedArray = context.obtainStyledAttributes(styleResId, intArrayOf(
             android.R.attr.layout_width,  // 0
             android.R.attr.layout_height, // 1
@@ -92,9 +93,9 @@ class AppButton: FrameLayout {
 
         setViewSize(layoutWidth, layoutHeight)
 
-        val typedArray = context.obtainStyledAttributes(styleResId, R.styleable.AppButton)
-        retrieveAttributes(context, typedArray)
-        typedArray.recycle()
+        context.withStyledAttributes(styleResId, R.styleable.AppButton) {
+            retrieveAttributes(context, this)
+        }
     }
 
     private fun retrieveAttributes(context: Context, attr: TypedArray, attrs: AttributeSet? = null, defStyleAttr: Int = 0) {
@@ -103,8 +104,8 @@ class AppButton: FrameLayout {
 //            android.R.attr.layout_height, // 1
 //            android.R.attr.minWidth // 2
 //        ))
-//        val layoutWidth = typedArray.getLayoutDimension(0, ViewGroup.LayoutParams.WRAP_CONTENT)
-//        val layoutHeight = typedArray.getLayoutDimension(1, ViewGroup.LayoutParams.WRAP_CONTENT)
+//        val layoutWidth = typedArray.getLayoutDimension(0, LayoutParams.WRAP_CONTENT)
+//        val layoutHeight = typedArray.getLayoutDimension(1, LayoutParams.WRAP_CONTENT)
 //        typedArray.recycle()
 //        setViewSize(layoutWidth, layoutHeight)
 
@@ -115,21 +116,21 @@ class AppButton: FrameLayout {
         containerView = CardView(context, attrs, defStyleAttr).apply {
             this.setCardBackgroundColor(Color.TRANSPARENT)
         }.also { containerView ->
-            containerView.visibility = View.VISIBLE
-            this.addView(containerView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            containerView.visibility = VISIBLE
+            this.addView(containerView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             setContainerAttributes(containerView, attr)
         }
 
         buttonView = ConstraintLayout(context, attrs, defStyleAttr).also { buttonView ->
-            buttonView.visibility = View.VISIBLE
-            containerView?.addView(buttonView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            buttonView.visibility = VISIBLE
+            containerView?.addView(buttonView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             setButtonAttributes(buttonView, attr)
         }
 
         iconView = AppCompatImageView(context, attrs, defStyleAttr).apply {
             id = R.id.icon
         }.also { iconView ->
-            buttonView?.addView(iconView, ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+            buttonView?.addView(iconView, ConstraintLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
                 startToStart = ConstraintSet.PARENT_ID
                 endToEnd = ConstraintSet.PARENT_ID
                 topToTop = ConstraintSet.PARENT_ID
@@ -141,7 +142,7 @@ class AppButton: FrameLayout {
         textView = AppCompatTextView(context, attrs, defStyleAttr).apply {
             id = R.id.text
         }.also { textView ->
-            buttonView?.addView(textView, ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+            buttonView?.addView(textView, ConstraintLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
                 startToStart = ConstraintSet.PARENT_ID
                 endToEnd = ConstraintSet.PARENT_ID
                 topToTop = ConstraintSet.PARENT_ID
@@ -151,7 +152,7 @@ class AppButton: FrameLayout {
         }
 
         iconTextRelativeMargin = attr.getDimensionPixelSize(R.styleable.AppButton_abIconTextRelativeMargin, 0)
-        iconTextRelativeOf = parseRelativeOf(attr.getInt(R.styleable.AppButton_abIconRelativeOfText, Gravity.START), 0)
+        iconTextRelativeOf = parseRelativeOf(attr.getInt(R.styleable.AppButton_abIconRelativeOfText, RelativeOf.START.value), RelativeOf.START)
         iconTextRelativeChainStyle = parseChainStyleOf(attr.getInt(R.styleable.AppButton_abIconTextRelativeChainStyle, iconTextRelativeChainStyle), 0)
         updateIconAndTextRelative()
     }
@@ -176,8 +177,8 @@ class AppButton: FrameLayout {
         view.isFocusableInTouchMode = false
 
         // sets button size
-        val buttonWidth = attr.getLayoutDimension(R.styleable.AppButton_abWidth, ViewGroup.LayoutParams.MATCH_PARENT)
-        val buttonHeight = attr.getLayoutDimension(R.styleable.AppButton_abHeight, ViewGroup.LayoutParams.MATCH_PARENT)
+        val buttonWidth = attr.getLayoutDimension(R.styleable.AppButton_abWidth, LayoutParams.MATCH_PARENT)
+        val buttonHeight = attr.getLayoutDimension(R.styleable.AppButton_abHeight, LayoutParams.MATCH_PARENT)
         view.setViewSize(buttonWidth, buttonHeight)
         val buttonMinWidth = attr.getDimensionPixelSize(R.styleable.AppButton_abMinWidth, 0)
         view.minimumWidth = buttonMinWidth
@@ -245,8 +246,8 @@ class AppButton: FrameLayout {
     private fun setButtonAttributes(view: ConstraintLayout, attr: TypedArray) {
 
         // sets button size
-        val buttonWidth = attr.getLayoutDimension(R.styleable.AppButton_abWidth, ViewGroup.LayoutParams.MATCH_PARENT)
-        val buttonHeight = attr.getLayoutDimension(R.styleable.AppButton_abHeight, ViewGroup.LayoutParams.MATCH_PARENT)
+        val buttonWidth = attr.getLayoutDimension(R.styleable.AppButton_abWidth, LayoutParams.MATCH_PARENT)
+        val buttonHeight = attr.getLayoutDimension(R.styleable.AppButton_abHeight, LayoutParams.MATCH_PARENT)
         view.setViewSize(buttonWidth, buttonHeight)
         val buttonMinWidth = attr.getDimensionPixelSize(R.styleable.AppButton_abMinWidth, 0)
         view.minWidth = buttonMinWidth
@@ -304,8 +305,8 @@ class AppButton: FrameLayout {
         view.setViewPadding(buttonPaddingStart, buttonPaddingTop, buttonPaddingEnd, buttonPaddingBottom)
 
         view.background = attr.getDrawable(R.styleable.AppButton_abBackground)
-        this.backgroundTintList = attr.getColorStateList(R.styleable.AppButton_abBackgroundTint)
-        this.backgroundTintMode = parseTintMode(attr.getInt(R.styleable.AppButton_abBackgroundTintMode, DEFAULT_TINT_MODE), null)
+        view.backgroundTintList = attr.getColorStateList(R.styleable.AppButton_abBackgroundTint)
+        view.backgroundTintMode = parseTintMode(attr.getInt(R.styleable.AppButton_abBackgroundTintMode, DEFAULT_TINT_MODE), null)
 
         // sets foreground
         view.foreground = attr.getDrawable(R.styleable.AppButton_abForeground)
@@ -315,8 +316,8 @@ class AppButton: FrameLayout {
 
     private fun setIconAttributes(view: AppCompatImageView, attr: TypedArray) {
         // sets icon size
-        val iconWidth = attr.getLayoutDimension(R.styleable.AppButton_abIconWidth, ViewGroup.LayoutParams.MATCH_PARENT)
-        val iconHeight = attr.getLayoutDimension(R.styleable.AppButton_abIconHeight, ViewGroup.LayoutParams.MATCH_PARENT)
+        val iconWidth = attr.getLayoutDimension(R.styleable.AppButton_abIconWidth, LayoutParams.MATCH_PARENT)
+        val iconHeight = attr.getLayoutDimension(R.styleable.AppButton_abIconHeight, LayoutParams.MATCH_PARENT)
         view.setViewSize(iconWidth, iconHeight)
 
         // sets icon adjust view bounds
@@ -424,10 +425,20 @@ class AppButton: FrameLayout {
         }
         // sets text ellipsize
         view.ellipsize = parseEllipsize(attr.getInt(R.styleable.AppButton_abTextEllipsize, -1))
-        // sets text lines
-        view.setLines(attr.getInt(R.styleable.AppButton_abTextLines, 1))
         // sets text max lines
-        view.maxLines = attr.getInt(R.styleable.AppButton_abTextMaxLines, Integer.MAX_VALUE)
+        val maxLines = attr.getInt(R.styleable.AppButton_abTextMaxLines, -1)
+        if (maxLines > -1) {
+            view.maxLines = maxLines
+        }
+        // sets text lines
+        val textLines = attr.getInt(R.styleable.AppButton_abTextLines, -1)
+        if (textLines > -1) {
+            view.setLines(textLines)
+        }
+
+        val textLineSpace = attr.getDimensionPixelSize(R.styleable.AppButton_abTextLineSpacingExtra, 0).toFloat()
+        val textLineSpacingMultiplier = attr.getFloat(R.styleable.AppButton_abTextLineSpacingMultiplier, 1.0f)
+        view.setLineSpacing(textLineSpace, textLineSpacingMultiplier)
 
         // sets text margins
         val textMargin = attr.getDimensionPixelSize(R.styleable.AppButton_abTextMargin, UNDEFINED_MARGIN)
@@ -484,7 +495,7 @@ class AppButton: FrameLayout {
         buttonView: ConstraintLayout?,
         iconView: AppCompatImageView?,
         textView: AppCompatTextView?,
-        relativeOf: Int,
+        relativeOf: RelativeOf,
         margin: Int,
         chainStyle: Int
     ) {
@@ -492,7 +503,7 @@ class AppButton: FrameLayout {
             return
         }
 
-        iconView.isVisible = iconView.drawable != null || this.background != null
+        iconView.isVisible = iconView.drawable != null || iconView.background != null
         textView.isVisible = !textView.text.isNullOrEmpty()
 
         if (!iconView.isVisible || !textView.isVisible) {
@@ -501,7 +512,7 @@ class AppButton: FrameLayout {
 
         val constraintSet = ConstraintSet()
         when (relativeOf) {
-            Gravity.TOP -> {
+            RelativeOf.TOP -> {
                 iconView.bringToFront()
 
                 constraintSet.clone(buttonView)
@@ -522,11 +533,13 @@ class AppButton: FrameLayout {
 
                 constraintSet.applyTo(buttonView)
 
-                // sets top or bottom margin after applied
-                textView.setViewMarginTop(margin + textView.marginTop)
+                if (margin != 0) {
+                    // sets top or bottom margin after applied
+                    textView.setViewMarginTop(margin + textView.marginTop)
+                }
             }
 
-            Gravity.BOTTOM -> {
+            RelativeOf.BOTTOM -> {
                 constraintSet.clone(buttonView)
 
                 textView.bringToFront()
@@ -547,13 +560,17 @@ class AppButton: FrameLayout {
 
                 constraintSet.applyTo(buttonView)
 
-                // sets top or bottom margin after applied
-                textView.setViewMarginBottom(margin + textView.marginBottom)
+                if (margin != 0) {
+                    // sets top or bottom margin after applied
+                    textView.setViewMarginBottom(margin + textView.marginBottom)
+                }
             }
 
-            Gravity.START -> {
-                // sets start or end margin before applied
-                textView.setViewMarginStart(margin + textView.marginStart)
+            RelativeOf.START -> {
+                if (margin != 0) {
+                    // sets start or end margin before applied
+                    textView.setViewMarginStart(margin + textView.marginStart)
+                }
 
                 iconView.bringToFront()
 
@@ -576,9 +593,11 @@ class AppButton: FrameLayout {
                 constraintSet.applyTo(buttonView)
             }
 
-            Gravity.END -> {
-                // sets start or end margin before applied
-                textView.setViewMarginEnd(margin + textView.marginEnd)
+            RelativeOf.END -> {
+                if (margin != 0) {
+                    // sets start or end margin before applied
+                    textView.setViewMarginEnd(margin + textView.marginEnd)
+                }
 
                 constraintSet.clone(buttonView)
 
@@ -597,6 +616,25 @@ class AppButton: FrameLayout {
                 constraintSet.createHorizontalChain(ConstraintSet.PARENT_ID, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT,
                     intArrayOf(textView.id, iconView.id), null, chainStyle
                 )
+
+                constraintSet.applyTo(buttonView)
+            }
+
+            RelativeOf.OVERLAP -> {
+                // ignores the margin between the icon and the text
+                // ignores the chain style
+
+                constraintSet.clone(buttonView)
+
+                constraintSet.connect(textView.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+                constraintSet.connect(textView.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                constraintSet.connect(textView.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+                constraintSet.connect(textView.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+
+                constraintSet.connect(iconView.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+                constraintSet.connect(iconView.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                constraintSet.connect(iconView.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+                constraintSet.connect(iconView.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
 
                 constraintSet.applyTo(buttonView)
             }
@@ -709,20 +747,27 @@ class AppButton: FrameLayout {
         }
     }
 
-    /**
-     * name="top" value="0x01"
-     * name="bottom" value="0x02"
-     * name="start" value="0x04"
-     * name="end" value="0x08"
-     */
-    private fun parseRelativeOf(location: Int, default: Int): Int {
-        return when (location) {
-            1 -> Gravity.TOP
-            2 -> Gravity.BOTTOM
-            3 -> Gravity.START
-            4 -> Gravity.END
-            else -> default
+    private enum class RelativeOf(val value: Int) {
+        OVERLAP (0),
+        TOP (1),
+        BOTTOM (2),
+        START (3),
+        END (4);
+
+        companion object {
+            fun generate(value: Int): RelativeOf? = entries.firstOrNull { it.value == value }
         }
+    }
+
+    /**
+     * name="overlap" value="0"
+     * name="top" value="1"
+     * name="bottom" value="2"
+     * name="start" value="3"
+     * name="end" value="4"
+     */
+    private fun parseRelativeOf(location: Int, default: RelativeOf): RelativeOf {
+        return RelativeOf.generate(location) ?: default
     }
 
     /**
@@ -749,9 +794,9 @@ class AppButton: FrameLayout {
      */
     private fun parseVisibility(visibility: Int, default: Int): Int {
         return when (visibility) {
-            0 -> View.VISIBLE
-            1 -> View.INVISIBLE
-            2 -> View.GONE
+            0 -> VISIBLE
+            1 -> INVISIBLE
+            2 -> GONE
             else -> default
         }
     }
@@ -771,18 +816,18 @@ class AppButton: FrameLayout {
         val iconView = this.iconView ?: return
         val textView = this.textView ?: return
 
-        val attr = context.obtainStyledAttributes(style, R.styleable.AppButton)
+        context.withStyledAttributes(style, R.styleable.AppButton) {
 
-        setContainerAttributes(containerView, attr)
-        setButtonAttributes(buttonView, attr)
-        setIconAttributes(iconView, attr)
-        setTextAttributes(textView, attr)
+            setContainerAttributes(containerView, this)
+            setButtonAttributes(buttonView, this)
+            setIconAttributes(iconView, this)
+            setTextAttributes(textView, this)
 
-        iconTextRelativeMargin = attr.getDimensionPixelSize(R.styleable.AppButton_abIconTextRelativeMargin, 0)
-        iconTextRelativeOf = parseRelativeOf(attr.getInt(R.styleable.AppButton_abIconRelativeOfText, Gravity.START), 0)
-        updateIconAndTextRelative()
+            iconTextRelativeMargin = getDimensionPixelSize(R.styleable.AppButton_abIconTextRelativeMargin, 0)
+            iconTextRelativeOf = parseRelativeOf(getInt(R.styleable.AppButton_abIconRelativeOfText, RelativeOf.START.value), RelativeOf.START)
+            updateIconAndTextRelative()
 
-        attr.recycle()
+        }
         requestLayout()
     }
 
@@ -801,6 +846,7 @@ class AppButton: FrameLayout {
 
     fun getIcon(): Drawable? = this.iconView?.drawable
 
+    @SuppressLint("SetTextI18n")
     fun setText(@StringRes text: Int?) {
         val textView = this.textView ?: return
 
@@ -823,6 +869,18 @@ class AppButton: FrameLayout {
         val textView = this.textView ?: return
 
         textView.typeface = typeface
+        updateIconAndTextRelative()
+    }
+
+    fun setTextColor(@ColorInt color: Int) {
+        this.setTextColor(ColorStateList.valueOf(color))
+    }
+
+    fun setTextColor(colors: ColorStateList?) {
+        colors ?: return
+        val textView = this.textView ?: return
+
+        textView.setTextColor(colors)
         updateIconAndTextRelative()
     }
 
@@ -863,5 +921,37 @@ class AppButton: FrameLayout {
 
     fun setCornerRadius(radius: Float) {
         containerView?.radius = radius
+    }
+
+    override fun setOnFocusChangeListener(l: OnFocusChangeListener?) {
+        containerView?.onFocusChangeListener = l
+    }
+
+    private var onPressChangeListener: OnPressChangeListener? = null
+    private var isDispatchPressed: Boolean = false
+
+    fun setOnPressChangeListener(listener: OnPressChangeListener?) {
+        this.onPressChangeListener = listener
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        val onPressChangeListener = this.onPressChangeListener
+        if (onPressChangeListener != null && this.isEnabled) {
+            val previousDispatchPressed = isDispatchPressed
+            var newDispatchPressed = previousDispatchPressed
+            when (ev?.action) {
+                MotionEvent.ACTION_DOWN -> newDispatchPressed = true
+                MotionEvent.ACTION_MOVE -> {}
+                MotionEvent.ACTION_UP -> newDispatchPressed = false
+                MotionEvent.ACTION_CANCEL -> newDispatchPressed = false
+            }
+
+            if (newDispatchPressed != previousDispatchPressed) {
+                isDispatchPressed = newDispatchPressed
+                onPressChangeListener.onPressChange(this, newDispatchPressed)
+            }
+        }
+
+        return super.dispatchTouchEvent(ev)
     }
 }

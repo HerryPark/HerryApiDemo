@@ -1,12 +1,12 @@
 package com.herry.libs.widget.view.recyclerview.form.recycler
 
 import android.content.Context
+import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -15,13 +15,11 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.NodeView
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.view.skeleton.SkeletonFrameLayout
-import com.herry.libs.widget.view.viewgroup.LoadingCountView
 
-@Suppress("unused")
-abstract class RecyclerViewForm : NodeView<RecyclerViewForm.Holder>() {
-
+@Suppress("unused", "MemberVisibilityCanBePrivate")
+abstract class RecyclerViewForm: NodeView<RecyclerViewForm.Holder>() {
     inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
-        val recyclerView: RecyclerView? = view.findViewById<RecyclerView?>(R.id.recyclerview_form_view)?.apply {
+        val recyclerView = view.findViewById<RecyclerView?>(R.id.recyclerview_form_view)?.apply {
             onBindRecyclerView(context, this)
         }
         val emptyView: FrameLayout? = view.findViewById(R.id.recyclerview_form_empty)
@@ -41,31 +39,28 @@ abstract class RecyclerViewForm : NodeView<RecyclerViewForm.Holder>() {
     abstract fun onBindRecyclerView(context: Context, recyclerView: RecyclerView)
 
     fun scrollToPosition(position: Int, offset: Int? = null, smoothScroll: Boolean = false) {
-        offset?.let {
-            when (val layoutManager = holder?.recyclerView?.layoutManager) {
-                is LinearLayoutManager -> {
-                    layoutManager.scrollToPositionWithOffset(position, offset)
-                    return
+        val recyclerView = holder?.recyclerView ?: return
+        recyclerView.post {
+            if (offset != null) {
+                when (val layoutManager = recyclerView.layoutManager) {
+                    is LinearLayoutManager -> {
+                        layoutManager.scrollToPositionWithOffset(position, offset)
+                        return@post
+                    }
+                    is StaggeredGridLayoutManager -> {
+                        layoutManager.scrollToPositionWithOffset(position, offset)
+                        return@post
+                    }
+                    else -> {}
                 }
-                is GridLayoutManager -> {
-                    layoutManager.scrollToPositionWithOffset(position, offset)
-                    return
-                }
-                is StaggeredGridLayoutManager -> {
-                    layoutManager.scrollToPositionWithOffset(position, offset)
-                    return
-                }
-                else -> {}
+            }
+
+            if (smoothScroll) {
+                recyclerView.smoothScrollToPosition(position)
+            } else {
+                recyclerView.scrollToPosition(position)
             }
         }
-
-        holder?.recyclerView?.run {
-            if (smoothScroll) smoothScrollToPosition(position) else scrollToPosition(position)
-        }
-    }
-
-    fun smoothScrollToPosition(position: Int) {
-        holder?.recyclerView?.smoothScrollToPosition(position)
     }
 
     fun setEmptyView(view: View?) {
@@ -130,7 +125,6 @@ abstract class RecyclerViewForm : NodeView<RecyclerViewForm.Holder>() {
         holder?.loadingViewContainer?.isVisible = true
         holder?.loadingView?.let { view ->
             when (view) {
-                is LoadingCountView -> view.show()
                 is SkeletonFrameLayout -> {
                     view.startEffect()
                 }
@@ -143,11 +137,6 @@ abstract class RecyclerViewForm : NodeView<RecyclerViewForm.Holder>() {
 
         holder?.loadingView?.let { view ->
             when (view) {
-                is LoadingCountView -> view.hide(listener = object: LoadingCountView.OnHideListener {
-                    override fun onDone() {
-                        loadingContainerView?.isVisible = false
-                    }
-                })
                 is SkeletonFrameLayout -> {
                     view.stopEffect()
                     loadingContainerView?.isVisible = false
@@ -159,12 +148,32 @@ abstract class RecyclerViewForm : NodeView<RecyclerViewForm.Holder>() {
         }
     }
 
-
     fun setVisibility(visibility: Int) {
         holder?.view?.visibility = visibility
     }
 
-    fun isVisible(isVisible: Boolean) {
+    fun setVisible(isVisible: Boolean) {
         holder?.view?.isVisible = isVisible
     }
+
+    fun getLayoutManager(): RecyclerView.LayoutManager? = holder?.recyclerView?.layoutManager
+
+    fun onSaveInstanceState(): Parcelable? = getLayoutManager()?.onSaveInstanceState()
+
+    fun onRestoreInstanceState(state: Parcelable?) {
+        getLayoutManager()?.onRestoreInstanceState(state)
+    }
+
+    fun setChangeLayoutManager(layoutManager: RecyclerView.LayoutManager?, onComplete: (() -> Unit)? = null) {
+        val recyclerView = holder?.recyclerView ?: return
+
+        if (layoutManager == null || layoutManager == recyclerView.layoutManager) {
+            return
+        }
+        onChangeLayoutManager(recyclerView, layoutManager, onComplete)
+    }
+
+    protected open fun onChangeLayoutManager(recyclerView: RecyclerView, layoutManager: RecyclerView.LayoutManager, onComplete: (() -> Unit)?) {}
+
+    fun getRecyclerView(): RecyclerView? = holder?.recyclerView
 }
