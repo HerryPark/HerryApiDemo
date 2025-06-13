@@ -20,5 +20,5 @@ internal class LaunchPickerResults {
 }
 
 internal class LaunchTakeResults {
-    var onResult: ((success: Boolean) -> Unit)? = null
+    var onResult: ((success: Boolean, e: Exception?) -> Unit)? = null
 }

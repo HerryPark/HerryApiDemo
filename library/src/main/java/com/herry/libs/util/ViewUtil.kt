@@ -232,7 +232,7 @@ object ViewUtil {
         return isSoftKeyboardShown(contentView.rootView)
     }
 
-    fun setSoftKeyboardVisibilityListener(activity: Activity?, listener: OnSoftKeyboardVisibilityListener) {
+    fun setSoftKeyboardVisibilityListener(activity: Activity?, listener: OnSoftKeyboardVisibilityChangedListener) {
         val contentView = activity?.findViewById<View?>(android.R.id.content) ?: return
         contentView.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             private var wasShown: Boolean? = null
@@ -245,7 +245,7 @@ object ViewUtil {
                 }
 
                 wasShown = isShown
-                listener.onChangedSoftKeyboardVisibility(isShown)
+                listener.onChanged(isShown)
             }
         })
     }
@@ -312,9 +312,9 @@ object ViewUtil {
         return px / (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
     }
 
-    fun isTabletDevice(context: Context?): Boolean = (context?.resources?.configuration?.smallestScreenWidthDp ?: 0) >= 600
+    fun isTabletDevice(): Boolean = (Resources.getSystem().configuration?.smallestScreenWidthDp ?: 0) >= 600
 
-    fun isPortraitOrientation(context: Context?): Boolean = context?.resources?.configuration?.orientation == Configuration.ORIENTATION_PORTRAIT
+    fun isPortraitOrientation(): Boolean = Resources.getSystem().configuration?.orientation == Configuration.ORIENTATION_PORTRAIT
 
     data class ReadMoreTextData(
         val moreLine: Int,

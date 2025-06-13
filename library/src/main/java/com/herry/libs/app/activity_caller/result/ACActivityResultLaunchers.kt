@@ -17,9 +17,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.nav.NavMovement
 import com.herry.libs.helper.ApiHelper
-import kotlin.jvm.Throws
 
-class ACActivityResultLaunchers(var activity: ComponentActivity) {
+class ACActivityResultLaunchers(val activity: ComponentActivity) {
 
     internal class ActivityResultViewModel : ViewModel() {
         val launchIntentResult = LaunchIntentResults()
@@ -188,14 +187,17 @@ class ACActivityResultLaunchers(var activity: ComponentActivity) {
     }
 
     @Throws(ActivityNotFoundException::class)
-    fun processLaunchTake(request: TakeMediaRequest, onResult: ((success: Boolean) -> Unit)?) {
+    fun processLaunchTake(request: TakeMediaRequest, onResult: ((success: Boolean, e: Exception?) -> Unit)?) {
         activityResultViewModel.launchTakeResult.onResult = onResult
-
-        takeLauncher.launch(request)
+        try {
+            takeLauncher.launch(request)
+        } catch (e: Exception ) {
+            onResult?.invoke(false, e)
+        }
     }
 
     private fun onLaunchTakeResult(success: Boolean) {
-        activityResultViewModel.launchTakeResult.onResult?.invoke(success)
+        activityResultViewModel.launchTakeResult.onResult?.invoke(success, null)
     }
 
     fun unregisterAll() {

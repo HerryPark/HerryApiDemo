@@ -49,7 +49,7 @@ class ACBase(private val callActivity: Activity, private val listener: ACBaseLis
             }
             is ACTake.Caller -> {
                 ACTake(caller, object : ACTake.OnListener {
-                    override fun launchTake(request: TakeMediaRequest, onResult: ((success: Boolean) -> Unit)?) {
+                    override fun launchTake(request: TakeMediaRequest, onResult: ((success: Boolean, e:Exception?) -> Unit)?) {
                         listener.launchTake(request, onResult)
                     }
                 }).also { it.call(activity = callActivity) }

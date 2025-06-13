@@ -77,7 +77,7 @@ open class LoopPagerSnapExHelper : PagerSnapExHelper() {
             return@snapToNext
         }
 
-        if (adapter !is LoopPagerRecyclerViewAdapter<*, *>) {
+        if (adapter !is LoopPagerAdapter) {
             super.snapToNext()
             return
         }

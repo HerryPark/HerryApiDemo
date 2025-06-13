@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.content.res.TypedArray
 import android.util.TypedValue
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
@@ -29,13 +30,16 @@ object SystemUI {
     }
 
     fun setDecorViewToFitSystemWindows(activity: Activity?, fit: Boolean) {
-        val window = activity?.window ?: return
+        setDecorViewToFitSystemWindows(activity?.window, fit)
+    }
 
+    fun setDecorViewToFitSystemWindows(window: Window?, fit: Boolean) {
+        window ?: return
         WindowCompat.setDecorFitsSystemWindows(window, fit)
     }
 
     /**
-     * Gets the status bar background color form the applied theme @see style.xml
+     * Gets the status bar background color form the applied theme @see style_dialog.xml
      */
     fun getSystemStatusBarBackgroundColor(context: Context?): Int {
         context ?: return 0
@@ -119,10 +123,14 @@ object SystemUI {
         window.navigationBarColor = navigationBarBackgroundColor
     }
 
-    fun isSystemFullScreen(context: Context?): Boolean {
-        context ?: return false
+    fun getSystemSoftInputMode(activity: Activity?): Int? {
+        return activity?.window?.attributes?.softInputMode
+    }
+
+    fun isSystemFullScreen(activity: Activity?): Boolean {
+        activity ?: return false
         val typedValue = TypedValue()
-        val attrs: TypedArray = context.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.windowFullscreen))
+        val attrs: TypedArray = activity.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.windowFullscreen))
         val isFullScreen = attrs.getBoolean(0, false)
         attrs.recycle()
         return isFullScreen
@@ -152,12 +160,11 @@ object SystemUI {
         isFull: Boolean?,
         showBehavior: SystemUIShowBehavior? = null,
         statusBarVisibility: SystemUIVisibility? = null,
-        navigationBarVisibility: SystemUIVisibility? = null
+        navigationBarVisibility: SystemUIVisibility? = null,
+        softInputMode: Int? = null
     ) {
-        activity ?: return
-
-        val window = activity.window ?: return
-        val decorView = activity.window?.decorView ?: return
+        val window = activity?.window ?: return
+        val decorView = window.decorView
 
         // sets full screen
         val isFullScreen = isFull ?: isCurrentFullScreen(activity)
@@ -166,6 +173,10 @@ object SystemUI {
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             View.SYSTEM_UI_FLAG_VISIBLE
+        }
+
+        if (softInputMode != null) {
+            window.setSoftInputMode(softInputMode)
         }
 
         val statusBarsType = WindowInsetsCompat.Type.statusBars()
@@ -226,27 +237,53 @@ object SystemUI {
 }
 
 data class SystemUIAppearances(
-    var isFullScreen: Boolean?,
-    var showBehavior: SystemUIShowBehavior?,
-    var statusBar: SystemUIAppearance?,
-    var navigationBar: SystemUIAppearance?
+    val isFullScreen: Boolean?,
+    val showBehavior: SystemUIShowBehavior?,
+    val statusBar: SystemUIAppearance?,
+    val navigationBar: SystemUIAppearance?,
+    val softInputMode: Int?
 ) {
     companion object {
-        fun getDefaultSystemUIAppearances(context: Context): SystemUIAppearances {
+        fun getDefaultSystemUIAppearances(activity: Activity): SystemUIAppearances {
             return SystemUIAppearances(
-                isFullScreen = SystemUI.isSystemFullScreen(context),
+                isFullScreen = SystemUI.isSystemFullScreen(activity),
                 showBehavior = SystemUIShowBehavior.AUTO,
-                statusBar = SystemUIAppearance.getDefaultStatusBarSystemUIAppearance(context),
-                navigationBar = SystemUIAppearance.getDefaultNavigationBarSystemUIAppearance(context)
+                statusBar = SystemUIAppearance.getDefaultStatusBarSystemUIAppearance(activity),
+                navigationBar = SystemUIAppearance.getDefaultNavigationBarSystemUIAppearance(activity),
+                softInputMode = SystemUI.getSystemSoftInputMode(activity)
             )
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as SystemUIAppearances
+
+        if (isFullScreen != other.isFullScreen) return false
+        if (showBehavior != other.showBehavior) return false
+        if (statusBar != other.statusBar) return false
+        if (navigationBar != other.navigationBar) return false
+        if (softInputMode != other.softInputMode) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = isFullScreen?.hashCode() ?: 0
+        result = 31 * result + (showBehavior?.hashCode() ?: 0)
+        result = 31 * result + (statusBar?.hashCode() ?: 0)
+        result = 31 * result + (navigationBar?.hashCode() ?: 0)
+        result = 31 * result + (softInputMode ?: 0)
+        return result
     }
 }
 
 data class SystemUIAppearance(
-    var appearanceColorStyle: SystemUIAppearanceColorStyle?,
-    @ColorInt var backgroundColor: Int?,
-    var visibility: SystemUIVisibility?
+    val appearanceColorStyle: SystemUIAppearanceColorStyle?,
+    @ColorInt val backgroundColor: Int?,
+    val visibility: SystemUIVisibility?
 ) {
     companion object {
         fun getDefaultStatusBarSystemUIAppearance(context: Context): SystemUIAppearance {
@@ -265,6 +302,28 @@ data class SystemUIAppearance(
             )
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as SystemUIAppearance
+
+        if (appearanceColorStyle != other.appearanceColorStyle) return false
+        if (backgroundColor != other.backgroundColor) return false
+        if (visibility != other.visibility) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = appearanceColorStyle?.hashCode() ?: 0
+        result = 31 * result + (backgroundColor ?: 0)
+        result = 31 * result + (visibility?.hashCode() ?: 0)
+        return result
+    }
+
+
 }
 
 enum class SystemUIAppearanceColorStyle {

@@ -8,7 +8,6 @@ import androidx.core.content.ContextCompat
 import com.herry.libs.app.activity_caller.ACModule
 import com.herry.libs.app.activity_caller.result.ACActivityResultContracts
 import com.herry.libs.app.activity_caller.result.TakeMediaRequest
-import com.herry.libs.log.Trace
 import java.io.Serializable
 
 class ACTake(private val caller: Caller, private val listener: OnListener) : ACModule {
@@ -45,8 +44,8 @@ class ACTake(private val caller: Caller, private val listener: OnListener) : ACM
                 listener.launchTake(TakeMediaRequest.Builder()
                     .setMediaType(ACActivityResultContracts.TakeImage)
                     .setInputUri(caller.uri)
-                    .build()) { success ->
-                   caller.onResult?.invoke(Result(activity, if (success) caller.uri else null, success))
+                    .build()) { success, _ ->
+                    caller.onResult?.invoke(Result(activity, if (success) caller.uri else null, success))
                 }
             }
 
@@ -60,7 +59,7 @@ class ACTake(private val caller: Caller, private val listener: OnListener) : ACM
                 listener.launchTake(TakeMediaRequest.Builder()
                     .setMediaType(ACActivityResultContracts.TakeVideo)
                     .setInputUri(caller.uri)
-                    .build()) { success ->
+                    .build()) { success, _ ->
                     caller.onResult?.invoke(Result(activity, if (success) caller.uri else null, success))
                 }
             }

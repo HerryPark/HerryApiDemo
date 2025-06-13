@@ -14,6 +14,7 @@ import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.activity_caller.result.ACActivityResultLaunchers
 import com.herry.libs.app.activity_caller.result.TakeMediaRequest
 import com.herry.libs.util.AppActivityManager
+import com.herry.libs.widget.extension.launchWhenViewResumed
 
 abstract class ACActivity : AppCompatActivity(), AC, AppActivityManager.OnGetAppActivityManager {
 
@@ -60,7 +61,7 @@ abstract class ACActivity : AppCompatActivity(), AC, AppActivityManager.OnGetApp
                 activityResultLaunchers.processLaunchPicker(request, onResult)
             }
 
-            override fun launchTake(request: TakeMediaRequest, onResult: ((success: Boolean) -> Unit)?) {
+            override fun launchTake(request: TakeMediaRequest, onResult: ((success: Boolean, e: Exception?) -> Unit)?) {
                 activityResultLaunchers.processLaunchTake(request, onResult)
             }
         })
@@ -81,12 +82,16 @@ abstract class ACActivity : AppCompatActivity(), AC, AppActivityManager.OnGetApp
     private fun showBlockedPermissionPopup(permissions: Array<String>, onCancel: ((dialog: DialogInterface) -> Unit)?) {
         hideBlockedPermissionPopup()
         blockedPermissionPopup = getBlockedPermissionPopup(permissions, onCancel)?.also {
-            it.show()
+            launchWhenViewResumed {
+                it.show()
+            }
         }
     }
 
     private fun hideBlockedPermissionPopup() {
-        blockedPermissionPopup?.dismiss()
+        launchWhenViewResumed {
+            blockedPermissionPopup?.dismiss()
+        }
     }
 
     protected open fun getBlockedPermissionPopup(permissions: Array<String>, onCancel: ((dialog: DialogInterface) -> Unit)?): Dialog? = null
@@ -99,4 +104,10 @@ abstract class ACActivity : AppCompatActivity(), AC, AppActivityManager.OnGetApp
     override fun getAppActivityManager(): AppActivityManager? {
         return (application as? AppActivityManager.OnGetAppActivityManager)?.getAppActivityManager()
     }
+
+//    @Deprecated("Deprecated in Java", ReplaceWith("super.onBackPressed()", "androidx.appcompat.app.AppCompatActivity"))
+//    @Suppress("DEPRECATION")
+//    final override fun onBackPressed() {
+//        super.onBackPressed()
+//    }
 }

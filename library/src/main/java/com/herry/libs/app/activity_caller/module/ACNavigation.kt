@@ -12,7 +12,7 @@ import com.herry.libs.app.nav.NavMovement
 import com.herry.libs.util.AppActivityManager
 import java.io.Serializable
 
-open class ACNavigation(private val caller: Caller, private val listener: ACModule.OnIntentListener): ACModule {
+class ACNavigation(private val caller: Caller, private val listener: ACModule.OnIntentListener): ACModule {
     enum class Error {
         EXIST_ACTIVITY
     }
@@ -26,6 +26,7 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
     ) : Serializable
 
     open class Caller(
+        internal val animation: Pair<Int, Int>? = null,
         internal val transitionSharedElements: Array<Transition>? = null,
         internal val onResult: ((result: Result) -> Unit)? = null,
         internal val allowDuplicated: Boolean = true
@@ -41,21 +42,23 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
         internal val intent: Intent,
         internal val bundle: Bundle? = null,
         allowDuplicated: Boolean = true,
+        animation: Pair<Int, Int>? = null,
         transitions: Array<Transition>? = null,
         onResult: ((result: Result) -> Unit)? = null
-    ) : Caller(transitions, onResult, allowDuplicated)
+    ) : Caller(animation, transitions, onResult, allowDuplicated)
 
     class NavCaller (
         internal val cls: Class<out ACActivity>,
         internal val bundle: Bundle? = null,
         internal val startDestination: Int = 0,
         internal val clearTop: Boolean = false,
+        animation: Pair<Int, Int>? = null,
         allowDuplicated: Boolean = true,
         transitions: Array<Transition>? = null,
         onResult: ((result: Result) -> Unit)? = null
-    ) : Caller(transitions, onResult, allowDuplicated)
+    ) : Caller(animation, transitions, onResult, allowDuplicated)
 
-    protected open fun getCallerIntent(activity: Activity): Intent? {
+    private fun getCallerIntent(activity: Activity): Intent? {
         return when(caller) {
             is NavCaller -> {
                 Intent(activity, caller.cls).apply {
@@ -131,10 +134,21 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
                 }
             }
         } else {
-            if (onResult != null) {
-                listener.launchIntent(intent, null, onResult)
+            val options: ActivityOptionsCompat? = if (caller.animation != null) {
+                val (enterAnim, exitAnim) = caller.animation
+                ActivityOptionsCompat.makeCustomAnimation(
+                    /* context = */ activity,
+                    /* enterResId = */ enterAnim,
+                    /* exitResId = */ exitAnim
+                )
             } else {
-                activity.startActivity(intent)
+                null
+            }
+
+            if (onResult != null) {
+                listener.launchIntent(intent, options, onResult)
+            } else {
+                activity.startActivity(intent, options?.toBundle())
             }
         }
     }

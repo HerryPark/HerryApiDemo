@@ -9,7 +9,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.core.app.ActivityOptionsCompat
 import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.activity_caller.result.TakeMediaRequest
-import kotlin.jvm.Throws
 
 interface ACModule {
     interface OnIntentListener {
@@ -44,7 +43,7 @@ interface ACModule {
         @Throws(ActivityNotFoundException::class)
         fun launchTake(
             request: TakeMediaRequest,
-            onResult: ((success: Boolean) -> Unit)?
+            onResult: ((success: Boolean, e: Exception?) -> Unit)?
         )
     }
 

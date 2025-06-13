@@ -2,8 +2,10 @@ package com.herry.libs.widget.view.recyclerview.snap.loop
 
 import android.annotation.SuppressLint
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import androidx.recyclerview.widget.RecyclerView
+import java.util.concurrent.atomic.AtomicBoolean
 
 @Suppress("unused")
 class AutoLoopPagerSnapExHelper : LoopPagerSnapExHelper() {
@@ -17,7 +19,7 @@ class AutoLoopPagerSnapExHelper : LoopPagerSnapExHelper() {
     }
 
     @SuppressLint("HandlerLeak")
-    private val timerHandler: Handler = object : Handler() {
+    private val timerHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 MSG_NEXT -> {
@@ -46,12 +48,18 @@ class AutoLoopPagerSnapExHelper : LoopPagerSnapExHelper() {
         }
     }
 
+    private val isAutoEnabled: AtomicBoolean = AtomicBoolean(false)
+
+    fun isAutoEnabled(): Boolean = isAutoEnabled.get()
+
     private fun enableAuto(enable: Boolean) {
         getRecyclerView() ?: return
 
         stopTimer()
 
-        if (enable) {
+        isAutoEnabled.set(enable && period > 0)
+
+        if (isAutoEnabled.get()) {
             sendMessageNext(period)
         }
     }
