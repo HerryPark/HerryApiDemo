@@ -291,6 +291,11 @@ class SchemePresenter : SchemeContract.Presenter() {
                 appLink = "kinemaster://kinemaster/template/section/template?sectionId=660a3de5be36545681280bdb&reqType=curation",
                 shortLink = "https://kine.to/template/section/template?sectionId=660a3de5be36545681280bdb&reqType=curation"
             ),
+            SchemeContract.SchemaData(
+                title = "Edit > GPT - TEST",
+                appLink = "kinemaster://kinemaster/edit/script?key=1234",
+                shortLink = "https://kine.to/edit/script?key=1234",
+            )
         )
 
         this.nodes.beginTransition()

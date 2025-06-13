@@ -73,10 +73,6 @@ class BottomSheetDialogFragment : BaseNavFragment() {
         }
     }
 
-    private fun cancel() {
-        navigateUp(false)
-    }
-
     private fun ok() {
         navigateUp(true)
     }

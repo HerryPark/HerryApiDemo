@@ -1,7 +1,6 @@
 package com.herry.test.app.base.mvvm
 
 import android.os.Bundle
-import android.view.View
 import com.herry.test.app.base.BaseFragment
 
 abstract class BaseMVVMFragment<VM: BaseViewModel>: BaseFragment() {
@@ -9,23 +8,56 @@ abstract class BaseMVVMFragment<VM: BaseViewModel>: BaseFragment() {
     protected lateinit var viewModel: VM
         private set
 
+    protected open val mvvmChecker: MVVMChecker = MVVMChecker(type = MVVMChecker.Type.NONE, enforce = MVVMChecker.Enforce.ON_START)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        this.viewModel = onViewModel()
+        viewModel = onViewModel()
+        viewModel.setMVVMChecker(context, mvvmChecker.type)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewLifecycleOwner.lifecycle.addObserver(viewModel)
+    override fun onStart() {
+        super.onStart()
 
-        super.onViewCreated(view, savedInstanceState)
+        if (mvvmChecker.enforce == MVVMChecker.Enforce.ON_START) {
+            viewModel.startMVVMChecker()
+        }
     }
 
-    override fun onDestroyView() {
-        viewLifecycleOwner.lifecycle.removeObserver(viewModel)
+    override fun onResume() {
+        super.onResume()
 
-        super.onDestroyView()
+        if (mvvmChecker.enforce == MVVMChecker.Enforce.ON_RESUME) {
+            viewModel.startMVVMChecker()
+        }
+    }
+
+    override fun onPause() {
+
+        if (mvvmChecker.enforce == MVVMChecker.Enforce.ON_RESUME) {
+            viewModel.stopMVVMChecker()
+        }
+
+        super.onPause()
+    }
+
+    override fun onStop() {
+        if (mvvmChecker.enforce == MVVMChecker.Enforce.ON_START) {
+            viewModel.stopMVVMChecker()
+        }
+
+        super.onStop()
+    }
+
+    private fun startMVVMChecker() {
+
+    }
+
+    private fun stopMVVMChecker() {
+
     }
 
     abstract fun onViewModel(): VM
+
 }

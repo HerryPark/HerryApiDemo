@@ -3,21 +3,53 @@ package com.herry.test.app.base.mvvm
 import android.os.Bundle
 import com.herry.test.app.base.nav.BaseNavFragment
 
-@Suppress("MemberVisibilityCanBePrivate")
 abstract class BaseMVVMNavFragment<VM: BaseViewModel>: BaseNavFragment() {
 
     protected lateinit var viewModel: VM
         private set
 
+    protected open val mvvmChecker: MVVMChecker = MVVMChecker(type = MVVMChecker.Type.NONE, enforce = MVVMChecker.Enforce.ON_START)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycle.addObserver(onViewModel().also { this.viewModel = it })
+        viewModel = onViewModel()
+        viewModel.setMVVMChecker(context, mvvmChecker.type)
+    }
 
-        onUIState()
+    override fun onStart() {
+        super.onStart()
+
+        if (mvvmChecker.enforce == MVVMChecker.Enforce.ON_START) {
+            viewModel.startMVVMChecker()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (mvvmChecker.enforce == MVVMChecker.Enforce.ON_RESUME) {
+            viewModel.startMVVMChecker()
+        }
+    }
+
+    override fun onPause() {
+
+        if (mvvmChecker.enforce == MVVMChecker.Enforce.ON_RESUME) {
+            viewModel.stopMVVMChecker()
+        }
+
+        super.onPause()
+    }
+
+    override fun onStop() {
+        if (mvvmChecker.enforce == MVVMChecker.Enforce.ON_START) {
+            viewModel.stopMVVMChecker()
+        }
+
+        super.onStop()
     }
 
     abstract fun onViewModel(): VM
 
-    protected open fun onUIState() {}
 }

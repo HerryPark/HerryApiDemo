@@ -72,10 +72,6 @@ class FullScreenDialogFragment : BaseNavFragment() {
         }
     }
 
-    private fun cancel() {
-        navigateUp(false)
-    }
-
     private fun ok() {
         navigateUp(true)
     }

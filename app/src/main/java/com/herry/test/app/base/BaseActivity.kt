@@ -2,24 +2,26 @@ package com.herry.test.app.base
 
 import android.app.Dialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.herry.libs.app.activity_caller.activity.ACActivity
-import com.herry.libs.helper.ApiHelper
 import com.herry.libs.permission.PermissionHelper
 import com.herry.libs.util.AppActivityManager
 import com.herry.libs.util.AppUtil
 import com.herry.libs.util.FragmentAddingOption
-import com.herry.libs.util.OnSoftKeyboardVisibilityListener
-import com.herry.libs.util.ViewUtil
+import com.herry.libs.util.KeyboardUtil
+import com.herry.libs.util.OnSoftKeyboardVisibilityChangedListener
 import com.herry.libs.util.listener.ListenerRegistry
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 
+@Suppress("unused")
 abstract class BaseActivity : ACActivity() {
 
     @IdRes
@@ -47,7 +49,12 @@ abstract class BaseActivity : ACActivity() {
             createContentView(contentViewId)
         }
 
-        ViewUtil.setSoftKeyboardVisibilityListener(this, onSoftKeyboardVisibilityListener)
+        addOnSoftKeyboardVisibilityChecker(onSoftKeyboardVisibilityChecker)
+    }
+
+    override fun onDestroy() {
+        removeOnSoftKeyboardVisibilityChecker(onSoftKeyboardVisibilityChecker)
+        super.onDestroy()
     }
 
     private fun createContentView(@LayoutRes id: Int) {
@@ -67,66 +74,63 @@ abstract class BaseActivity : ACActivity() {
 
     protected open fun onPostSetContentView() { }
 
-    override fun onResume() {
-        super.onResume()
-
-        withoutSavedInstance.set(false)
-
-        // checks changed application by user
-        if ((application is BaseApplication) && (application as BaseApplication).isNeedRestartApp()) {
-            (application as BaseApplication).resetRestartApp()
-            // restart application
-            packageManager.getLaunchIntentForPackage(packageName)?.run {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                startActivity(this)
-            }
-        }
-    }
-
     override fun getBlockedPermissionPopup(permissions: Array<String>, onCancel: ((dialog: DialogInterface) -> Unit)?): Dialog? {
-        return PermissionHelper.createPermissionSettingScreenPopup(this, onCancel)?.getDialog()
+        return PermissionHelper.createPermissionSettingScreenPopup(activity = this, onCancel = onCancel)?.getDialog()
     }
 
     protected fun finish(withoutAnimation: Boolean) {
         super.finish()
-        if (withoutAnimation) {
-            if (ApiHelper.hasAPI34()) {
-                overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0)
-            } else {
-                @Suppress("DEPRECATION")
-                overridePendingTransition(0, 0)
-            }
-        }
+        if (withoutAnimation) overridePendingTransition(0, 0)
     }
 
     open fun getActivityManager(): AppActivityManager? {
-        return (application as? BaseApplication)?.getAppActivityManager()
+        return (application as? AppActivityManager.OnGetAppActivityManager)?.getAppActivityManager()
     }
 
-    private fun onBackKeyPressed() {
+    protected open fun onBackKeyPressed(): Boolean {
         val backStackFragment = AppUtil.getLastBackStackFragment(supportFragmentManager)
-        if (null != backStackFragment) {
-            val fragment = backStackFragment.fragment as? BaseFragment
-
-            if (fragment?.onBackPressed() == true) {
-                return
+        when (val fragment = backStackFragment?.fragment) {
+            is BaseFragment -> if (fragment.onBackPressed()) {
+                return true
             }
         }
 
-        super.onBackPressed()
+        // finish activity
+        finish()
+        return true
     }
 
-    private val onSoftKeyboardVisibilityListener = object: OnSoftKeyboardVisibilityListener {
-        override fun onChangedSoftKeyboardVisibility(isVisible: Boolean) {
-            softKeyboardVisibilityListeners.notifyListeners(object : ListenerRegistry.NotifyCB<OnSoftKeyboardVisibilityListener> {
-                override fun notify(listener: OnSoftKeyboardVisibilityListener) {
+    private val onSoftKeyboardVisibilityChecker = object : OnGlobalLayoutListener {
+        private val wasShown: AtomicReference<Boolean> = AtomicReference()
+
+        override fun onGlobalLayout() {
+            val isShown = KeyboardUtil.isSoftKeyboardShown(this@BaseActivity)
+            if (isShown == wasShown.get()) {
+                // Keyboard state hasn't changed
+                return
+            }
+
+            wasShown.set(isShown)
+
+            softKeyboardVisibilityListeners.notifyListeners(object : ListenerRegistry.NotifyCB<OnSoftKeyboardVisibilityChangedListener> {
+                override fun notify(listener: OnSoftKeyboardVisibilityChangedListener) {
                     // notify to child fragments
-                    listener.onChangedSoftKeyboardVisibility(isVisible)
+                    listener.onChanged(isShown)
                     // notify to an inheritance activity
-                    this@BaseActivity.onChangedSoftKeyboardVisibility(isVisible)
+                    this@BaseActivity.onChangedSoftKeyboardVisibility(isShown)
                 }
             })
         }
+    }
+
+    private fun addOnSoftKeyboardVisibilityChecker(checker: OnGlobalLayoutListener) {
+        val contentView = findViewById<View?>(android.R.id.content) ?: return
+        contentView.viewTreeObserver?.addOnGlobalLayoutListener(checker)
+    }
+
+    private fun removeOnSoftKeyboardVisibilityChecker(checker: OnGlobalLayoutListener) {
+        val contentView = findViewById<View?>(android.R.id.content) ?: return
+        contentView.viewTreeObserver?.removeOnGlobalLayoutListener(checker)
     }
 
     /**
@@ -134,22 +138,21 @@ abstract class BaseActivity : ACActivity() {
      */
     protected open fun onChangedSoftKeyboardVisibility(isVisible: Boolean) { }
 
-    private val softKeyboardVisibilityListeners = ListenerRegistry<OnSoftKeyboardVisibilityListener>()
+    private val softKeyboardVisibilityListeners = ListenerRegistry<OnSoftKeyboardVisibilityChangedListener>()
 
     /**
      * adds the soft keyboard visibility changed listener for the Fragment, this is called from the BaseFragment's onCreate()
      */
-    internal fun addOnSoftKeyboardVisibilityListener(listener: OnSoftKeyboardVisibilityListener) {
+    internal fun addOnSoftKeyboardVisibilityChangedListener(listener: OnSoftKeyboardVisibilityChangedListener) {
         softKeyboardVisibilityListeners.register(listener)
     }
 
     /**
      * removes the soft keyboard visibility changed listener for the Fragment, this is called from the BaseFragment's onDestroy()
      */
-    internal fun removeOnSoftKeyboardVisibilityListener(listener: OnSoftKeyboardVisibilityListener) {
+    internal fun removeOnSoftKeyboardVisibilityChangedListener(listener: OnSoftKeyboardVisibilityChangedListener) {
         softKeyboardVisibilityListeners.unregister(listener)
     }
-
 
     private val withoutSavedInstance: AtomicBoolean = AtomicBoolean(false)
     protected fun recreate(withoutSavedInstance: Boolean) {
@@ -161,5 +164,10 @@ abstract class BaseActivity : ACActivity() {
         if (!withoutSavedInstance.get()) {
             super.onSaveInstanceState(outState)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        withoutSavedInstance.set(false)
     }
 }

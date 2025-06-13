@@ -33,9 +33,9 @@ open class SingleActivity: BaseActivity() {
             val transparentStatusBar = it.getBooleanExtra(FRAGMENT_TRANSPARENT_STATUS_BAR, false)
             SystemUI.setStatusBar(
                 this,
-                SystemUIAppearance.getDefaultStatusBarSystemUIAppearance(this).apply {
+                SystemUIAppearance.getDefaultStatusBarSystemUIAppearance(this).copy(
                     backgroundColor = if (transparentStatusBar) Color.TRANSPARENT else null
-                }
+                )
             )
             SystemUI.setSystemUiVisibility(activity = this, isFull = transparentStatusBar)
         }

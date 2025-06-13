@@ -40,11 +40,14 @@ import java.util.Locale
 
 class SearchFeedsFragment: BaseMVPNavView<SearchFeedsContract.View, SearchFeedsContract.Presenter>(), SearchFeedsContract.View {
 
-    override fun onSystemUIAppearances(context: Context): SystemUIAppearances =
-        SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
-            statusBar?.appearanceColorStyle = SystemUIAppearanceColorStyle.LIGHT
-            statusBar?.visibility = SystemUIVisibility.SHOW
-        }
+    override fun onSystemUIAppearances(context: Context, default: SystemUIAppearances): SystemUIAppearances? {
+        return default.copy(
+            statusBar = default.statusBar?.copy(
+                appearanceColorStyle = SystemUIAppearanceColorStyle.LIGHT,
+                visibility = SystemUIVisibility.SHOW
+            )
+        )
+    }
 
     override fun onCreatePresenter(): SearchFeedsContract.Presenter = SearchFeedsPresenter()
 

@@ -122,7 +122,7 @@ class PainterFragment : BaseNavFragment() {
                 if (it.hasRatio && view is ConstraintLayout) {
                     val constraintSet = ConstraintSet()
                     constraintSet.clone(view)
-                    val dimensionRatio = String.format(Locale.ENGLISH, "${if (ViewUtil.isPortraitOrientation(context)) "H" else "W"},%d:%d", it.ratioWidth, it.ratioHeight)
+                    val dimensionRatio = String.format(Locale.ENGLISH, "${if (ViewUtil.isPortraitOrientation()) "H" else "W"},%d:%d", it.ratioWidth, it.ratioHeight)
                     constraintSet.setDimensionRatio(this.id, dimensionRatio)
                     constraintSet.applyTo(view)
                 }

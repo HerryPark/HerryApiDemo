@@ -9,18 +9,23 @@ import android.view.ViewGroup
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.configure.SystemUIAppearances
 import com.herry.libs.widget.configure.SystemUIVisibility
-import com.herry.libs.widget.extension.*
+import com.herry.libs.widget.extension.getViewMargins
+import com.herry.libs.widget.extension.navigateTo
+import com.herry.libs.widget.extension.setOnSingleClickListener
+import com.herry.libs.widget.extension.setViewMarginTop
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
 
 class CreateFragment: BaseNavFragment() {
 
-    override fun onSystemUIAppearances(context: Context): SystemUIAppearances {
-        return SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
-            isFullScreen = true
-            statusBar?.backgroundColor = Color.BLACK
-            statusBar?.visibility = SystemUIVisibility.SHOW
-        }
+    override fun onSystemUIAppearances(context: Context, default: SystemUIAppearances): SystemUIAppearances? {
+        return default.copy(
+            isFullScreen = true,
+            statusBar = default.statusBar?.copy(
+                backgroundColor = Color.BLACK,
+                visibility = SystemUIVisibility.SHOW
+            )
+        )
     }
 
     private var container: View? = null

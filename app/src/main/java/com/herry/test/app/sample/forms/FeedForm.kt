@@ -131,7 +131,7 @@ class FeedForm(
             holder.cover?.let { cover ->
                 val width = model.feed.width
                 val height = model.feed.height
-                val dimensionRatio = String.format(Locale.ENGLISH, "${if (ViewUtil.isPortraitOrientation(context)) "H" else "W"},%d:%d", width, height)
+                val dimensionRatio = String.format(Locale.ENGLISH, "${if (ViewUtil.isPortraitOrientation()) "H" else "W"},%d:%d", width, height)
                 constraintSet.setDimensionRatio(cover.id, dimensionRatio)
                 constraintSet.applyTo(constraintLayout)
             }

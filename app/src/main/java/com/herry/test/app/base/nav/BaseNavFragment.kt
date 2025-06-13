@@ -1,19 +1,22 @@
 package com.herry.test.app.base.nav
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.clearFragmentResultListener
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.DialogFragmentNavigator
 import androidx.navigation.fragment.findNavController
 import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.app.nav.NavMovement
 import com.herry.libs.util.BundleUtil
-import com.herry.libs.util.ViewUtil
+import com.herry.libs.util.KeyboardUtil
 import com.herry.libs.widget.extension.getNavCurrentDestinationID
 import com.herry.libs.widget.extension.launchWhenViewResumed
+import com.herry.libs.widget.extension.launchWhenViewStarted
 import com.herry.libs.widget.extension.setFragmentResult
 import com.herry.libs.widget.extension.setFragmentResultListener
 import com.herry.test.app.base.BaseActivity
@@ -28,6 +31,7 @@ open class BaseNavFragment : BaseFragment, NavMovement {
     constructor(@LayoutRes contentLayoutId: Int) : super(contentLayoutId)
 
     companion object {
+        @Suppress("ConstPropertyName")
         private const val NavigationID = "NavigationID"
     }
     /**
@@ -63,9 +67,9 @@ open class BaseNavFragment : BaseFragment, NavMovement {
      * @param delayMs action delay millisecond
      */
     protected fun navigateUp(result: Bundle? = null, force: Boolean = false, delayMs: Long = 0L) {
-        lifecycleScope.launch(Dispatchers.Main) {
+        launchWhenViewStarted {
             if (isOnNavigateUpDelay) {
-                return@launch
+                return@launchWhenViewStarted
             }
             if (delayMs > 0L && !force) {
                 withContext(Dispatchers.Default) {
@@ -84,7 +88,13 @@ open class BaseNavFragment : BaseFragment, NavMovement {
             return
         }
 
-        val currentNavDestination = findNavController().currentDestination
+        val navController = try {
+            findNavController()
+        } catch (_: Exception) {
+            return
+        }
+
+        val currentNavDestination = navController.currentDestination
         val currentDestinationId = currentNavDestination?.id
 
         // sets from navigation id to result
@@ -94,7 +104,7 @@ open class BaseNavFragment : BaseFragment, NavMovement {
             }
         }
 
-        if (currentNavDestination is DialogFragmentNavigator.Destination) {
+        if (isDialogTypeFragment(currentNavDestination)) {
             launchWhenViewResumed {
                 navigateUpDialogFragment(result)
             }
@@ -110,28 +120,19 @@ open class BaseNavFragment : BaseFragment, NavMovement {
             }))
 
             // calls system(navController) navigate up action
-            if (!findNavController().navigateUp()) {
+            if (!navController.navigateUp()) {
                 finishActivity(NavBundleUtil.isNavigationResultOk(result), result)
             }
-        } catch (ex: IllegalStateException) {
+        } catch (_: IllegalStateException) {
             finishActivity(NavBundleUtil.isNavigationResultOk(result), result)
         }
     }
 
     // This function must be called from onResume.
     private fun navigateUpDialogFragment(bundle: Bundle? = null) {
-        val callNavigationId = findNavController().previousBackStackEntry?.destination?.id
-        val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
-
-        if (callNavigationId != null && currentDestinationId != null) {
+        val notified = notifyNavigateUpResult(bundle)
+        if (notified) {
             findNavController().popBackStack()
-
-            val result = bundle ?: getNavigateUpResult()
-            NavBundleUtil.addFromNavigationId(result, currentDestinationId)
-            setFragmentResult(
-                callNavigationId.toString(),
-                result
-            )
         }
 
         val dialog = super.getDialog()
@@ -140,6 +141,24 @@ open class BaseNavFragment : BaseFragment, NavMovement {
         } else {
             dismiss()
         }
+    }
+
+    fun notifyNavigateUpResult(bundle: Bundle? = null): Boolean {
+        val navController = findNavController()
+        val callNavigationId = navController.previousBackStackEntry?.destination?.id
+        val currentDestinationId = navController.currentBackStackEntry?.destination?.id
+
+        if (callNavigationId != null && currentDestinationId != null) {
+            val result = bundle ?: getNavigateUpResult()
+            NavBundleUtil.addFromNavigationId(result, currentDestinationId)
+            setFragmentResult(
+                callNavigationId.toString(),
+                result
+            )
+            return true
+        }
+
+        return false
     }
 
     override fun isTransition(): Boolean = transitionHelper.isTransition()
@@ -162,8 +181,12 @@ open class BaseNavFragment : BaseFragment, NavMovement {
             val fromId = NavBundleUtil.fromNavigationId(bundle)
             onNavigateUpResult(fromId, bundle)
         })
+    }
 
-        transitionHelper.onCreate(activity, this)
+    override fun onDestroy() {
+        val requestKey: String = if (navigationID == 0) super.fragmentTag else navigationID.toString()
+        clearFragmentResultListener(requestKey)
+        super.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -185,7 +208,7 @@ open class BaseNavFragment : BaseFragment, NavMovement {
     protected fun finishFragment(bundle: Bundle?) {
         val activity = this.activity
         if (activity is BaseNavActivity) {
-            ViewUtil.hideSoftKeyboard(this)
+            KeyboardUtil.hideSoftKeyboard(fragment = this)
             navigateUp(bundle, force = true)
         } else if (activity is BaseActivity) {
             finishActivity(NavBundleUtil.isNavigationResultOk(bundle), bundle)
@@ -195,13 +218,13 @@ open class BaseNavFragment : BaseFragment, NavMovement {
     /**
      * finish activity.
      * If you want finish with to set result, creates [bundle] parameter.
-     * @see BundleUtil.createNavigationBundle(Boolean)
+     * @see NavBundleUtil.createNavigationBundle(Boolean)
      * @param resultOK set result to ok or cancel
      * @param bundle result data
      */
-    protected open fun finishActivity(resultOK: Boolean, bundle: Bundle? = null) {
+    protected open fun finishActivity(resultOK: Boolean, bundle: Bundle? = null, afterTransition: Boolean = true) {
         activity?.let { activity ->
-            ViewUtil.hideSoftKeyboard(activity)
+            KeyboardUtil.hideSoftKeyboard(fragment = this)
 
             val activityResult = if (resultOK) Activity.RESULT_OK else Activity.RESULT_CANCELED
             val resultBundle = if (null != bundle) {
@@ -215,7 +238,44 @@ open class BaseNavFragment : BaseFragment, NavMovement {
             activity.setResult(activityResult, Intent().apply {
                 putExtra(NavMovement.NAV_BUNDLE, resultBundle)
             })
-            activity.finishAfterTransition()
+            if (afterTransition) {
+                activity.finishAfterTransition()
+            } else {
+                activity.finish()
+            }
+        }
+    }
+
+    private fun isDialogTypeFragment(navDestination: NavDestination? = null): Boolean {
+        val destination = navDestination ?: try {
+            findNavController().currentDestination
+        } catch (_: Exception) {
+            null
+        }
+
+        return destination is DialogFragmentNavigator.Destination
+    }
+
+    private var isCanceled = false
+
+    override fun onCancel(dialog: DialogInterface) {
+        if (!isDialogTypeFragment()) return
+
+        isCanceled = true
+        // control dialog fragment's canceled action - send the navigation up result (false) to parent
+        launchWhenViewResumed {
+            navigateUpDialogFragment(NavBundleUtil.createNavigationBundle(false, null))
+        }
+    }
+
+    /**
+     * Cancel the dialog destination fragment. This fragment is defined to <dialog> destination in the navigation resource
+     */
+    protected fun cancel() {
+        if (!isDialogTypeFragment()) return
+
+        if (!isCanceled) {
+            navigateUp()
         }
     }
 }

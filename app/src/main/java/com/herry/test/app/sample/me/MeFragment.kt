@@ -19,12 +19,15 @@ import com.herry.test.app.keepchildvm.KeepChildVMTabAdapter
 
 class MeFragment: BaseNavFragment() {
 
-    override fun onSystemUIAppearances(context: Context): SystemUIAppearances =
-        SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
-            isFullScreen = true
-            showBehavior = SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE
-            statusBar?.visibility = SystemUIVisibility.HIDE
-        }
+    override fun onSystemUIAppearances(context: Context, default: SystemUIAppearances): SystemUIAppearances? {
+        return default.copy(
+            isFullScreen = true,
+            showBehavior = SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE,
+            statusBar = default.statusBar?.copy(
+                visibility = SystemUIVisibility.HIDE
+            )
+        )
+    }
 
     private var container: View? = null
     private lateinit var viewPager: ViewPager2

@@ -22,7 +22,7 @@ import com.herry.test.R
 import com.herry.test.app.base.nestednav.BaseMVPNestedNavView
 
 class HomeFragment: BaseMVPNestedNavView<HomeContract.View, HomeContract.Presenter>(), HomeContract.View {
-    override fun onSystemUIAppearances(context: Context): SystemUIAppearances? = null
+    override fun onSystemUIAppearances(context: Context, default: SystemUIAppearances): SystemUIAppearances? = null
 
     override fun onCreatePresenter(): HomeContract.Presenter = HomePresenter()
 

@@ -1,14 +1,14 @@
 package com.herry.test.app.base.nav
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -17,15 +17,20 @@ import androidx.navigation.fragment.findNavController
 import com.herry.libs.app.nav.BottomNavHostFragment
 import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.app.nav.NavMovement
-import com.herry.libs.widget.extension.*
+import com.herry.libs.log.Trace
+import com.herry.libs.widget.extension.getBackEntryCounts
+import com.herry.libs.widget.extension.getNavCurrentDestinationID
+import com.herry.libs.widget.extension.isCurrentStartDestinationFragment
+import com.herry.libs.widget.extension.isNestedNavHostFragment
+import com.herry.libs.widget.extension.isParentViewVisible
+import com.herry.libs.widget.extension.setFragmentResult
 import com.herry.test.R
 import com.herry.test.app.base.BaseActivity
 import com.herry.test.app.base.nestednav.NestedNavMovement
+import java.util.concurrent.ConcurrentHashMap
 
 @SuppressWarnings("unused")
 abstract class BaseNavActivity : BaseActivity() {
-
-    private var navController: NavController? = null
 
     private var navHostFragment: NavHostFragment? = null
 
@@ -33,23 +38,35 @@ abstract class BaseNavActivity : BaseActivity() {
 
     private val navActivityViewModel: SavedViewModel by viewModels()
 
+    private fun getNavController(): NavController? = navHostFragment?.findNavController()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(getContentView())
 
-        if (navActivityViewModel.getNavigateManager().value == null) {
+        if (navActivityViewModel.getNavigateManager() == null) {
             navActivityViewModel.setNavigateManager(NavigationStack())
         }
 
         // sets base NavHostFragment
-        navHostFragment = supportFragmentManager.findFragmentById(getNavHostFragment()) as? NavHostFragment
-        navHostFragment?.run {
-            addOnBackStackChangedListener(this, true)
-        }
+        navHostFragment = supportFragmentManager.findFragmentById(getNavHostFragmentId()) as? NavHostFragment
+        findViewById<View?>(android.R.id.content)?.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+            override fun onViewAttachedToWindow(v: View) {
+                val navHostFragment = navHostFragment ?: return
+                addOnBackStackChangedListener(navHostFragment, true)
+            }
 
-        navController = navHostFragment?.findNavController()
+            override fun onViewDetachedFromWindow(v: View) {
+                val navHostFragment = navHostFragment ?: return
+                removeOnBackStackChangedListener(navHostFragment)
+            }
+        })
 
         onSetupStartDestination()
+    }
+
+    override fun onDestroy() {
+        navHostFragment = null
+        super.onDestroy()
     }
 
     protected open fun onSetupStartDestination() {
@@ -57,29 +74,29 @@ abstract class BaseNavActivity : BaseActivity() {
     }
 
     protected fun setStartDestination(@IdRes startDestination: Int) {
-        navController?.let {
+        getNavController()?.let {
             val navGraph = it.navInflater.inflate(getGraph())
             if (startDestination != 0) {
                 navGraph.setStartDestination(startDestination)
             }
-            it.setGraph(navGraph, getDefaultBundle())
+            it.setGraph(navGraph, getNavBundle())
         }
     }
 
     @LayoutRes
-    protected open fun getContentView(): Int = R.layout.activity_navigation
+    override fun getContentViewId(): Int = R.layout.activity_navigation
 
     @IdRes
-    protected open fun getNavHostFragment(): Int = R.id.activity_navigation_fragment
+    protected open fun getNavHostFragmentId(): Int = R.id.activity_navigation_fragment
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
-        val bundle = getDefaultBundle()
+        val bundle = getNavBundle()
         if (bundle != null) {
-            navController?.setGraph(getGraph(), bundle)
+            getNavController()?.setGraph(getGraph(), bundle)
         } else {
-            navController?.setGraph(getGraph())
+            getNavController()?.setGraph(getGraph())
         }
     }
 
@@ -92,6 +109,7 @@ abstract class BaseNavActivity : BaseActivity() {
         return super.onSupportNavigateUp()
     }
 
+    @SuppressLint("MissingSuperCall")
     @Deprecated("Deprecated in Java")
     final override fun onBackPressed() {
         if (navigateUpResult()) {
@@ -101,7 +119,7 @@ abstract class BaseNavActivity : BaseActivity() {
         }
     }
 
-    private fun navigateUp(): Boolean = getActiveNavHostFragment()?.navController?.navigateUp() ?: false
+    private fun navigateUp(): Boolean = getActiveNavHostFragment()?.navController?.navigateUp() == true
 
     private fun isNavigationUpBlocked(fragment: Fragment?): Boolean {
         if (fragment is NavMovement) {
@@ -190,35 +208,67 @@ abstract class BaseNavActivity : BaseActivity() {
 
     private fun getActiveNavHostFragment(): NavHostFragment? {
         // find from navigation stack
-        return navActivityViewModel.getNavigateManager().value?.getActiveHost()
+        val activeHost = navActivityViewModel.getNavigateManager()?.getActiveHost()
+        // Add safety checks here if activeHost can be non-null but not added
+        if (activeHost != null && activeHost.isAdded) {
+            return activeHost
+        }
+        return null
     }
 
-    private fun getActiveFragment(): Fragment? {
-        return getActiveNavHostFragment()?.childFragmentManager?.primaryNavigationFragment
-            ?: this.navHostFragment?.childFragmentManager?.primaryNavigationFragment
+    protected fun getActiveFragment(): Fragment? {
+        val activeNavHost = getActiveNavHostFragment()
+
+        // Check the NavHostFragment returned by getActiveNavHostFragment() first
+        if (activeNavHost != null && activeNavHost.isAdded && !activeNavHost.isStateSaved) {
+            try {
+                // It's possible for primaryNavigationFragment to be null even if childFragmentManager is available
+                val primaryFragment = activeNavHost.childFragmentManager.primaryNavigationFragment
+                if (primaryFragment != null && primaryFragment.isAdded) {
+                    return primaryFragment
+                }
+            } catch (e: IllegalStateException) {
+                Trace.w("IllegalStateException while accessing primaryNavigationFragment from activeNavHost", e)
+            }
+        }
+
+        // Fallback or primary check for the activity's main navHostFragment
+        val baseNavHost = this.navHostFragment // Assuming this is the NavHostFragment for the Activity itself
+        if (baseNavHost != null && baseNavHost.isAdded && !baseNavHost.isStateSaved) {
+            try {
+                val primaryFragment = baseNavHost.childFragmentManager.primaryNavigationFragment
+                if (primaryFragment != null && primaryFragment.isAdded) {
+                    return primaryFragment
+                }
+            } catch (e: IllegalStateException) {
+                Trace.w("IllegalStateException while accessing primaryNavigationFragment from baseNavHost", e)
+                // Fragment is not in a state to provide its primary navigation fragment
+            }
+        }
+
+        return null // Return null if no valid active fragment is found
     }
 
     abstract fun getGraph(): Int
 
-    private fun getDefaultBundle(): Bundle? {
+    protected fun getNavBundle(): Bundle? {
         return if (intent != null) intent.getBundleExtra(NavMovement.NAV_BUNDLE) else null
     }
 
     @IdRes
     protected open fun getStartDestination(): Int {
-        var startDestination = intent?.getIntExtra(NavMovement.NAV_START_DESTINATION, 0) ?: 0
+        var startDestination = if (intent != null) intent.getIntExtra(NavMovement.NAV_START_DESTINATION, 0) else 0
         if (startDestination == 0) {
-            val navGraph = navController?.navInflater?.inflate(getGraph())
+            val navGraph = getNavController()?.navInflater?.inflate(getGraph())
             startDestination = navGraph?.startDestinationId ?: 0
         }
 
         return startDestination
     }
 
-    @Suppress("unused")
     fun finishActivity(bundle: Bundle?) {
         setNavigationUpResult(bundle)
-        navController?.currentDestination?.let {
+        getNavController()?.currentDestination?.let {
             NavBundleUtil.addFromNavigationId(getNavigationUpResult(), it.id)
         }
         if (!navigateUp()) {
@@ -239,102 +289,105 @@ abstract class BaseNavActivity : BaseActivity() {
         runOnUiThread { finishAfterTransition() }
     }
 
-    interface OnFragmentManagerBackStackChangedListener : FragmentManager.OnBackStackChangedListener {
-        fun isBaseHost(): Boolean
-
-        fun host(): NavHostFragment
-    }
+    private fun getNavigateManager(): NavigationStack? = navActivityViewModel.getNavigateManager()
 
     private fun addOnBackStackChangedListener(navHostFragment: NavHostFragment, isBase: Boolean) {
-        val navigateManager = navActivityViewModel.getNavigateManager().value ?: kotlin.run {
-            navActivityViewModel.setNavigateManager(NavigationStack()).value
-        }
+        val navigateManager = getNavigateManager()
 
         navigateManager ?: return
 
-        navigateManager.addHost(navHostFragment)
+        val onBackStackChangedListener = object : OnFragmentManagerBackStackChangedListener {
+            override fun isBaseHost(): Boolean = isBase
 
-        navHostFragment.childFragmentManager.addOnBackStackChangedListener(
-            object : OnFragmentManagerBackStackChangedListener {
-                override fun isBaseHost(): Boolean = isBase
+            override fun host(): NavHostFragment = navHostFragment
 
-                override fun host(): NavHostFragment = navHostFragment
+            override fun onBackStackChanged() {
+                // checks whether onBackStackChangedListener calling is navigate() or navigateUp()
+                val navigationStack: NavigationStack = getNavigateManager() ?: return
+                val previousBackEntryCounts = navigationStack.getBackEntryCounts(navHostFragment)
+                val currentBackEntryCounts = host().getBackEntryCounts()
 
-                override fun onBackStackChanged() {
-                    // checks whether onBackStackChangedListener calling is navigate() or navigateUp()
-                    val navigationStack: NavigationStack = navActivityViewModel.getNavigateManager().value ?: return
-                    val previousBackEntryCounts = navigationStack.getBackEntryCounts(navHostFragment)
-                    val currentBackEntryCounts = host().getBackEntryCounts()
+                val activeFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
 
-                    val activeFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+                when {
+                    previousBackEntryCounts < currentBackEntryCounts -> {
+                        // called by navigate()
+                        navigationStack.pushNavigate(navHostFragment)
+                    }
+                    previousBackEntryCounts > currentBackEntryCounts -> {
+                        // called by navigateUp() or popToNavHost()
+                        if (currentBackEntryCounts <= 0) {
+                            // pop all
+                            navigationStack.popUpToHost(navHostFragment)
 
-                    when {
-                        previousBackEntryCounts < currentBackEntryCounts -> {
-                            // called by navigate()
-                            navigationStack.pushNavigate(navHostFragment)
-                        }
-                        previousBackEntryCounts > currentBackEntryCounts -> {
-                            // called by navigateUp() or popToNavHost()
-                            if (currentBackEntryCounts <= 0) {
-                                // pop all
-                                navigationStack.popUpToHost(navHostFragment)
-
-                                // process navigate up result data
-                                getNavigationUpResult()?.let { result ->
-                                    if (activeFragment is NavMovement) {
-                                        val currentId = activeFragment.getNavCurrentDestinationID()
-                                        if (currentId != 0) {
-                                            activeFragment.setFragmentResult(requestKey = currentId.toString(), result)
-                                        }
+                            // process navigate up result data
+                            getNavigationUpResult()?.let { result ->
+                                if (activeFragment is NavMovement) {
+                                    val currentId = activeFragment.getNavCurrentDestinationID()
+                                    if (currentId != 0) {
+                                        activeFragment.setFragmentResult(requestKey = currentId.toString(), result)
                                     }
-
-                                    setNavigationUpResult(null)
                                 }
-                            } else {
-                                navigationStack.popNavigate()
 
-                                // process navigate up result data
-                                getNavigationUpResult()?.let { result ->
-                                    if (activeFragment is NavMovement) {
-                                        val navDestination = navHostFragment.navController.currentDestination
-                                        if (navDestination != null) {
-                                            val navUpDesId = result.getInt(NavMovement.NAV_UP_DES_ID, 0)
-                                            val currentDesId = navHostFragment.navController.currentDestination?.id ?: 0
-                                            if (navUpDesId != 0 &&
-                                                navUpDesId != currentDesId
-                                            ) {
+                                setNavigationUpResult(null)
+                            }
+                        } else {
+                            navigationStack.popNavigate()
+
+                            // process navigate up result data
+                            getNavigationUpResult()?.let { result ->
+                                if (activeFragment is NavMovement) {
+                                    val navDestination = navHostFragment.navController.currentDestination
+                                    if (navDestination != null) {
+                                        val navUpDesId = result.getInt(NavMovement.NAV_UP_DES_ID, 0)
+                                        val currentDesId = navHostFragment.navController.currentDestination?.id ?: 0
+                                        if (navUpDesId != 0 &&
+                                            navUpDesId != currentDesId
+                                        ) {
 //                                                NavBundleUtil.addFromNavigationId(result, currentDesId)
-                                                if (!navigateUp()) {
-                                                    if (isBase) {
-                                                        finish(result)
-                                                    }
+                                            if (!navigateUp()) {
+                                                if (isBase) {
+                                                    finish(result)
                                                 }
-                                            } else {
-                                                val currentId = activeFragment.getNavCurrentDestinationID()
-                                                if (currentId != 0) {
-                                                    activeFragment.setFragmentResult(requestKey = currentId.toString(), result)
-                                                }
-
-                                                setNavigationUpResult(null)
                                             }
+                                        } else {
+                                            val currentId = activeFragment.getNavCurrentDestinationID()
+                                            if (currentId != 0) {
+                                                activeFragment.setFragmentResult(requestKey = currentId.toString(), result)
+                                            }
+
+                                            setNavigationUpResult(null)
                                         }
                                     }
                                 }
                             }
                         }
-                        else -> {
-                            return
-                        }
                     }
-
-                    navigationStack.setBackEntryCounts(navHostFragment, currentBackEntryCounts)
+                    else -> {
+                        return
+                    }
                 }
+
+                navigationStack.setBackEntryCounts(navHostFragment, currentBackEntryCounts)
             }
-        )
+        }
+        navigateManager.addHost(navHostFragment, onBackStackChangedListener)
+    }
+
+    fun removeOnBackStackChangedListener(navHostFragment: NavHostFragment) {
+        getNavigateManager()?.removeHost(navHostFragment)
     }
 
     fun addChildNavHostFragment(navHostFragment: NavHostFragment) {
         addOnBackStackChangedListener(navHostFragment, false)
+    }
+
+    fun removeChildNavHostFragment(navHostFragment: NavHostFragment) {
+        removeOnBackStackChangedListener(navHostFragment)
+    }
+
+    fun hasChildNavHostFragment(navHostFragment: NavHostFragment): Boolean {
+        return getNavigateManager()?.hasHost(navHostFragment) == true
     }
 
     internal fun setNavigationUpResult(result: Bundle?) {
@@ -342,66 +395,109 @@ abstract class BaseNavActivity : BaseActivity() {
     }
 
     private fun getNavigationUpResult(): Bundle? = this.fragmentNavigateUpResult
-}
 
-class SavedViewModel: ViewModel() {
-    private val navigateManager = MutableLiveData<NavigationStack>()
-
-    fun getNavigateManager(): LiveData<NavigationStack> = this.navigateManager
-
-    fun setNavigateManager(value: NavigationStack): LiveData<NavigationStack>{
-        this.navigateManager.value = value
-        return this.navigateManager
+    private fun clearFocus() {
+        navHostFragment?.view?.requestFocus()
     }
 }
 
+internal class SavedViewModel: ViewModel() {
+    private var navigateManager: NavigationStack? = null
+
+    fun getNavigateManager(): NavigationStack? = this.navigateManager
+
+    fun setNavigateManager(value: NavigationStack) {
+        this.navigateManager = value
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        navigateManager?.cleanup()
+        navigateManager = null
+    }
+}
+
+internal interface OnFragmentManagerBackStackChangedListener : FragmentManager.OnBackStackChangedListener {
+    fun isBaseHost(): Boolean
+
+    fun host(): NavHostFragment
+}
+
+internal data class NavigationHostData(
+    val navHostFragment: NavHostFragment,
+    val onBackStackChangedListener: OnFragmentManagerBackStackChangedListener
+)
+
 @Suppress("unused")
-class NavigationStack {
-    private val hosts = HashMap<Int, NavHostFragment>()
+internal class NavigationStack {
+    private val hosts = ConcurrentHashMap<Int, NavigationHostData>()
     // saves
     private val stack: MutableList<Int> = mutableListOf()
     // saves NavHostFragment.ID and entry counts
-    private val hostBackStackEntryCounts: HashMap<Int, Int> = HashMap()
+    private val hostBackStackEntryCounts: ConcurrentHashMap<Int, Int> = ConcurrentHashMap()
 
-    fun addHost(item: NavHostFragment) {
-        hosts[item.id] = item
-        hostBackStackEntryCounts[item.id] = item.getBackEntryCounts()
+    fun addHost(navHostFragment: NavHostFragment, onBackStackChangedListener: OnFragmentManagerBackStackChangedListener) {
+        if (hasHost(navHostFragment)) {
+            removeHost(navHostFragment)
+        }
+        hosts[navHostFragment.id] = NavigationHostData(navHostFragment, onBackStackChangedListener)
+        navHostFragment.childFragmentManager.addOnBackStackChangedListener(onBackStackChangedListener)
+
+        hostBackStackEntryCounts[navHostFragment.id] = navHostFragment.getBackEntryCounts()
     }
 
-    fun removeHost(item: NavHostFragment) {
-        hosts.remove(item.id)
-        hostBackStackEntryCounts.remove(item.id)
+    fun removeHost(navHostFragment: NavHostFragment) {
+        val hostData = getHost(navHostFragment)
+        if (hostData != null) {
+            navHostFragment.childFragmentManager.removeOnBackStackChangedListener(hostData.onBackStackChangedListener)
+        }
+        hosts.remove(navHostFragment.id)
+
+        hostBackStackEntryCounts.remove(navHostFragment.id)
     }
 
-    internal fun pushNavigate(item: NavHostFragment) {
-        stack.add(item.id)
+    private fun getHost(navHostFragment: NavHostFragment): NavigationHostData? = hosts[navHostFragment.id]
+
+    fun hasHost(navHostFragment: NavHostFragment) = getHost(navHostFragment) != null
+
+    internal fun pushNavigate(navHostFragment: NavHostFragment) {
+        stack.add(navHostFragment.id)
     }
 
     internal fun popNavigate() {
         stack.removeLastOrNull()
     }
 
-    fun popUpToHost(item: NavHostFragment) {
+    fun popUpToHost(navHostFragment: NavHostFragment) {
         val iterator = stack.iterator()
         for (id in iterator) {
-            if (id == item.id) {
+            if (id == navHostFragment.id) {
                 iterator.remove()
             }
         }
     }
 
-    fun getBackEntryCounts(item: NavHostFragment): Int = hostBackStackEntryCounts[item.id] ?: 0
+    fun getBackEntryCounts(navHostFragment: NavHostFragment): Int = hostBackStackEntryCounts[navHostFragment.id] ?: 0
 
-    fun setBackEntryCounts(item: NavHostFragment, counts: Int) {
-        hostBackStackEntryCounts[item.id] = counts
+    fun setBackEntryCounts(navHostFragment: NavHostFragment, counts: Int) {
+        hostBackStackEntryCounts[navHostFragment.id] = counts
     }
 
     fun getActiveHost(): NavHostFragment? {
-        val activeHostId = hosts.keys.firstOrNull { it == stack.lastOrNull() }
-        if (activeHostId != null) {
-            return hosts[activeHostId]
+        val activeHostId = stack.lastOrNull()
+        return if (activeHostId != null) {
+            hosts[activeHostId]?.navHostFragment
+        } else {
+            null
         }
+    }
 
-        return null
+    fun cleanup() {
+        hosts.values.toMutableList().forEach { hostData ->
+            removeHost(hostData.navHostFragment)
+        }
+        hosts.clear()
+        hostBackStackEntryCounts.clear()
+        stack.clear()
     }
 }

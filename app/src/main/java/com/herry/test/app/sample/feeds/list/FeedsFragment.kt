@@ -28,12 +28,15 @@ import com.herry.test.widget.TabLayoutForm
 
 class FeedsFragment: BaseMVPNavView<FeedsContract.View, FeedsContract.Presenter>(), FeedsContract.View {
 
-    override fun onSystemUIAppearances(context: Context): SystemUIAppearances =
-        SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
-            showBehavior = SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE
-            statusBar?.backgroundColor = Color.WHITE
-            statusBar?.visibility = SystemUIVisibility.SHOW
-        }
+    override fun onSystemUIAppearances(context: Context, default: SystemUIAppearances): SystemUIAppearances? {
+        return default.copy(
+            showBehavior = SystemUIShowBehavior.TRANSIENT_BARS_BY_SWIPE,
+            statusBar = default.statusBar?.copy(
+                backgroundColor = Color.WHITE,
+                visibility = SystemUIVisibility.SHOW
+            )
+        )
+    }
 
     override fun onCreatePresenter(): FeedsContract.Presenter = FeedsPresenter()
 

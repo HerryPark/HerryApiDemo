@@ -75,12 +75,15 @@ class FeedDetailFragment: BaseMVPNavView<FeedDetailContract.View, FeedDetailCont
         }
     }
 
-    override fun onSystemUIAppearances(context: Context): SystemUIAppearances =
-        SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
-            isFullScreen = true
-            statusBar?.backgroundColor = Color.TRANSPARENT
-            statusBar?.visibility = SystemUIVisibility.SHOW
-        }
+    override fun onSystemUIAppearances(context: Context, default: SystemUIAppearances): SystemUIAppearances {
+        return default.copy(
+            isFullScreen = true,
+            statusBar = default.statusBar?.copy(
+                backgroundColor = Color.TRANSPARENT,
+                visibility = SystemUIVisibility.SHOW
+            )
+        )
+    }
 
     @OptIn(UnstableApi::class)
     override fun onCreatePresenter(): FeedDetailContract.Presenter? {
@@ -203,7 +206,7 @@ class FeedDetailFragment: BaseMVPNavView<FeedDetailContract.View, FeedDetailCont
             coverImage?.let { cover ->
                 val width = feed.width
                 val height = feed.height
-                val dimensionRatio = String.format(Locale.ENGLISH, "${if (ViewUtil.isPortraitOrientation(context)) "H" else "W"},%d:%d", width, height)
+                val dimensionRatio = String.format(Locale.ENGLISH, "${if (ViewUtil.isPortraitOrientation()) "H" else "W"},%d:%d", width, height)
                 constraintSet.setDimensionRatio(cover.id, dimensionRatio)
                 constraintSet.applyTo(constraintLayout)
 

@@ -28,13 +28,18 @@ import com.herry.test.app.sample.tags.TagsFragment
 
 class NewsFragment: BaseMVPNavView<NewsContract.View, NewsContract.Presenter>(), NewsContract.View {
 
-    override fun onSystemUIAppearances(context: Context): SystemUIAppearances =
-        SystemUIAppearances.getDefaultSystemUIAppearances(context).apply {
-            isFullScreen = true
-            statusBar?.backgroundColor = Color.TRANSPARENT
-            statusBar?.visibility = SystemUIVisibility.SHOW
-            navigationBar?.backgroundColor = Color.YELLOW
-        }
+    override fun onSystemUIAppearances(context: Context, default: SystemUIAppearances): SystemUIAppearances? {
+        return default.copy(
+            isFullScreen = true,
+            statusBar = default.statusBar?.copy(
+                backgroundColor = Color.TRANSPARENT,
+                visibility = SystemUIVisibility.HIDE
+            ),
+            navigationBar = default.navigationBar?.copy(
+                backgroundColor = Color.YELLOW
+            )
+        )
+    }
 
     @UnstableApi override fun onCreatePresenter(): NewsContract.Presenter = NewsPresenter()
 
